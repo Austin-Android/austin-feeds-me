@@ -10,6 +10,7 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
+        android:name=".AustinFeedsMe"
         android:theme="@android:style/Theme.NoTitleBar"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -62,6 +63,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="a990417f6f9d08531281f34e943909afd40c2a11" />
     </application>
 
 </manifest>
