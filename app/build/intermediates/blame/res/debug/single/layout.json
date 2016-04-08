@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/near_you.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/near_you.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/happening_now.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/happening_now.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/activity_start_screen.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/activity_start_screen.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/all_events.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/all_events.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/splash.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/splash.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/urgent_item.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/urgent_item.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/layout/add_event.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/layout/add_event.xml"
+    }
+]

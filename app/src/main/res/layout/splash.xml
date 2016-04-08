@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgLogo"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="#FFFFFF"
+        android:textSize="40sp" 
+        android:layout_marginBottom="50dp"/>
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="97dp"
+        android:contentDescription="@string/desc"
+        android:src="@drawable/ic_launcher" />
+    
+    <TextView
+        android:id="@+id/created"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/develop" 
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/app_name"
+    	android:layout_marginLeft="20dp" 
+    	android:layout_marginRight="40dp"/>
+    
+    <TextView
+        android:id="@+id/james"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/app_name"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_toRightOf="@+id/created"
+        android:text="@string/james"
+        android:textColor="#FFFFFF" />
+    
+    <TextView
+        android:id="@+id/daniel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/james"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_toRightOf="@+id/created"
+        android:text="@string/daniel"
+        android:textColor="#FFFFFF" />
+    
+    <TextView
+        android:id="@+id/andre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/daniel"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/created"
+        android:text="@string/andre"
+        android:textColor="#FFFFFF" />
+    
+</RelativeLayout>

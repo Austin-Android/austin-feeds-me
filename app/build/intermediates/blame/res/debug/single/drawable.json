@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/ic_launcher.jpg",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/ic_launcher.jpg"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/pin_large.png",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/pin_large.png"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/bkg.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/bkg.xml"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/plus.png",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/plus.png"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/clock_large.jpg",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/clock_large.jpg"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/list_large.jpg",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/list_large.jpg"
+    },
+    {
+        "merged": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/build/intermediates/res/merged/debug/drawable/pressed.xml",
+        "source": "/Users/darrankelinske/source/pixelplus/UTFeedsMe/app/src/main/res/drawable/pressed.xml"
+    }
+]
