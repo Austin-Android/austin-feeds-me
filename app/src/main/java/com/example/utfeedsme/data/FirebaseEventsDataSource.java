@@ -32,7 +32,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
         final List<Event> events = new ArrayList<Event>();
 
         Firebase ref = new Firebase("https://austin-feeds-me.firebaseio.com/events");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
