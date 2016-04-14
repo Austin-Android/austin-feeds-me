@@ -47,4 +47,6 @@ dependencies {
         transitive = true;
     }
     compile 'com.firebase:firebase-client-android:2.5.2+'
+    compile "com.android.support:appcompat-v7:23.3.0"
+
 }

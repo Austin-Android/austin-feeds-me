@@ -27,6 +27,11 @@ public final class Event {
 
     public Event() {}
 
+    public Event(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     public Event(String title) {
         this.title = title;
     }
@@ -57,6 +62,11 @@ public final class Event {
 
     public String getRsvp_link() {
         return rsvp_link;
+    }
+
+    public boolean isEmpty() {
+        return (title == null || "".equals(title)) &&
+                (description == null || "".equals(description));
     }
 
 }
