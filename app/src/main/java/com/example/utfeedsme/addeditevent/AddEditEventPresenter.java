@@ -31,7 +31,7 @@ public class AddEditEventPresenter implements Presenter {
         if (newEvent.isEmpty()) {
             // Oopsy - Need basic details
         } else {
-            mEventsRepository.saveEvent(newEvent);
+//            mEventsRepository.saveEvent(newEvent);
             mAddEditEventView.showEventsList();
         }
     }

@@ -11,7 +11,7 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:name=".AustinFeedsMeApplication"
-        android:theme="@android:style/Theme.NoTitleBar"
+        android:theme="@style/Theme.AppCompat"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
@@ -63,6 +63,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".addeditevent.AddEditEventActivity"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="a990417f6f9d08531281f34e943909afd40c2a11" />

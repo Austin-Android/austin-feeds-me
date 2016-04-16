@@ -22,7 +22,17 @@ public interface EventsDataSource {
 
     }
 
+    interface SaveEventCallback {
+
+        void onEventSaved(boolean success);
+
+        void onError(String error);
+
+    }
+
     void getEvents(LoadEventsCallback callback);
 
     void getEvent(String eventId, LoadEventCallback callback);
+
+    void saveEvent(Event eventToSave, SaveEventCallback callback);
 }

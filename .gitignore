@@ -5,6 +5,8 @@
 .DS_Store
 /build
 /captures
+*.class
+/app/build
 /app/build/generated
 /app/build/outputs
 /app/build/intermediates/symbols

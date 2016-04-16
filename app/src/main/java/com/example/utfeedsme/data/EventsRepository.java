@@ -65,4 +65,21 @@ public class EventsRepository implements EventsDataSource {
     public void getEvent(String eventId, LoadEventCallback callback) {
 
     }
+
+    @Override
+    public void saveEvent(Event eventToSave, final SaveEventCallback callback) {
+
+        mEventsRemoteDataSource.saveEvent(eventToSave, new SaveEventCallback() {
+            @Override
+            public void onEventSaved(boolean success) {
+                callback.onEventSaved(success);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+
+    }
 }
