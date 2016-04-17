@@ -8,9 +8,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by darrankelinske on 4/10/16.
@@ -64,10 +62,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
         Firebase ref = new Firebase("https://austin-feeds-me.firebaseio.com/events");
         Firebase newEventRef = ref.push();
 
-        Map<String, String> eventHashMap = new HashMap<String, String>();
-        eventHashMap.put("title", eventToSave.getTitle());
-        eventHashMap.put("description", eventToSave.getDescription());
-        newEventRef.setValue(eventHashMap);
+        newEventRef.setValue(eventToSave);
 
         Log.d("Woo", "The new event ID is: "+newEventRef.getKey());
      }

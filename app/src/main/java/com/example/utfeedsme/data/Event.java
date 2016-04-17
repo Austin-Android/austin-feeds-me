@@ -64,9 +64,9 @@ public final class Event {
         return rsvp_link;
     }
 
-    public boolean isEmpty() {
-        return (title == null || "".equals(title)) &&
-                (description == null || "".equals(description));
-    }
+//    public boolean isEmpty() {
+//        return (title == null || "".equals(title)) &&
+//                (description == null || "".equals(description));
+//    }
 
 }

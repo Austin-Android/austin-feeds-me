@@ -28,11 +28,11 @@ public class AddEditEventPresenter implements Presenter {
     @Override
     public void createEvent(String title, String description) {
         Event newEvent = new Event(title, description);
-        if (newEvent.isEmpty()) {
+//        if (newEvent.isEmpty()) {
             // Oopsy - Need basic details
-        } else {
+//        } else {
 //            mEventsRepository.saveEvent(newEvent);
             mAddEditEventView.showEventsList();
-        }
+//        }
     }
 }
