@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.example.utfeedsme.addeditevent.AddEditEventActivity;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -17,7 +18,7 @@ public class StartScreen extends Activity {
 	
 	//protected RecordsDataSource dataSource;
 		
-	ImageButton happening_now_btn, near_you_btn, all_events_btn, add_event_btn;
+	ImageButton happening_now_btn, near_you_btn, all_events_btn, add_event_btn, add_event_btn2;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class StartScreen extends Activity {
         setContentView(R.layout.activity_start_screen);
         
        // final StartScreen thisActivity = this;
-        Parse.initialize(this, "vdhZN2rmjBYhLJFlFK8NRFW0wKZHQ3CDNMEkwAWy", "5J5WzJDG8FR95pmI9eN1HTOCtbcBktoz9B6yRNo4");
+        Parse.initialize(this, "vdhZN2rmjBYhLJFlFK8NRFW0wKZHQ3CDNMEkwAWy", BuildConfig.PARSE_KEY);
         ParseObject testObject = new ParseObject("TestObject");
         testObject.put("foo", "bar");
         testObject.saveInBackground();
@@ -36,6 +37,8 @@ public class StartScreen extends Activity {
         near_you_btn = (ImageButton) findViewById(R.id.near_you);
         all_events_btn = (ImageButton) findViewById(R.id.all_events);
         add_event_btn = (ImageButton) findViewById(R.id.add_event);
+        add_event_btn2 = (ImageButton) findViewById(R.id.add_event2);
+
         
         happening_now_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -65,6 +68,14 @@ public class StartScreen extends Activity {
 				startActivity(openAddEvent);
 			}
 		});
+
+        add_event_btn2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent openAddEvent = new Intent(StartScreen.this, AddEditEventActivity.class);
+                Log.v(TAG, "yoooo we pressed the add event 2 button");
+                startActivity(openAddEvent);
+            }
+        });
 
     }
 

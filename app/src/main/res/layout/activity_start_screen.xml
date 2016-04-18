@@ -1,9 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
+    android:orientation="vertical"
     android:background="#BF5700">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     
     <TextView
         android:id="@+id/name"
@@ -120,5 +125,31 @@
         android:layout_marginBottom="10dp"
         android:layout_marginRight="32dp"
         android:textColor="#FFFFFF"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/plus"
+        android:text="@string/add_event"
+        android:contentDescription="@string/add_event"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:id="@+id/add_event2"
+        android:background="@drawable/bkg"
+        android:layout_below="@+id/all_events"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:id="@+id/add_text_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Event in Firebase"
+        android:layout_below="@+id/add_event2"
+        android:layout_marginLeft="30dp"
+        android:textColor="#FFFFFF"/>
     
 </RelativeLayout>
+
+</ScrollView>

@@ -15,6 +15,10 @@ repositories {
 }
 
 
+Properties props = new Properties()
+props.load(new FileInputStream(file(project.property("austinfeedsme.properties"))))
+
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -23,6 +27,8 @@ android {
         applicationId "com.example.utfeedsme"
         minSdkVersion 16
         targetSdkVersion 22
+        manifestPlaceholders = [fabricApiKey:props['fabric']]
+        buildConfigField "String", "PARSE_KEY", props['parse_client_key']
     }
 
     buildTypes {
@@ -46,7 +52,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-    compile 'com.firebase:firebase-client-android:2.5.2+'
+    compile 'com.firebase:firebase-client-android:2.5.2'
     compile "com.android.support:appcompat-v7:23.3.0"
     compile 'com.jakewharton:butterknife:7.0.1'
 
