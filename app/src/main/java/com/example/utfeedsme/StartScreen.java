@@ -1,6 +1,5 @@
 package com.example.utfeedsme;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,10 +8,15 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.utfeedsme.addeditevent.AddEditEventActivity;
+import com.firebase.client.Firebase;
+import com.firebase.ui.auth.core.FirebaseLoginBaseActivity;
+import com.firebase.ui.auth.core.FirebaseLoginError;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
-public class StartScreen extends Activity {
+public class StartScreen extends FirebaseLoginBaseActivity {
+
+    private Firebase mRef;
 	
 	private final static String TAG = "StartScreen";
 	
@@ -24,6 +28,8 @@ public class StartScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
+
+        mRef = new Firebase("https://austin-feeds-me.firebaseio.com/");
         
        // final StartScreen thisActivity = this;
         Parse.initialize(this, "vdhZN2rmjBYhLJFlFK8NRFW0wKZHQ3CDNMEkwAWy", BuildConfig.PARSE_KEY);
@@ -115,4 +121,22 @@ public class StartScreen extends Activity {
       //dataSource.close();
       super.onPause();
     }
+
+    @Override
+    public Firebase getFirebaseRef() {
+        return mRef;
+    }
+
+    @Override
+    public void onFirebaseLoginProviderError(FirebaseLoginError firebaseError) {
+        Log.e(TAG, "Login provider error: " + firebaseError.toString());
+        resetFirebaseLoginPrompt();
+    }
+
+    @Override
+    public void onFirebaseLoginUserError(FirebaseLoginError firebaseError) {
+        Log.e(TAG, "Login user error: "+firebaseError.toString());
+        resetFirebaseLoginPrompt();
+    }
+
 }
