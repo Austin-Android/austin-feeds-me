@@ -13,6 +13,7 @@ import com.example.utfeedsme.data.Event;
 import com.example.utfeedsme.data.EventsDataSource;
 import com.example.utfeedsme.data.EventsRepository;
 import com.example.utfeedsme.data.FirebaseEventsDataSource;
+import com.firebase.client.Firebase;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,13 +39,15 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
         setContentView(R.layout.activity_addeditevent);
         ButterKnife.bind(this);
 
+        final Firebase ref = new Firebase("https://austin-feeds-me.firebaseio.com/");
+
         FirebaseEventsDataSource dataSource = FirebaseEventsDataSource.getInstance();
         final EventsRepository repository = EventsRepository.getInstance(dataSource);
 
         saveButton.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                repository.saveEvent(new Event(title.getText().toString(),
+                repository.saveEvent(new Event(ref.getAuth().getUid(), title.getText().toString(),
                         description.getText().toString()), new EventsDataSource.SaveEventCallback() {
                     @Override
                     public void onEventSaved(boolean success) {

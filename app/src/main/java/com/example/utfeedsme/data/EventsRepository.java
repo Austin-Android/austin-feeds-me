@@ -33,9 +33,9 @@ public class EventsRepository implements EventsDataSource {
         mEventsRemoteDataSource = eventsRemoteDataSource;
     }
 
-    public static EventsRepository getInstance(EventsDataSource eventssRemoteDataSource) {
+    public static EventsRepository getInstance(EventsDataSource eventsRemoteDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new EventsRepository(eventssRemoteDataSource);
+            INSTANCE = new EventsRepository(eventsRemoteDataSource);
         }
         return INSTANCE;
     }

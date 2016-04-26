@@ -26,8 +26,8 @@ public class AddEditEventPresenter implements Presenter {
     }
 
     @Override
-    public void createEvent(String title, String description) {
-        Event newEvent = new Event(title, description);
+    public void createEvent(String uid, String title, String description) {
+        Event newEvent = new Event(uid, title, description);
 //        if (newEvent.isEmpty()) {
             // Oopsy - Need basic details
 //        } else {

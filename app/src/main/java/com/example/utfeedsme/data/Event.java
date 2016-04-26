@@ -17,6 +17,7 @@
 package com.example.utfeedsme.data;
 
 public final class Event {
+    private String uid;
     private String title;
     private String description;
     private String date;
@@ -27,7 +28,8 @@ public final class Event {
 
     public Event() {}
 
-    public Event(String title, String description) {
+    public Event(String uid, String title, String description) {
+        this.uid = uid;
         this.title = title;
         this.description = description;
     }
@@ -62,6 +64,14 @@ public final class Event {
 
     public String getRsvp_link() {
         return rsvp_link;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
 //    public boolean isEmpty() {
