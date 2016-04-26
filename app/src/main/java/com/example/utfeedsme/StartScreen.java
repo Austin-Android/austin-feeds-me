@@ -91,6 +91,8 @@ public class StartScreen extends FirebaseLoginBaseActivity {
     protected void onStart() {
         super.onStart();
         setEnabledAuthProvider(AuthProviderType.TWITTER);
+        setEnabledAuthProvider(AuthProviderType.GOOGLE);
+//        setEnabledAuthProvider(AuthProviderType.PASSWORD);
     }
 
     @Override
