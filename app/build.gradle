@@ -27,8 +27,11 @@ android {
         applicationId "com.example.utfeedsme"
         minSdkVersion 16
         targetSdkVersion 22
-        manifestPlaceholders = [fabricApiKey: props['fabric']]
+        manifestPlaceholders = [fabricApiKey: props['fabric'], twitterKey: props['twitter_key'],
+                                twitterSecret: props['twitter_secret']]
         buildConfigField "String", "PARSE_KEY", props['parse_client_key']
+
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -68,7 +71,6 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.5.2'
 
     // Needed for Authentication with these services
-    compile 'com.facebook.android:facebook-android-sdk:4.6.0'
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     compile 'org.twitter4j:twitter4j-core:4.0.2'
 }
