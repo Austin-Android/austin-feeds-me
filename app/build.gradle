@@ -21,7 +21,7 @@ props.load(new FileInputStream(file(project.property("austinfeedsme.properties")
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.example.utfeedsme"
@@ -53,6 +53,7 @@ dependencies {
     // Support Libs
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
 
     // Parse
     compile files('libs/Parse-1.7.1.jar')
