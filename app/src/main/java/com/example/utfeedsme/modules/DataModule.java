@@ -1,7 +1,5 @@
 package com.example.utfeedsme.modules;
 
-import android.app.Application;
-
 import com.example.utfeedsme.data.EventsDataSource;
 import com.example.utfeedsme.data.FirebaseEventsDataSource;
 import com.firebase.client.Firebase;
