@@ -55,5 +55,5 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile "com.android.support:appcompat-v7:23.3.0"
     compile 'com.jakewharton:butterknife:7.0.1'
-
+    compile 'com.google.dagger:dagger:2.4'
 }
