@@ -13,6 +13,7 @@ import com.example.utfeedsme.addeditevent.AddEditEventContract.View;
 import com.example.utfeedsme.data.Event;
 import com.example.utfeedsme.data.EventsDataSource;
 import com.example.utfeedsme.data.EventsRepository;
+import com.firebase.client.Firebase;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,7 @@ import butterknife.ButterKnife;
  * Created by darrankelinske on 4/13/16.
  */
 public class AddEditEventActivity extends AppCompatActivity implements View {
+    @Inject Firebase firebase;
     @Inject EventsRepository repository;
 
     @Bind(R.id.title_addeditevent_edittext)
@@ -42,7 +44,8 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
         saveButton.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                repository.saveEvent(new Event(ref.getAuth().getUid(), title.getText().toString(),
+                repository.saveEvent(new Event(firebase.getAuth().getUid(),
+                        title.getText().toString(),
                         description.getText().toString()), new EventsDataSource.SaveEventCallback() {
                     @Override
                     public void onEventSaved(boolean success) {
@@ -56,7 +59,6 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                 });
             }
         });
-
     }
 
     @Override
