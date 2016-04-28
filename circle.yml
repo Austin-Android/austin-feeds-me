@@ -16,6 +16,7 @@ dependencies:
         - echo y | android update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.3,android-23,extra-google-m2repository,extra-google-google_play_services,extra-android-support
         - echo y | android update sdk --no-ui --all --filter "extra-google-google_play_services"
         - echo y | android update sdk --no-ui --all --filter build-tools-23.0.3
+        - echo y | android update sdk --no-ui --all --filter extra-android-support
     override:
         - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
 
