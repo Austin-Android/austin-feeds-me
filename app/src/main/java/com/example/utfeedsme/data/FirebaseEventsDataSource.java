@@ -10,31 +10,23 @@ import com.firebase.client.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by darrankelinske on 4/10/16.
- */
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class FirebaseEventsDataSource implements EventsDataSource {
+    private final Firebase fireBase;
 
-    private static FirebaseEventsDataSource INSTANCE;
-
-
-    public static FirebaseEventsDataSource getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new FirebaseEventsDataSource();
-        }
-        return INSTANCE;
+    @Inject
+    public FirebaseEventsDataSource(Firebase fireBase) {
+        this.fireBase = fireBase;
     }
-
-    // Prevent direct instantiation.
-    private FirebaseEventsDataSource() {}
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
-
         final List<Event> events = new ArrayList<Event>();
 
-        Firebase ref = new Firebase("https://austin-feeds-me.firebaseio.com/events");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        fireBase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -59,12 +51,11 @@ public class FirebaseEventsDataSource implements EventsDataSource {
 
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
-        Firebase ref = new Firebase("https://austin-feeds-me.firebaseio.com/events");
-        Firebase newEventRef = ref.push();
+        fireBase.push();
 
-        newEventRef.setValue(eventToSave);
+        fireBase.setValue(eventToSave);
 
-        Log.d("Woo", "The new event ID is: "+newEventRef.getKey());
+        Log.d("Woo", "The new event ID is: " + fireBase.getKey());
      }
 
 }

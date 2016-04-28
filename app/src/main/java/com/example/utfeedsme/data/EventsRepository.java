@@ -16,37 +16,25 @@
 
 package com.example.utfeedsme.data;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Concrete implementation to load Events from the a data source.
  */
+@Singleton
 public class EventsRepository implements EventsDataSource {
-
-    private static EventsRepository INSTANCE = null;
-
     private final EventsDataSource mEventsRemoteDataSource;
 
-    private EventsRepository(@NonNull EventsDataSource eventsRemoteDataSource) {
-        mEventsRemoteDataSource = eventsRemoteDataSource;
-    }
-
-    public static EventsRepository getInstance(EventsDataSource eventssRemoteDataSource) {
-        if (INSTANCE == null) {
-            INSTANCE = new EventsRepository(eventssRemoteDataSource);
-        }
-        return INSTANCE;
-    }
-
-    public static void destroyInstance() {
-        INSTANCE = null;
+    @Inject
+    public EventsRepository(EventsDataSource eventsDataSource) {
+        this.mEventsRemoteDataSource = eventsDataSource;
     }
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
-
         mEventsRemoteDataSource.getEvents(new LoadEventsCallback() {
             @Override
             public void onEventsLoaded(List<Event> events) {
