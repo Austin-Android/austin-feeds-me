@@ -42,7 +42,7 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
         saveButton.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                repository.saveEvent(new Event(title.getText().toString(),
+                repository.saveEvent(new Event(ref.getAuth().getUid(), title.getText().toString(),
                         description.getText().toString()), new EventsDataSource.SaveEventCallback() {
                     @Override
                     public void onEventSaved(boolean success) {

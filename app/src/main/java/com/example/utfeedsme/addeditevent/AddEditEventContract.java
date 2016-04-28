@@ -19,7 +19,7 @@ public interface AddEditEventContract {
 
     interface Presenter {
 
-        void createEvent(String title, String description);
+        void createEvent(String uid, String title, String description);
 
     }
 }
