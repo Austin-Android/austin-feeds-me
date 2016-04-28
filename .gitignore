@@ -22,4 +22,4 @@
 /.idea
 austinfeedsme.properties
 *.iml
-.idea/
+.idea/*
