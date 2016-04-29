@@ -2,11 +2,16 @@ package com.example.utfeedsme;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.utfeedsme.addeditevent.AddEditEventActivity;
 import com.firebase.client.Firebase;
@@ -16,9 +21,19 @@ import com.firebase.ui.auth.core.FirebaseLoginError;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
-public class StartScreen extends FirebaseLoginBaseActivity {
+public class StartScreen extends FirebaseLoginBaseActivity
+        implements NavigationMenuAdapter.OnItemClickListener {
 
     private Firebase mRef;
+
+    // Navigation Menu member variables
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
+    private RecyclerView mDrawerList;
+
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private String[] mNavigationItems;
 	
 	private final static String TAG = "StartScreen";
 	
@@ -40,6 +55,8 @@ public class StartScreen extends FirebaseLoginBaseActivity {
         testObject.saveInBackground();
         //dataSource = new RecordsDataSource(this);
         //dataSource.open();
+
+        mTitle = mDrawerTitle = getTitle();
         
         happening_now_btn = (ImageButton) findViewById(R.id.happening_now);
         near_you_btn = (ImageButton) findViewById(R.id.near_you);
@@ -47,7 +64,50 @@ public class StartScreen extends FirebaseLoginBaseActivity {
         add_event_btn = (ImageButton) findViewById(R.id.add_event);
         add_event_btn2 = (ImageButton) findViewById(R.id.add_event2);
 
-        
+        mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
+        mDrawerList.setLayoutManager(new LinearLayoutManager(this));
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        mNavigationItems = getResources().getStringArray(R.array.navigation_items_array);
+
+        // set a custom shadow that overlays the main content when the drawer opens
+//        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        // improve performance by indicating the list if fixed size.
+        mDrawerList.setHasFixedSize(true);
+
+        // set up the drawer's list view with items and click listener
+        mDrawerList.setAdapter(new NavigationMenuAdapter(mNavigationItems, this));
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
+
+
         happening_now_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent openHappeningNow = new Intent("com.example.utfeedsme.HAPPENINGNOW");
@@ -151,4 +211,26 @@ public class StartScreen extends FirebaseLoginBaseActivity {
         resetFirebaseLoginPrompt();
     }
 
+
+    @Override
+    public void onClick(View view, int position) {
+        Log.i(TAG, "Menu item with position: " + position + " was clicked.");
+        switch(getResources().getStringArray(R.array.navigation_items_array)[position]) {
+            case "Event List" :
+                startActivity(new Intent(getApplicationContext(), AllEvents.class));
+                break;
+            case "Event Map" :
+                Toast.makeText(StartScreen.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+                break;
+            case "Add Event" : startActivity(
+                    new Intent(getApplicationContext(), AddEditEventActivity.class));
+                break;
+            default:
+                startActivity(new Intent(getApplicationContext(), AllEvents.class));
+                break;
+        }
+
+        mDrawerLayout.closeDrawer(mDrawerList);
+
+    }
 }
