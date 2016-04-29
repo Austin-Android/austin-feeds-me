@@ -20,3 +20,6 @@
 /app/build/intermediates/manifests
 /app/build/intermediates
 /.idea
+austinfeedsme.properties
+*.iml
+.idea/*

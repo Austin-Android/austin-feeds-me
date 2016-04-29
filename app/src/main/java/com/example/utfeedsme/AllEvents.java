@@ -17,9 +17,12 @@ import com.parse.ParseQueryAdapter;
 
 import java.util.List;
 
-public class AllEvents extends Activity {
+import javax.inject.Inject;
 
+public class AllEvents extends Activity {
     private static final String LOG_TAG = "AllEvents";
+
+    @Inject EventsRepository repository;
 
     private ParseQueryAdapter<ParseObject> mainAdapter;
     private CustomAdapter urgentTodosAdapter;
@@ -28,11 +31,8 @@ public class AllEvents extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((AustinFeedsMeApplication) getApplication()).component().inject(this);
         setContentView(R.layout.all_events);
-
-        FirebaseEventsDataSource dataSource = FirebaseEventsDataSource.getInstance();
-
-        EventsRepository repository = EventsRepository.getInstance(dataSource);
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
