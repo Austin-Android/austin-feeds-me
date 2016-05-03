@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.utfeedsme.AllEvents;
 import com.example.utfeedsme.NavigationMenuAdapter;
 import com.example.utfeedsme.R;
 import com.example.utfeedsme.addeditevent.AddEditEventActivity;
@@ -192,7 +191,7 @@ public class EventsActivity extends FirebaseLoginBaseActivity
         Log.i(TAG, "Menu item with position: " + position + " was clicked.");
         switch(getResources().getStringArray(R.array.navigation_items_array)[position]) {
             case "Event List" :
-                startActivity(new Intent(getApplicationContext(), AllEvents.class));
+                startActivity(new Intent(getApplicationContext(), EventsActivity.class));
                 break;
             case "Event Map" :
                 Toast.makeText(EventsActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
@@ -201,7 +200,7 @@ public class EventsActivity extends FirebaseLoginBaseActivity
                     new Intent(getApplicationContext(), AddEditEventActivity.class));
                 break;
             default:
-                startActivity(new Intent(getApplicationContext(), AllEvents.class));
+                startActivity(new Intent(getApplicationContext(), EventsActivity.class));
                 break;
         }
 
