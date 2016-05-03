@@ -51,9 +51,9 @@ public class FirebaseEventsDataSource implements EventsDataSource {
 
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
-        fireBase.push();
+        Firebase newEventRef = fireBase.push();
 
-        fireBase.setValue(eventToSave);
+        newEventRef.setValue(eventToSave);
 
         Log.d("Woo", "The new event ID is: " + fireBase.getKey());
      }
