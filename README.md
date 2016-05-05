@@ -6,3 +6,8 @@ The goal of the application is to allow users who are signed in via twitter to p
 
 All users of the application can view the posted events.
 
+The application is building on CircleCI and the build results can be found here:
+
+https://circleci.com/gh/Austin-Droids/austin-feeds-me
+
+When the application is in a useable state it will be published to the Google Play Store for distribution.
