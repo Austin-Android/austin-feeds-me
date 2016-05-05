@@ -11,3 +11,5 @@ The application is building on CircleCI and the build results can be found here:
 https://circleci.com/gh/Austin-Droids/austin-feeds-me
 
 When the application is in a useable state it will be published to the Google Play Store for distribution.
+
+The application uses Firebase for local and remote storage.
