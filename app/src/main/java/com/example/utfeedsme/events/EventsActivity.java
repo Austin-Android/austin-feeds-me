@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,15 +22,17 @@ import com.example.utfeedsme.R;
 import com.example.utfeedsme.addeditevent.AddEditEventActivity;
 import com.example.utfeedsme.data.Event;
 import com.firebase.client.Firebase;
-import com.firebase.ui.auth.core.AuthProviderType;
-import com.firebase.ui.auth.core.FirebaseLoginBaseActivity;
-import com.firebase.ui.auth.core.FirebaseLoginError;
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventsActivity extends FirebaseLoginBaseActivity
+public class EventsActivity extends AppCompatActivity
         implements NavigationMenuAdapter.OnItemClickListener, EventsContract.View {
+
+    public static final int RC_SIGN_IN = 7;
 
     private Firebase mRef;
 
@@ -48,7 +51,6 @@ public class EventsActivity extends FirebaseLoginBaseActivity
 
     private EventsAdapter mListAdapter;
 
-	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,9 +127,7 @@ public class EventsActivity extends FirebaseLoginBaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-        setEnabledAuthProvider(AuthProviderType.TWITTER);
-//        setEnabledAuthProvider(AuthProviderType.GOOGLE);
-//        setEnabledAuthProvider(AuthProviderType.PASSWORD);
+
     }
 
     @Override
@@ -139,8 +139,10 @@ public class EventsActivity extends FirebaseLoginBaseActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.login_menu_item).setVisible(getAuth() == null);
-        menu.findItem(R.id.logout_menu_item).setVisible(getAuth() != null);
+        menu.findItem(R.id.login_menu_item)
+                .setVisible(FirebaseAuth.getInstance().getCurrentUser() == null);
+        menu.findItem(R.id.logout_menu_item)
+                .setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
         return true;
     }
 
@@ -148,10 +150,16 @@ public class EventsActivity extends FirebaseLoginBaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.login_menu_item:
-                this.showFirebaseLoginPrompt();
+
+                startActivityForResult(
+                        // Get an instance of AuthUI based on the default app
+                        AuthUI.getInstance().createSignInIntentBuilder().build(),
+                        RC_SIGN_IN);
+
                 return true;
             case R.id.logout_menu_item:
-                this.logout();
+                AuthUI.getInstance(FirebaseApp.getInstance())
+                        .signOut(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -167,24 +175,6 @@ public class EventsActivity extends FirebaseLoginBaseActivity
     protected void onPause() {
       super.onPause();
     }
-
-    @Override
-    public Firebase getFirebaseRef() {
-        return mRef;
-    }
-
-    @Override
-    public void onFirebaseLoginProviderError(FirebaseLoginError firebaseError) {
-        Log.e(TAG, "Login provider error: " + firebaseError.toString());
-        resetFirebaseLoginPrompt();
-    }
-
-    @Override
-    public void onFirebaseLoginUserError(FirebaseLoginError firebaseError) {
-        Log.e(TAG, "Login user error: "+firebaseError.toString());
-        resetFirebaseLoginPrompt();
-    }
-
 
     @Override
     public void onClick(View view, int position) {
