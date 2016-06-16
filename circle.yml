@@ -14,6 +14,7 @@ machine:
 dependencies:
     pre:
         - wget http://whereisdarran.com/austinfeedsme.properties
+        - wget http://whereisdarran.com/google-services.json -P app/
         - echo y | android update sdk --no-ui --all --filter tools,platform-tools,android-23
         - echo y | android update sdk --no-ui --all --filter build-tools-23.0.3
         - echo y | android update sdk --no-ui --all --filter android-23
