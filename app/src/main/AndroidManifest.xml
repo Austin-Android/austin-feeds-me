@@ -6,10 +6,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".AustinFeedsMeApplication"
@@ -18,66 +17,20 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light" >
         <activity
-            android:name=".SplashScreen"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".events.EventsActivity"
             android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="com.example.utfeedsme.STARTSCREEN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".HappeningNow"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="com.example.utfeedsme.HAPPENINGNOW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".NearYou"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="com.example.utfeedsme.NEARYOU" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".AllEvents"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="com.example.utfeedsme.ALLEVENTS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".AddEvent"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="com.example.utfeedsme.ADDEVENT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity android:name=".addeditevent.AddEditEventActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabricApiKey}" />
 
-        <activity android:name="com.firebase.ui.auth.twitter.TwitterPromptActivity" />
         <meta-data
             android:name="com.firebase.ui.TwitterKey"
             android:value="${twitterKey}"/>

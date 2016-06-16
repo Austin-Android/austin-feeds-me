@@ -22,8 +22,8 @@ public final class Event {
     private String description;
     private String date;
     private String host;
+    private String rsvpLink;
     private String picture;
-    private String rsvp_link;
     private String tags;
 
     public Event() {}
@@ -32,6 +32,17 @@ public final class Event {
         this.uid = uid;
         this.title = title;
         this.description = description;
+    }
+
+    public Event(String uid, String title, String description, String date, String host,
+                 String rsvpLink) {
+
+        this.uid = uid;
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.host = host;
+        this.rsvpLink = rsvpLink;
     }
 
     public Event(String title) {
@@ -62,16 +73,20 @@ public final class Event {
         return picture;
     }
 
-    public String getRsvp_link() {
-        return rsvp_link;
-    }
-
     public String getUid() {
         return uid;
     }
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getRsvpLink() {
+        return rsvpLink;
+    }
+
+    public void setRsvpLink(String rsvpLink) {
+        this.rsvpLink = rsvpLink;
     }
 
 //    public boolean isEmpty() {

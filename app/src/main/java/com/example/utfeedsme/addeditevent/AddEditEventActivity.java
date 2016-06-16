@@ -65,7 +65,7 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                     });
                 } else {
                     Snackbar.make(linearLayout,
-                            "You must be logged in to save an event", Snackbar.LENGTH_SHORT)
+                            "You must be logged in to save an event.", Snackbar.LENGTH_SHORT)
                             .show();
                 }
             }
