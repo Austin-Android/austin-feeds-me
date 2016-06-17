@@ -1,11 +1,14 @@
 package com.example.utfeedsme.addeditevent;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -15,7 +18,8 @@ import com.example.utfeedsme.addeditevent.AddEditEventContract.View;
 import com.example.utfeedsme.data.Event;
 import com.example.utfeedsme.data.EventsDataSource;
 import com.example.utfeedsme.data.EventsRepository;
-import com.firebase.client.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 import javax.inject.Inject;
 
@@ -26,15 +30,14 @@ import butterknife.ButterKnife;
  * Created by darrankelinske on 4/13/16.
  */
 public class AddEditEventActivity extends AppCompatActivity implements View {
-    @Inject Firebase firebase;
+    @Inject
+    DatabaseReference firebase;
     @Inject EventsRepository repository;
 
-    @Bind(R.id.title_addeditevent_edittext)
+    @Bind(R.id.title_add_edit_event_edittext)
     EditText title;
-    @Bind(R.id.description_addeditevent_edittext)
+    @Bind(R.id.description_add_edit_event_edittext)
     EditText description;
-    @Bind(R.id.save_addeditevent_button)
-    Button saveButton;
     @Bind(R.id.add_edit_event_linear_layout)
     LinearLayout linearLayout;
 
@@ -44,15 +47,24 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
         ((AustinFeedsMeApplication) getApplication()).component().inject(this);
         setContentView(R.layout.activity_addeditevent);
         ButterKnife.bind(this);
+    }
 
-        saveButton.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_edit_event, menu);
+        return true;
+    }
 
-                if (null != firebase.getAuth()) {
-                    repository.saveEvent(new Event(firebase.getAuth().getUid(),
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.add_event_item:
+                if (null == FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+                    repository.saveEvent(new Event(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                             title.getText().toString(),
-                            description.getText().toString()), new EventsDataSource.SaveEventCallback() {
+                            description.getText().toString()),
+                            new EventsDataSource.SaveEventCallback() {
                         @Override
                         public void onEventSaved(boolean success) {
                             Log.i("Woo", "Yay the event was saved: " + success);
@@ -64,12 +76,19 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                         }
                     });
                 } else {
+                    android.view.View view = this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm =
+                                (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                     Snackbar.make(linearLayout,
                             "You must be logged in to save an event.", Snackbar.LENGTH_SHORT)
                             .show();
                 }
-            }
-        });
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

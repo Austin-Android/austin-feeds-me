@@ -6,7 +6,6 @@ import com.crashlytics.android.Crashlytics;
 import com.example.utfeedsme.components.ApplicationComponent;
 import com.example.utfeedsme.components.DaggerApplicationComponent;
 import com.example.utfeedsme.modules.AustinFeedsMeApplicationModule;
-import com.firebase.client.Firebase;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -20,7 +19,7 @@ public class AustinFeedsMeApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-        Firebase.setAndroidContext(this);
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         applicationComponent = DaggerApplicationComponent.builder()
                 .austinFeedsMeApplicationModule(new AustinFeedsMeApplicationModule(this))

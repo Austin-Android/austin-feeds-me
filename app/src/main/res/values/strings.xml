@@ -39,5 +39,8 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="save_event">Save Event</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
 
 </resources>

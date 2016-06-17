@@ -7,7 +7,7 @@ import com.example.utfeedsme.AustinFeedsMeApplication;
 import com.example.utfeedsme.data.Event;
 import com.example.utfeedsme.data.EventsDataSource;
 import com.example.utfeedsme.data.EventsRepository;
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import javax.inject.Inject;
 public class EventsPresenter implements EventsContract.UserActionsListener {
 
     @Inject
-    Firebase firebase;
+    DatabaseReference firebase;
     @Inject
     EventsRepository repository;
 

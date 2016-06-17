@@ -21,7 +21,6 @@ import com.example.utfeedsme.NavigationMenuAdapter;
 import com.example.utfeedsme.R;
 import com.example.utfeedsme.addeditevent.AddEditEventActivity;
 import com.example.utfeedsme.data.Event;
-import com.firebase.client.Firebase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,8 +32,6 @@ public class EventsActivity extends AppCompatActivity
         implements NavigationMenuAdapter.OnItemClickListener, EventsContract.View {
 
     public static final int RC_SIGN_IN = 7;
-
-    private Firebase mRef;
 
     // Navigation Menu member variables
     private ActionBarDrawerToggle mDrawerToggle;
@@ -56,7 +53,6 @@ public class EventsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
 
-        mRef = new Firebase("https://austin-feeds-me.firebaseio.com/");
         mActionsListener = new EventsPresenter(this, this);
 
         mTitle = mDrawerTitle = getTitle();
@@ -100,7 +96,7 @@ public class EventsActivity extends AppCompatActivity
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mItemListener);
 
@@ -123,12 +119,6 @@ public class EventsActivity extends AppCompatActivity
             mActionsListener.openEventDetails(clickedEvent);
         }
     };
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,9 +145,10 @@ public class EventsActivity extends AppCompatActivity
                         // Get an instance of AuthUI based on the default app
                         AuthUI.getInstance().createSignInIntentBuilder().build(),
                         RC_SIGN_IN);
-
                 return true;
+
             case R.id.logout_menu_item:
+
                 AuthUI.getInstance(FirebaseApp.getInstance())
                         .signOut(this);
                 return true;
@@ -167,7 +158,7 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-      super.onResume();
+        super.onResume();
         mActionsListener.loadEvents();
     }
 
@@ -181,16 +172,16 @@ public class EventsActivity extends AppCompatActivity
         Log.i(TAG, "Menu item with position: " + position + " was clicked.");
         switch(getResources().getStringArray(R.array.navigation_items_array)[position]) {
             case "Event List" :
-                startActivity(new Intent(getApplicationContext(), EventsActivity.class));
+                startActivity(new Intent(EventsActivity.this, EventsActivity.class));
                 break;
             case "Event Map" :
                 Toast.makeText(EventsActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
                 break;
             case "Add Event" : startActivity(
-                    new Intent(getApplicationContext(), AddEditEventActivity.class));
+                    new Intent(EventsActivity.this, AddEditEventActivity.class));
                 break;
             default:
-                startActivity(new Intent(getApplicationContext(), EventsActivity.class));
+                startActivity(new Intent(EventsActivity.this, EventsActivity.class));
                 break;
         }
 
@@ -276,5 +267,14 @@ public class EventsActivity extends AppCompatActivity
     public interface EventItemListener {
 
         void onEventClick(Event clickedEvent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("EventsActivity", "This is the current email: " +
+                FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        Log.d("EventsActivity", "This is the current uid: " +
+                FirebaseAuth.getInstance().getCurrentUser().getUid());
+
     }
 }
