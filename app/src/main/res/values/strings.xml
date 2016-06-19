@@ -34,7 +34,6 @@
     <string-array name="navigation_items_array">
         <item>Event List</item>
         <item>Event Map</item>
-        <item>Add Event</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>

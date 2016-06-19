@@ -3,6 +3,8 @@ package com.example.utfeedsme.events;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,11 +24,14 @@ import com.example.utfeedsme.R;
 import com.example.utfeedsme.addeditevent.AddEditEventActivity;
 import com.example.utfeedsme.data.Event;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class EventsActivity extends AppCompatActivity
         implements NavigationMenuAdapter.OnItemClickListener, EventsContract.View {
@@ -37,6 +42,7 @@ public class EventsActivity extends AppCompatActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerList;
+    private FloatingActionButton mAddEventFab;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -102,12 +108,16 @@ public class EventsActivity extends AppCompatActivity
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
         recyclerView.setAdapter(mListAdapter);
-
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
+        mAddEventFab = (FloatingActionButton) findViewById(R.id.add_event_fab);
+        mAddEventFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EventsActivity.this, AddEditEventActivity.class));
+            }
+        });
     }
 
     /**
@@ -150,7 +160,12 @@ public class EventsActivity extends AppCompatActivity
             case R.id.logout_menu_item:
 
                 AuthUI.getInstance(FirebaseApp.getInstance())
-                        .signOut(this);
+                        .signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // user is now signed out
+                        mAddEventFab.setVisibility(View.GONE);
+                    }
+                });
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -160,6 +175,11 @@ public class EventsActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         mActionsListener.loadEvents();
+        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
+            mAddEventFab.setVisibility(View.VISIBLE);
+        } else {
+            mAddEventFab.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -176,9 +196,6 @@ public class EventsActivity extends AppCompatActivity
                 break;
             case "Event Map" :
                 Toast.makeText(EventsActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
-                break;
-            case "Add Event" : startActivity(
-                    new Intent(EventsActivity.this, AddEditEventActivity.class));
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
@@ -271,10 +288,17 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("EventsActivity", "This is the current email: " +
-                FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        Log.d("EventsActivity", "This is the current uid: " +
-                FirebaseAuth.getInstance().getCurrentUser().getUid());
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                Log.d("EventsActivity", "This is the current email: " +
+                        FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                Log.d("EventsActivity", "This is the current uid: " +
+                        FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+                        mAddEventFab.setVisibility(View.VISIBLE);
+                }
+            }
+        }
 
     }
 }

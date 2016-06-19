@@ -55,7 +55,9 @@ public class FirebaseEventsDataSource implements EventsDataSource {
 
         newEventRef.setValue(eventToSave);
 
-        Log.d("Woo", "The new event ID is: " + fireBase.getKey());
+        Log.d("Woo", "The new event ID is: " + newEventRef.getKey());
+
+        callback.onEventSaved(true);
      }
 
 }

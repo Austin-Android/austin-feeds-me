@@ -66,10 +66,6 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.add_event_item:
-//                Log.d("EventsActivity", "This is the current email: " +
-//                        FirebaseAuth.getInstance().getCurrentUser().getEmail());
-//                Log.d("EventsActivity", "This is the current uid: " +
-//                        FirebaseAuth.getInstance().getCurrentUser().getUid());
                 if (null != FirebaseAuth.getInstance().getCurrentUser()) {
                     repository.saveEvent(new Event(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                             title.getText().toString(),
@@ -82,6 +78,7 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                         @Override
                         public void onEventSaved(boolean success) {
                             Log.i("Woo", "Yay the event was saved: " + success);
+                            finish();
                         }
 
                         @Override
