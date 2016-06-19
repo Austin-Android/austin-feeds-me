@@ -38,6 +38,12 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
     EditText title;
     @Bind(R.id.description_add_edit_event_edittext)
     EditText description;
+    @Bind(R.id.host_add_edit_event_edittext)
+    EditText host;
+    @Bind(R.id.date_add_edit_event_edittext)
+    EditText date;
+    @Bind(R.id.rsvp_link_add_edit_event_edittext)
+    EditText rsvpLink;
     @Bind(R.id.add_edit_event_linear_layout)
     LinearLayout linearLayout;
 
@@ -60,11 +66,19 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.add_event_item:
-                if (null == FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+//                Log.d("EventsActivity", "This is the current email: " +
+//                        FirebaseAuth.getInstance().getCurrentUser().getEmail());
+//                Log.d("EventsActivity", "This is the current uid: " +
+//                        FirebaseAuth.getInstance().getCurrentUser().getUid());
+                if (null != FirebaseAuth.getInstance().getCurrentUser()) {
                     repository.saveEvent(new Event(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                             title.getText().toString(),
-                            description.getText().toString()),
+                            description.getText().toString(),
+                            date.getText().toString(),
+                            host.getText().toString(),
+                            rsvpLink.getText().toString()),
                             new EventsDataSource.SaveEventCallback() {
+
                         @Override
                         public void onEventSaved(boolean success) {
                             Log.i("Woo", "Yay the event was saved: " + success);

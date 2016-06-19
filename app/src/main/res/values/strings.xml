@@ -42,5 +42,8 @@
     <string name="save_event">Save Event</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
+    <string name="date">Date</string>
+    <string name="host">Host</string>
+    <string name="rsvp_link">RSVP Link</string>
 
 </resources>
