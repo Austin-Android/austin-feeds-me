@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -153,7 +154,10 @@ public class EventsActivity extends AppCompatActivity
 
                 startActivityForResult(
                         // Get an instance of AuthUI based on the default app
-                        AuthUI.getInstance().createSignInIntentBuilder().build(),
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setProviders(AuthUI.EMAIL_PROVIDER,
+                        AuthUI.GOOGLE_PROVIDER).build(),
                         RC_SIGN_IN);
                 return true;
 
@@ -163,6 +167,11 @@ public class EventsActivity extends AppCompatActivity
                         .signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         // user is now signed out
+                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
+                        animation1.setDuration(1000);
+                        animation1.setStartOffset(1000);
+                        animation1.setFillAfter(true);
+                        mAddEventFab.startAnimation(animation1);
                         mAddEventFab.setVisibility(View.GONE);
                     }
                 });
@@ -295,6 +304,11 @@ public class EventsActivity extends AppCompatActivity
                 Log.d("EventsActivity", "This is the current uid: " +
                         FirebaseAuth.getInstance().getCurrentUser().getUid());
                     if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+                        animation1.setDuration(1000);
+                        animation1.setStartOffset(1000);
+                        animation1.setFillAfter(true);
+                        mAddEventFab.startAnimation(animation1);
                         mAddEventFab.setVisibility(View.VISIBLE);
                 }
             }
