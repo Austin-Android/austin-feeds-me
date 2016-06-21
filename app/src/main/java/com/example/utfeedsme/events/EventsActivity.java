@@ -156,8 +156,7 @@ public class EventsActivity extends AppCompatActivity
                         // Get an instance of AuthUI based on the default app
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
-                                .setProviders(AuthUI.EMAIL_PROVIDER,
-                        AuthUI.GOOGLE_PROVIDER).build(),
+                                .setProviders(AuthUI.EMAIL_PROVIDER).build(),
                         RC_SIGN_IN);
                 return true;
 
