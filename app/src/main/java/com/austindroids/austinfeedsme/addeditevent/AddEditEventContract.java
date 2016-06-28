@@ -1,4 +1,4 @@
-package com.example.utfeedsme.addeditevent;
+package com.austindroids.austinfeedsme.addeditevent;
 
 /**
  * This specifies the contract between the view and the presenter.

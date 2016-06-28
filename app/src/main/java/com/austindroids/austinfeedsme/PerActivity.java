@@ -1,4 +1,4 @@
-package com.example.utfeedsme;
+package com.austindroids.austinfeedsme;
 
 import java.lang.annotation.Retention;
 

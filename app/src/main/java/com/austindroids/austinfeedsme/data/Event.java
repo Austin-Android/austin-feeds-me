@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.utfeedsme.data;
+package com.austindroids.austinfeedsme.data;
 
 public final class Event {
     private String uid;

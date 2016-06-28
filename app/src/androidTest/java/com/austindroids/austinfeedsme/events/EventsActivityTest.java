@@ -1,4 +1,4 @@
-package com.example.utfeedsme.events;
+package com.austindroids.austinfeedsme.events;
 
 /**
  * Created by darrankelinske on 5/4/16.

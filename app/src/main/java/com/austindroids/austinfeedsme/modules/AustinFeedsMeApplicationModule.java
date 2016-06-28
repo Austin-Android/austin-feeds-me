@@ -1,4 +1,4 @@
-package com.example.utfeedsme.modules;
+package com.austindroids.austinfeedsme.modules;
 
 import android.app.Application;
 

@@ -1,12 +1,12 @@
-package com.example.utfeedsme.events;
+package com.austindroids.austinfeedsme.events;
 
 import android.app.Activity;
 import android.util.Log;
 
-import com.example.utfeedsme.AustinFeedsMeApplication;
-import com.example.utfeedsme.data.Event;
-import com.example.utfeedsme.data.EventsDataSource;
-import com.example.utfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
+import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.data.EventsDataSource;
+import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;

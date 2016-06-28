@@ -1,4 +1,4 @@
-package com.example.utfeedsme.events;
+package com.austindroids.austinfeedsme.events;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +20,10 @@ import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.utfeedsme.NavigationMenuAdapter;
-import com.example.utfeedsme.R;
-import com.example.utfeedsme.addeditevent.AddEditEventActivity;
-import com.example.utfeedsme.data.Event;
+import com.austindroids.austinfeedsme.NavigationMenuAdapter;
+import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
+import com.austindroids.austinfeedsme.data.Event;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

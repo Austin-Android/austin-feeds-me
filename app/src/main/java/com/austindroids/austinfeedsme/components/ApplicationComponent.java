@@ -1,11 +1,11 @@
-package com.example.utfeedsme.components;
+package com.austindroids.austinfeedsme.components;
 
 import android.app.Application;
 
-import com.example.utfeedsme.addeditevent.AddEditEventActivity;
-import com.example.utfeedsme.events.EventsPresenter;
-import com.example.utfeedsme.modules.AustinFeedsMeApplicationModule;
-import com.example.utfeedsme.modules.DataModule;
+import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
+import com.austindroids.austinfeedsme.events.EventsPresenter;
+import com.austindroids.austinfeedsme.modules.AustinFeedsMeApplicationModule;
+import com.austindroids.austinfeedsme.modules.DataModule;
 
 import javax.inject.Singleton;
 

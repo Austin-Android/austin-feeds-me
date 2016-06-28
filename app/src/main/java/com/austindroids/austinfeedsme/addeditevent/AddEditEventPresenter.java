@@ -1,10 +1,10 @@
-package com.example.utfeedsme.addeditevent;
+package com.austindroids.austinfeedsme.addeditevent;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.utfeedsme.addeditevent.AddEditEventContract.Presenter;
-import com.example.utfeedsme.data.EventsDataSource;
+import com.austindroids.austinfeedsme.addeditevent.AddEditEventContract.Presenter;
+import com.austindroids.austinfeedsme.data.EventsDataSource;
 
 
 /**

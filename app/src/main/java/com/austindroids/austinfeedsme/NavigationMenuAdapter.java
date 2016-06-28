@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.utfeedsme;
+package com.austindroids.austinfeedsme;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

@@ -1,6 +1,6 @@
-package com.example.utfeedsme.events;
+package com.austindroids.austinfeedsme.events;
 
-import com.example.utfeedsme.data.Event;
+import com.austindroids.austinfeedsme.data.Event;
 
 import java.util.List;
 

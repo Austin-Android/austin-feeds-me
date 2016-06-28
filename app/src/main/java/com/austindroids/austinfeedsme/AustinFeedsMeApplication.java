@@ -1,11 +1,12 @@
-package com.example.utfeedsme;
+package com.austindroids.austinfeedsme;
 
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.utfeedsme.components.ApplicationComponent;
-import com.example.utfeedsme.components.DaggerApplicationComponent;
-import com.example.utfeedsme.modules.AustinFeedsMeApplicationModule;
+import com.austindroids.austinfeedsme.components.ApplicationComponent;
+import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
+import com.austindroids.austinfeedsme.modules.AustinFeedsMeApplicationModule;
+import com.google.firebase.database.FirebaseDatabase;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -19,7 +20,7 @@ public class AustinFeedsMeApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         applicationComponent = DaggerApplicationComponent.builder()
                 .austinFeedsMeApplicationModule(new AustinFeedsMeApplicationModule(this))

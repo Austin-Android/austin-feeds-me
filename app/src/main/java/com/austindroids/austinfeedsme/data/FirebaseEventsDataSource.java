@@ -1,4 +1,4 @@
-package com.example.utfeedsme.data;
+package com.austindroids.austinfeedsme.data;
 
 import android.util.Log;
 

@@ -1,7 +1,7 @@
-package com.example.utfeedsme.modules;
+package com.austindroids.austinfeedsme.modules;
 
-import com.example.utfeedsme.data.EventsDataSource;
-import com.example.utfeedsme.data.FirebaseEventsDataSource;
+import com.austindroids.austinfeedsme.data.EventsDataSource;
+import com.austindroids.austinfeedsme.data.FirebaseEventsDataSource;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

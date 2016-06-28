@@ -1,8 +1,8 @@
-package com.example.utfeedsme.modules;
+package com.austindroids.austinfeedsme.modules;
 
 import android.app.Activity;
 
-import com.example.utfeedsme.PerActivity;
+import com.austindroids.austinfeedsme.PerActivity;
 
 import dagger.Module;
 import dagger.Provides;

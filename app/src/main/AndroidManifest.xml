@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.utfeedsme"
+    package="com.austindroids.austinfeedsme"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -11,13 +11,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".AustinFeedsMeApplication"
+        android:name="com.austindroids.austinfeedsme.AustinFeedsMeApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".events.EventsActivity"
+            android:name="com.austindroids.austinfeedsme.events.EventsActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".addeditevent.AddEditEventActivity" />
+        <activity android:name="com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

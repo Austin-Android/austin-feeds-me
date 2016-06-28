@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.utfeedsme.data;
+package com.austindroids.austinfeedsme.data;
 
 import java.util.List;
 
