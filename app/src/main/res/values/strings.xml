@@ -34,7 +34,6 @@
     <string-array name="navigation_items_array">
         <item>Event List</item>
         <item>Event Map</item>
-        <item>Add Event</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
@@ -42,5 +41,8 @@
     <string name="save_event">Save Event</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
+    <string name="date">Date</string>
+    <string name="host">Host</string>
+    <string name="rsvp_link">RSVP Link</string>
 
 </resources>
