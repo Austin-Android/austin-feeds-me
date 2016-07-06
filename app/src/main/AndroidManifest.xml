@@ -27,16 +27,16 @@
 
         <activity android:name="com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabricApiKey}" />
+        <!--<meta-data-->
+            <!--android:name="io.fabric.ApiKey"-->
+            <!--android:value="${fabricApiKey}" />-->
 
-        <meta-data
-            android:name="com.firebase.ui.TwitterKey"
-            android:value="${twitterKey}"/>
-        <meta-data
-            android:name="com.firebase.ui.TwitterSecret"
-            android:value="${twitterSecret}"/>
+        <!--<meta-data-->
+            <!--android:name="com.firebase.ui.TwitterKey"-->
+            <!--android:value="${twitterKey}"/>-->
+        <!--<meta-data-->
+            <!--android:name="com.firebase.ui.TwitterSecret"-->
+            <!--android:value="${twitterSecret}"/>-->
     </application>
 
 </manifest>
