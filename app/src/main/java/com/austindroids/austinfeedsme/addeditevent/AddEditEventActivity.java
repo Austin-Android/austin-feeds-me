@@ -57,7 +57,7 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_edit_event, menu);
+        getMenuInflater().inflate(R.menu.menu_add_edit, menu);
         return true;
     }
 

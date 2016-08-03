@@ -18,7 +18,7 @@ package com.austindroids.austinfeedsme.data;
 
 public final class Event {
     private String uid;
-    private String title;
+    private String name;
     private String description;
     private String date;
     private String host;
@@ -26,35 +26,37 @@ public final class Event {
     private String picture;
     private String tags;
 
+    private boolean isFood;
+
     public Event() {}
 
-    public Event(String uid, String title, String description) {
+    public Event(String uid, String name, String description) {
         this.uid = uid;
-        this.title = title;
+        this.name = name;
         this.description = description;
     }
 
-    public Event(String uid, String title, String description, String date, String host,
+    public Event(String uid, String name, String description, String date, String host,
                  String rsvpLink) {
 
         this.uid = uid;
-        this.title = title;
+        this.name = name;
         this.description = description;
         this.date = date;
         this.host = host;
         this.rsvpLink = rsvpLink;
     }
 
-    public Event(String title) {
-        this.title = title;
+    public Event(String name) {
+        this.name = name;
     }
 
     public String getTags() {
         return tags;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
@@ -90,8 +92,16 @@ public final class Event {
     }
 
 //    public boolean isEmpty() {
-//        return (title == null || "".equals(title)) &&
+//        return (name == null || "".equals(name)) &&
 //                (description == null || "".equals(description));
 //    }
+
+    public boolean isFood() {
+        return isFood;
+    }
+
+    public void setFood(boolean food) {
+        isFood = food;
+    }
 
 }

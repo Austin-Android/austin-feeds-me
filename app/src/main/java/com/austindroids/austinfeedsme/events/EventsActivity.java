@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -134,7 +136,7 @@ public class EventsActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.start_screen, menu);
+        getMenuInflater().inflate(R.menu.menu_events, menu);
         return true;
     }
 
@@ -240,10 +242,17 @@ public class EventsActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            Event Event = mEvents.get(position);
+            Event event = mEvents.get(position);
 
-            viewHolder.title.setText(Event.getTitle());
-            viewHolder.description.setText(Event.getDescription());
+            viewHolder.title.setText(event.getName());
+
+            Spanned result;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                result = Html.fromHtml(event.getDescription(),Html.FROM_HTML_MODE_LEGACY);
+            } else {
+                result = Html.fromHtml(event.getDescription());
+            }
+            viewHolder.description.setText(result);
         }
 
         public void replaceData(List<Event> Events) {
