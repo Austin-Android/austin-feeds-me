@@ -27,6 +27,9 @@
 
         <activity android:name="com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity" />
 
+        <activity android:name="com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <!--<meta-data-->
             <!--android:name="io.fabric.ApiKey"-->
             <!--android:value="${fabricApiKey}" />-->

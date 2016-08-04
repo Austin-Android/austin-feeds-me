@@ -16,15 +16,21 @@
 
 package com.austindroids.austinfeedsme.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public final class Event {
+
+    private String id;
     private String uid;
     private String name;
     private String description;
     private String date;
     private String host;
+    @SerializedName("results")
     private String rsvpLink;
     private String picture;
     private String tags;
+    private Group group;
 
     private boolean isFood;
 
@@ -91,17 +97,20 @@ public final class Event {
         this.rsvpLink = rsvpLink;
     }
 
-//    public boolean isEmpty() {
-//        return (name == null || "".equals(name)) &&
-//                (description == null || "".equals(description));
-//    }
-
     public boolean isFood() {
         return isFood;
     }
 
     public void setFood(boolean food) {
         isFood = food;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public String getId() {
+        return id;
     }
 
 }

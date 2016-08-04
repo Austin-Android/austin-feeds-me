@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.austindroids.austinfeedsme.NavigationMenuAdapter;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
+import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -206,6 +207,9 @@ public class EventsActivity extends AppCompatActivity
                 break;
             case "Event Map" :
                 Toast.makeText(EventsActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+                break;
+            case "Food Filter" :
+                startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
