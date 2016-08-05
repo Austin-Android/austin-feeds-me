@@ -20,13 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.austindroids.austinfeedsme.NavigationMenuAdapter;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
 import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -202,11 +202,11 @@ public class EventsActivity extends AppCompatActivity
     public void onClick(View view, int position) {
         Log.i(TAG, "Menu item with position: " + position + " was clicked.");
         switch(getResources().getStringArray(R.array.navigation_items_array)[position]) {
-            case "Event List" :
+            case "Events List" :
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
                 break;
-            case "Event Map" :
-                Toast.makeText(EventsActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+            case "Events Map" :
+                startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
                 break;
             case "Food Filter" :
                 startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));

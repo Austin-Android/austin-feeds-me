@@ -32,8 +32,8 @@
     <string name="toggle">Toggle View</string>
 
     <string-array name="navigation_items_array">
-        <item>Event List</item>
-        <item>Event Map</item>
+        <item>Events List</item>
+        <item>Events Map</item>
         <item>Food Filter</item>
     </string-array>
 

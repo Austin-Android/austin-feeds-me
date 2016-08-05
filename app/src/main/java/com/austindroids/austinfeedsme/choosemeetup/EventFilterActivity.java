@@ -94,6 +94,12 @@ public class EventFilterActivity extends AppCompatActivity {
 
                         }
                         Log.d(TAG, "After cleaning we have this many events: " + eventsFromRest.size());
+                        if (eventsFromRest.size() == 0) {
+                            Toast.makeText(EventFilterActivity.this,
+                                    "All events for the next 3 months have been filtered!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
                         ChooseEventsAdapter adapter = new ChooseEventsAdapter(eventsFromRest);
                         eventsRecyclerView.setAdapter(adapter);
                     }

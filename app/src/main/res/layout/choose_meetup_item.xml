@@ -51,12 +51,12 @@
                 android:id="@+id/add_event"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Has Food?"/>
+                android:text="Has Food!"/>
             <Button
                 android:id="@+id/remove_event"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No Food!"/>
+                android:text="No Food :("/>
 
         </LinearLayout>
 

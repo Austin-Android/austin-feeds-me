@@ -24,16 +24,12 @@ public final class Event {
     private String description;
     private String date;
     private String host;
-
-    public String getEvent_url() {
-        return event_url;
-    }
-
     private String event_url;
     private String picture;
     private String tags;
     private Group group;
     private String time;
+    private Venue venue;
 
     private boolean isFood;
 
@@ -117,5 +113,13 @@ public final class Event {
 
     public String getTime() {
         return time;
+    }
+
+    public String getEvent_url() {
+        return event_url;
+    }
+
+    public Venue getVenue() {
+        return venue;
     }
 }
