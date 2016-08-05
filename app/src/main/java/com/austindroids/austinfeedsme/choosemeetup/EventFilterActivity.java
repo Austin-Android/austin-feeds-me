@@ -75,8 +75,6 @@ public class EventFilterActivity extends AppCompatActivity {
                 Results results = response.body();
                 Log.d(TAG, "Event count from API: " + results.getEvents().size());
                 final List<Event> eventsFromRest = results.getEvents();
-                ChooseEventsAdapter adapter = new ChooseEventsAdapter(eventsFromRest);
-                eventsRecyclerView.setAdapter(adapter);
 
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
