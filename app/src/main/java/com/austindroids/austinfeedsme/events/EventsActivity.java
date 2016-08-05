@@ -257,6 +257,7 @@ public class EventsActivity extends AppCompatActivity
                 result = Html.fromHtml(event.getDescription());
             }
             viewHolder.description.setText(result);
+            viewHolder.eventUrl.setText(event.getEvent_url());
         }
 
         public void replaceData(List<Event> Events) {
@@ -280,8 +281,8 @@ public class EventsActivity extends AppCompatActivity
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             public TextView title;
-
             public TextView description;
+            public TextView eventUrl;
             private EventItemListener mItemListener;
 
             public ViewHolder(View itemView, EventItemListener listener) {
@@ -289,6 +290,7 @@ public class EventsActivity extends AppCompatActivity
                 mItemListener = listener;
                 title = (TextView) itemView.findViewById(R.id.event_detail_title);
                 description = (TextView) itemView.findViewById(R.id.event_detail_description);
+                eventUrl = (TextView) itemView.findViewById(R.id.event_link);
                 itemView.setOnClickListener(this);
             }
 

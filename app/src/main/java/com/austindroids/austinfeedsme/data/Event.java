@@ -16,8 +16,6 @@
 
 package com.austindroids.austinfeedsme.data;
 
-import com.google.gson.annotations.SerializedName;
-
 public final class Event {
 
     private String id;
@@ -26,11 +24,16 @@ public final class Event {
     private String description;
     private String date;
     private String host;
-    @SerializedName("results")
-    private String rsvpLink;
+
+    public String getEvent_url() {
+        return event_url;
+    }
+
+    private String event_url;
     private String picture;
     private String tags;
     private Group group;
+    private String time;
 
     private boolean isFood;
 
@@ -50,7 +53,6 @@ public final class Event {
         this.description = description;
         this.date = date;
         this.host = host;
-        this.rsvpLink = rsvpLink;
     }
 
     public Event(String name) {
@@ -89,14 +91,6 @@ public final class Event {
         this.uid = uid;
     }
 
-    public String getRsvpLink() {
-        return rsvpLink;
-    }
-
-    public void setRsvpLink(String rsvpLink) {
-        this.rsvpLink = rsvpLink;
-    }
-
     public boolean isFood() {
         return isFood;
     }
@@ -113,4 +107,15 @@ public final class Event {
         return id;
     }
 
+    public void setEvent_url(String event_url) {
+        this.event_url = event_url;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getTime() {
+        return time;
+    }
 }

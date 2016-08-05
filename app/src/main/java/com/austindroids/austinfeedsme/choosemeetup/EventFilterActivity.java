@@ -25,7 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,7 +81,6 @@ public class EventFilterActivity extends AppCompatActivity {
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<Event> cleanEventArrayList = new ArrayList<>();
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             Event event = postSnapshot.getValue(Event.class);
 
@@ -127,7 +125,6 @@ public class EventFilterActivity extends AppCompatActivity {
 
         private List<Event> events;
 
-
         public ChooseEventsAdapter(List<Event> events) {
             setList(events);
         }
@@ -158,7 +155,8 @@ public class EventFilterActivity extends AppCompatActivity {
                 viewHolder.quote.setText(Html.fromHtml(description));
             }
 
-            viewHolder.link.setText(event.getRsvpLink());
+            viewHolder.link.setText(event.getEvent_url());
+
 
         }
 
@@ -193,10 +191,10 @@ public class EventFilterActivity extends AppCompatActivity {
             public ViewHolder(View itemView) {
                 super(itemView);
 
-                author = (TextView) itemView.findViewById(R.id.quote_author);
+                author = (TextView) itemView.findViewById(R.id.event_title);
                 group = (TextView) itemView.findViewById(R.id.event_group_name);
-                quote = (TextView) itemView.findViewById(R.id.quote_text);
-                link = (TextView) itemView.findViewById(R.id.quote_link);
+                quote = (TextView) itemView.findViewById(R.id.event_text);
+                link = (TextView) itemView.findViewById(R.id.event_link);
                 addEvent = (Button) itemView.findViewById(R.id.add_event);
                 removeEvent = (Button) itemView.findViewById(R.id.remove_event);
 
@@ -214,6 +212,8 @@ public class EventFilterActivity extends AppCompatActivity {
                         myRef.push().setValue(event);
                         Toast.makeText(v.getContext(), eventName + " added!",
                                 Toast.LENGTH_SHORT).show();
+
+                        removeAt(getAdapterPosition());
 
                     }
                 });
@@ -234,9 +234,17 @@ public class EventFilterActivity extends AppCompatActivity {
                         Toast.makeText(v.getContext(), eventName + " removed!",
                                 Toast.LENGTH_SHORT).show();
 
+                        removeAt(getAdapterPosition());
+
                     }
                 });
 
+            }
+
+            public void removeAt(int position) {
+                events.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, events.size());
             }
 
         }

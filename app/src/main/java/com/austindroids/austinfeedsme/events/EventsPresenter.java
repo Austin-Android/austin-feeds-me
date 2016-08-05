@@ -9,6 +9,7 @@ import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,8 +42,10 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
 
                 while (iter.hasNext()) {
                     Event nextEvent = iter.next();
-                    if (!nextEvent.isFood())
+                    if (!nextEvent.isFood() ||
+                            (Long.parseLong(nextEvent.getTime()) < new Date().getTime())) {
                         iter.remove();
+                    }
                 }
 
                 view.showEvents(events);

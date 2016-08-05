@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/quote_author"
+            android:id="@+id/event_title"
             style="@android:style/TextAppearance.Large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:hint="Group Name"/>
 
         <TextView
-            android:id="@+id/quote_text"
+            android:id="@+id/event_text"
             style="@android:style/TextAppearance.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:hint="Quote"/>
 
         <TextView
-            android:id="@+id/quote_link"
+            android:id="@+id/event_link"
             style="@android:style/TextAppearance.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
