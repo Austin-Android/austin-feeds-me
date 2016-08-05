@@ -42,11 +42,6 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 13));
 
-        map.addMarker(new MarkerOptions()
-                .title("Austin")
-                .snippet("yeeeehhaawww!")
-                .position(austin));
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("events");
         myRef.keepSynced(true);
@@ -65,7 +60,8 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 Double.valueOf(event.getVenue().getLon()));
                         map.addMarker(new MarkerOptions()
                                 .position(eventLocation)
-                                .title(event.getName()));
+                                .title(event.getName())
+                                .snippet(event.getGroup().getName()));
                     }
                 }
 
