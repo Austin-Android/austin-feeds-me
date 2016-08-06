@@ -125,14 +125,6 @@ public class EventsActivity extends AppCompatActivity
             }
         });
 
-        if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-            AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-            animation1.setDuration(1000);
-            animation1.setStartOffset(1000);
-            animation1.setFillAfter(true);
-            mAddEventFab.startAnimation(animation1);
-            mAddEventFab.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
