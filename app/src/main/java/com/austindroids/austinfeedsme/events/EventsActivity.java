@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -83,7 +83,7 @@ public class EventsActivity extends AppCompatActivity
         mDrawerList.setAdapter(new NavigationMenuAdapter(mNavigationItems, this));
         // enable ActionBar app icon to behave as action to toggle nav drawer
 
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -93,6 +93,7 @@ public class EventsActivity extends AppCompatActivity
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -107,6 +108,7 @@ public class EventsActivity extends AppCompatActivity
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
 
         mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mItemListener);
 
@@ -122,6 +124,15 @@ public class EventsActivity extends AppCompatActivity
                 startActivity(new Intent(EventsActivity.this, AddEditEventActivity.class));
             }
         });
+
+        if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+            AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+            animation1.setDuration(1000);
+            animation1.setStartOffset(1000);
+            animation1.setFillAfter(true);
+            mAddEventFab.startAnimation(animation1);
+            mAddEventFab.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

@@ -2,7 +2,6 @@ package com.austindroids.austinfeedsme.eventsmap;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
@@ -54,7 +53,6 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
                     Event event = postSnapshot.getValue(Event.class);
 
                     if (event.isFood() && event.getVenue() != null) {
-                        Log.d("EventMap", "onDataChange: " + event.getName());
                         LatLng eventLocation = new LatLng(
                                 Double.valueOf(event.getVenue().getLat()),
                                 Double.valueOf(event.getVenue().getLon()));

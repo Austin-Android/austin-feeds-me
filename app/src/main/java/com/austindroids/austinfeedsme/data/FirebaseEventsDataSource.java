@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,7 +26,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
     @Override
     public void getEvents(final LoadEventsCallback callback) {
         final List<Event> events = new ArrayList<Event>();
-
+        fireBase.orderByChild("time").startAt((new Date().getTime()));
         fireBase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

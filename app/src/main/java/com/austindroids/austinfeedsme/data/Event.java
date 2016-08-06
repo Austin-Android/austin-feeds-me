@@ -28,7 +28,7 @@ public final class Event {
     private String picture;
     private String tags;
     private Group group;
-    private String time;
+    private Long time;
     private Venue venue;
 
     private boolean isFood;
@@ -107,11 +107,11 @@ public final class Event {
         this.event_url = event_url;
     }
 
-    public void setTime(String time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
-    public String getTime() {
+    public Long getTime() {
         return time;
     }
 

@@ -20,20 +20,24 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.austindroids.austinfeedsme.events.EventsActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity" />
+        <activity android:name="com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity"
+            android:parentActivityName=".events.EventsActivity"/>
 
         <activity android:name="com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:parentActivityName=".events.EventsActivity"
+            android:theme="@style/AppTheme"/>
 
         <activity android:name=".eventsmap.EventsMapActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:parentActivityName=".events.EventsActivity"
+            android:theme="@style/AppTheme"/>
 
         <!--<meta-data-->
             <!--android:name="io.fabric.ApiKey"-->

@@ -43,7 +43,7 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
                 while (iter.hasNext()) {
                     Event nextEvent = iter.next();
                     if (!nextEvent.isFood() ||
-                            (Long.parseLong(nextEvent.getTime()) < new Date().getTime())) {
+                            (nextEvent.getTime() < new Date().getTime())) {
                         iter.remove();
                     }
                 }

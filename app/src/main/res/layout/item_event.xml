@@ -22,6 +22,8 @@
         <TextView
             android:id="@+id/event_detail_description"
             style="@android:style/TextAppearance.Small"
+            android:maxLines="7"
+            android:ellipsize="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

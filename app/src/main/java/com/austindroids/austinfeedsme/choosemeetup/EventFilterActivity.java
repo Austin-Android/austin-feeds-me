@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,9 +46,7 @@ public class EventFilterActivity extends AppCompatActivity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_meetup);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_event_filter);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("events");
@@ -87,7 +84,8 @@ public class EventFilterActivity extends AppCompatActivity {
 
                             while (iter.hasNext()) {
                                 Event nextEvent = iter.next();
-                                if (event.getId().equals(nextEvent.getId()))
+                                if (event.getId() != null &&
+                                        event.getId().equals(nextEvent.getId()))
                                     iter.remove();
                             }
 
