@@ -1,15 +1,18 @@
 package com.austindroids.austinfeedsme.events;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -18,7 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.NavigationMenuAdapter;
@@ -110,7 +114,7 @@ public class EventsActivity extends AppCompatActivity
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.setDrawerIndicatorEnabled(true);
 
-        mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mItemListener);
+        mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mEventItemListener);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
         recyclerView.setAdapter(mListAdapter);
@@ -125,12 +129,14 @@ public class EventsActivity extends AppCompatActivity
             }
         });
 
+        mActionsListener.loadEvents();
+
     }
 
     /**
-     * Listener for clicks on notes in the RecyclerView.
+     * Listener for clicks on events in the RecyclerView.
      */
-    EventItemListener mItemListener = new EventItemListener() {
+    EventItemListener mEventItemListener = new EventItemListener() {
         @Override
         public void onEventClick(Event clickedEvent) {
             mActionsListener.openEventDetails(clickedEvent);
@@ -141,6 +147,52 @@ public class EventsActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_events, menu);
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        final MenuItem searchMenu = menu.findItem(R.id.menu_search);
+
+        MenuItemCompat.setOnActionExpandListener(searchMenu,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        mActionsListener.loadEvents();
+                        return true;  // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        // Do something when expanded
+                        return true;  // Return true to expand action view
+                    }
+                });
+
+        // Get the search close button image view
+        ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+
+        // Set on click listener
+        closeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //Find EditText view
+                EditText et = (EditText) findViewById(R.id.search_src_text);
+
+                //Clear the text from EditText view
+                et.setText("");
+
+                //Clear query
+                searchView.setQuery("", false);
+                //Collapse the action view
+                searchView.onActionViewCollapsed();
+                //Collapse the search widget
+                searchMenu.collapseActionView();
+            }
+        });
         return true;
     }
 
@@ -172,12 +224,12 @@ public class EventsActivity extends AppCompatActivity
                         .signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         // user is now signed out
-                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
-                        animation1.setDuration(1000);
-                        animation1.setStartOffset(1000);
-                        animation1.setFillAfter(true);
-                        mAddEventFab.startAnimation(animation1);
-                        mAddEventFab.setVisibility(View.GONE);
+//                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
+//                        animation1.setDuration(1000);
+//                        animation1.setStartOffset(1000);
+//                        animation1.setFillAfter(true);
+//                        mAddEventFab.startAnimation(animation1);
+//                        mAddEventFab.setVisibility(View.GONE);
                     }
                 });
                 return true;
@@ -188,17 +240,28 @@ public class EventsActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mActionsListener.loadEvents();
-        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
-            mAddEventFab.setVisibility(View.VISIBLE);
-        } else {
-            mAddEventFab.setVisibility(View.GONE);
-        }
+//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
+//            mAddEventFab.setVisibility(View.VISIBLE);
+//        } else {
+//            mAddEventFab.setVisibility(View.GONE);
+//        }
     }
 
     @Override
     protected void onPause() {
       super.onPause();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            mActionsListener.searchEvents(query);
+        }
     }
 
     @Override
@@ -321,12 +384,12 @@ public class EventsActivity extends AppCompatActivity
                 Log.d("EventsActivity", "This is the current uid: " +
                         FirebaseAuth.getInstance().getCurrentUser().getUid());
                     if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-                        animation1.setDuration(1000);
-                        animation1.setStartOffset(1000);
-                        animation1.setFillAfter(true);
-                        mAddEventFab.startAnimation(animation1);
-                        mAddEventFab.setVisibility(View.VISIBLE);
+//                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+//                        animation1.setDuration(1000);
+//                        animation1.setStartOffset(1000);
+//                        animation1.setFillAfter(true);
+//                        mAddEventFab.startAnimation(animation1);
+//                        mAddEventFab.setVisibility(View.VISIBLE);
                 }
             }
         }

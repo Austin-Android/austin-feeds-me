@@ -19,6 +19,8 @@ interface EventsContract {
 
         void loadEvents();
 
+        void searchEvents(String searchTerm);
+
         void openEventDetails(Event clickedEvent);
 
     }

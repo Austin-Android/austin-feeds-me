@@ -61,6 +61,39 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
     }
 
     @Override
+    public void searchEvents(final String searchTerm) {
+        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
+            @Override
+            public void onEventsLoaded(List<Event> events) {
+
+                Iterator<Event> iter = events.iterator();
+
+                while (iter.hasNext()) {
+                    Event nextEvent = iter.next();
+
+                    // Remove event if it doesn't have free food or is in the past
+                    // or if the event name or description doesn't contain the search term
+                    if (!nextEvent.isFood()
+                            || (nextEvent.getTime() < new Date().getTime())
+                            || !(nextEvent.getName().contains(searchTerm)
+                              || nextEvent.getDescription().contains(searchTerm))) {
+                        iter.remove();
+                    }
+                }
+
+                view.showEvents(events);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e("OOPS", "We have an errorrrrr");
+
+            }
+        });
+
+    }
+
+    @Override
     public void openEventDetails(Event clickedEvent) {
 
     }
