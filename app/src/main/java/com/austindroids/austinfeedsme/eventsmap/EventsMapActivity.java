@@ -17,6 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+
 /**
  * Created by daz on 8/5/16.
  */
@@ -52,7 +54,10 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event event = postSnapshot.getValue(Event.class);
 
-                    if (event.isFood() && event.getVenue() != null) {
+                    if (event.isFood()
+                            && event.getVenue() != null
+                            && event.getTime() > new Date().getTime()) {
+
                         LatLng eventLocation = new LatLng(
                                 Double.valueOf(event.getVenue().getLat()),
                                 Double.valueOf(event.getVenue().getLon()));
@@ -60,6 +65,7 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 .position(eventLocation)
                                 .title(event.getName())
                                 .snippet(event.getGroup().getName()));
+
                     }
                 }
 

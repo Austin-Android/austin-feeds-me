@@ -62,6 +62,11 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
 
     @Override
     public void searchEvents(final String searchTerm) {
+
+        // Probably better to use Regex
+        // http://stackoverflow.com/questions/14018478/string-contains-ignore-case
+        final String lowerCaseSearch = searchTerm.toLowerCase();
+
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
             public void onEventsLoaded(List<Event> events) {
@@ -75,8 +80,8 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
                     // or if the event name or description doesn't contain the search term
                     if (!nextEvent.isFood()
                             || (nextEvent.getTime() < new Date().getTime())
-                            || !(nextEvent.getName().contains(searchTerm)
-                              || nextEvent.getDescription().contains(searchTerm))) {
+                            || !(nextEvent.getName().toLowerCase().contains(lowerCaseSearch)
+                              || nextEvent.getDescription().toLowerCase().contains(lowerCaseSearch))) {
                         iter.remove();
                     }
                 }

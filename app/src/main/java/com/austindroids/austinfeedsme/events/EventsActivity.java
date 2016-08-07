@@ -153,6 +153,8 @@ public class EventsActivity extends AppCompatActivity
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        // Fix to have searchview expand to fill entire ActionBar on tablets
+        searchView.setMaxWidth(Integer.MAX_VALUE);
 
         final MenuItem searchMenu = menu.findItem(R.id.menu_search);
 
