@@ -1,15 +1,19 @@
 package com.austindroids.austinfeedsme.eventsmap;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,7 +26,9 @@ import java.util.Date;
 /**
  * Created by daz on 8/5/16.
  */
-public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class EventsMapActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
+        GoogleMap.OnInfoWindowLongClickListener {
 
     SupportMapFragment mapFragment;
 
@@ -42,6 +48,7 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 13));
+        map.setOnInfoWindowLongClickListener(this);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("events");
@@ -63,8 +70,9 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
                                 Double.valueOf(event.getVenue().getLon()));
                         map.addMarker(new MarkerOptions()
                                 .position(eventLocation)
-                                .title(event.getName())
-                                .snippet(event.getGroup().getName()));
+                                .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                                .snippet(event.getGroup().getName() + "\n" +event.getName()))
+                                .setTag(event.getEvent_url());
 
                     }
                 }
@@ -76,5 +84,19 @@ public class EventsMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             }
         });
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker marker) {
+
+        String rsvpLink = (String) marker.getTag();
+
+        if (rsvpLink != null)
+        {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(rsvpLink));
+            startActivity(i);
+        }
+
     }
 }

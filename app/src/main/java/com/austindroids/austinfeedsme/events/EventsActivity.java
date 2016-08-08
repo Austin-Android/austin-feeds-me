@@ -31,6 +31,7 @@ import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
 import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
+import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -316,6 +317,7 @@ public class EventsActivity extends AppCompatActivity
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
             Event event = mEvents.get(position);
 
+            viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
             viewHolder.title.setText(event.getName());
 
             Spanned result;
@@ -348,6 +350,7 @@ public class EventsActivity extends AppCompatActivity
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+            public TextView eventDate;
             public TextView title;
             public TextView description;
             public TextView eventUrl;
@@ -356,6 +359,7 @@ public class EventsActivity extends AppCompatActivity
             public ViewHolder(View itemView, EventItemListener listener) {
                 super(itemView);
                 mItemListener = listener;
+                eventDate = (TextView) itemView.findViewById(R.id.event_detail_time);
                 title = (TextView) itemView.findViewById(R.id.event_detail_title);
                 description = (TextView) itemView.findViewById(R.id.event_detail_description);
                 eventUrl = (TextView) itemView.findViewById(R.id.event_link);
