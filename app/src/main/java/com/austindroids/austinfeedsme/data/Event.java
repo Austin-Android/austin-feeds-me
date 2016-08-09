@@ -17,44 +17,50 @@
 package com.austindroids.austinfeedsme.data;
 
 public final class Event {
+
+    private String id;
     private String uid;
-    private String title;
+    private String name;
     private String description;
     private String date;
     private String host;
-    private String rsvpLink;
+    private String event_url;
     private String picture;
     private String tags;
+    private Group group;
+    private Long time;
+    private Venue venue;
+
+    private boolean isFood;
 
     public Event() {}
 
-    public Event(String uid, String title, String description) {
+    public Event(String uid, String name, String description) {
         this.uid = uid;
-        this.title = title;
+        this.name = name;
         this.description = description;
     }
 
-    public Event(String uid, String title, String description, String date, String host,
+    public Event(String uid, String name, String description, String date, String host,
                  String rsvpLink) {
 
         this.uid = uid;
-        this.title = title;
+        this.name = name;
         this.description = description;
         this.date = date;
         this.host = host;
-        this.rsvpLink = rsvpLink;
     }
 
-    public Event(String title) {
-        this.title = title;
+    public Event(String name) {
+        this.name = name;
     }
 
     public String getTags() {
         return tags;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
@@ -81,17 +87,39 @@ public final class Event {
         this.uid = uid;
     }
 
-    public String getRsvpLink() {
-        return rsvpLink;
+    public boolean isFood() {
+        return isFood;
     }
 
-    public void setRsvpLink(String rsvpLink) {
-        this.rsvpLink = rsvpLink;
+    public void setFood(boolean food) {
+        isFood = food;
     }
 
-//    public boolean isEmpty() {
-//        return (title == null || "".equals(title)) &&
-//                (description == null || "".equals(description));
-//    }
+    public Group getGroup() {
+        return group;
+    }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setEvent_url(String event_url) {
+        this.event_url = event_url;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public String getEvent_url() {
+        return event_url;
+    }
+
+    public Venue getVenue() {
+        return venue;
+    }
 }

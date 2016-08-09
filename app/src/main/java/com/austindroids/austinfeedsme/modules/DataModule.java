@@ -19,7 +19,8 @@ public class DataModule {
         return FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_URL);
     }
 
-    @Provides @Singleton EventsDataSource eventsDataSource(FirebaseEventsDataSource firebaseEventsDataSource) {
+    @Provides @Singleton
+    EventsDataSource eventsDataSource(FirebaseEventsDataSource firebaseEventsDataSource) {
         return firebaseEventsDataSource;
     }
 }

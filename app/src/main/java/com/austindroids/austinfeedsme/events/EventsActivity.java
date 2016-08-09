@@ -1,29 +1,37 @@
 package com.austindroids.austinfeedsme.events;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.austindroids.austinfeedsme.NavigationMenuAdapter;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
+import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
+import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -80,7 +88,7 @@ public class EventsActivity extends AppCompatActivity
         mDrawerList.setAdapter(new NavigationMenuAdapter(mNavigationItems, this));
         // enable ActionBar app icon to behave as action to toggle nav drawer
 
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -90,6 +98,7 @@ public class EventsActivity extends AppCompatActivity
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -104,8 +113,9 @@ public class EventsActivity extends AppCompatActivity
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
 
-        mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mItemListener);
+        mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mEventItemListener);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
         recyclerView.setAdapter(mListAdapter);
@@ -119,12 +129,15 @@ public class EventsActivity extends AppCompatActivity
                 startActivity(new Intent(EventsActivity.this, AddEditEventActivity.class));
             }
         });
+
+        mActionsListener.loadEvents();
+
     }
 
     /**
-     * Listener for clicks on notes in the RecyclerView.
+     * Listener for clicks on events in the RecyclerView.
      */
-    EventItemListener mItemListener = new EventItemListener() {
+    EventItemListener mEventItemListener = new EventItemListener() {
         @Override
         public void onEventClick(Event clickedEvent) {
             mActionsListener.openEventDetails(clickedEvent);
@@ -134,7 +147,55 @@ public class EventsActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.start_screen, menu);
+        getMenuInflater().inflate(R.menu.menu_events, menu);
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        // Fix to have searchview expand to fill entire ActionBar on tablets
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        final MenuItem searchMenu = menu.findItem(R.id.menu_search);
+
+        MenuItemCompat.setOnActionExpandListener(searchMenu,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        mActionsListener.loadEvents();
+                        return true;  // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        // Do something when expanded
+                        return true;  // Return true to expand action view
+                    }
+                });
+
+        // Get the search close button image view
+        ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+
+        // Set on click listener
+        closeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //Find EditText view
+                EditText et = (EditText) findViewById(R.id.search_src_text);
+
+                //Clear the text from EditText view
+                et.setText("");
+
+                //Clear query
+                searchView.setQuery("", false);
+                //Collapse the action view
+                searchView.onActionViewCollapsed();
+                //Collapse the search widget
+                searchMenu.collapseActionView();
+            }
+        });
         return true;
     }
 
@@ -166,12 +227,12 @@ public class EventsActivity extends AppCompatActivity
                         .signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         // user is now signed out
-                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
-                        animation1.setDuration(1000);
-                        animation1.setStartOffset(1000);
-                        animation1.setFillAfter(true);
-                        mAddEventFab.startAnimation(animation1);
-                        mAddEventFab.setVisibility(View.GONE);
+//                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
+//                        animation1.setDuration(1000);
+//                        animation1.setStartOffset(1000);
+//                        animation1.setFillAfter(true);
+//                        mAddEventFab.startAnimation(animation1);
+//                        mAddEventFab.setVisibility(View.GONE);
                     }
                 });
                 return true;
@@ -182,12 +243,11 @@ public class EventsActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mActionsListener.loadEvents();
-        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
-            mAddEventFab.setVisibility(View.VISIBLE);
-        } else {
-            mAddEventFab.setVisibility(View.GONE);
-        }
+//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
+//            mAddEventFab.setVisibility(View.VISIBLE);
+//        } else {
+//            mAddEventFab.setVisibility(View.GONE);
+//        }
     }
 
     @Override
@@ -196,14 +256,29 @@ public class EventsActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            mActionsListener.searchEvents(query);
+        }
+    }
+
+    @Override
     public void onClick(View view, int position) {
         Log.i(TAG, "Menu item with position: " + position + " was clicked.");
         switch(getResources().getStringArray(R.array.navigation_items_array)[position]) {
-            case "Event List" :
+            case "Events List" :
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
                 break;
-            case "Event Map" :
-                Toast.makeText(EventsActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
+            case "Events Map" :
+                startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
+                break;
+            case "Food Filter" :
+                startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
@@ -240,10 +315,19 @@ public class EventsActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            Event Event = mEvents.get(position);
+            Event event = mEvents.get(position);
 
-            viewHolder.title.setText(Event.getTitle());
-            viewHolder.description.setText(Event.getDescription());
+            viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
+            viewHolder.title.setText(event.getName());
+
+            Spanned result;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                result = Html.fromHtml(event.getDescription(),Html.FROM_HTML_MODE_LEGACY);
+            } else {
+                result = Html.fromHtml(event.getDescription());
+            }
+            viewHolder.description.setText(result);
+            viewHolder.eventUrl.setText(event.getEvent_url());
         }
 
         public void replaceData(List<Event> Events) {
@@ -266,16 +350,19 @@ public class EventsActivity extends AppCompatActivity
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+            public TextView eventDate;
             public TextView title;
-
             public TextView description;
+            public TextView eventUrl;
             private EventItemListener mItemListener;
 
             public ViewHolder(View itemView, EventItemListener listener) {
                 super(itemView);
                 mItemListener = listener;
+                eventDate = (TextView) itemView.findViewById(R.id.event_detail_time);
                 title = (TextView) itemView.findViewById(R.id.event_detail_title);
                 description = (TextView) itemView.findViewById(R.id.event_detail_description);
+                eventUrl = (TextView) itemView.findViewById(R.id.event_link);
                 itemView.setOnClickListener(this);
             }
 
@@ -303,12 +390,12 @@ public class EventsActivity extends AppCompatActivity
                 Log.d("EventsActivity", "This is the current uid: " +
                         FirebaseAuth.getInstance().getCurrentUser().getUid());
                     if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-                        animation1.setDuration(1000);
-                        animation1.setStartOffset(1000);
-                        animation1.setFillAfter(true);
-                        mAddEventFab.startAnimation(animation1);
-                        mAddEventFab.setVisibility(View.VISIBLE);
+//                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+//                        animation1.setDuration(1000);
+//                        animation1.setStartOffset(1000);
+//                        animation1.setFillAfter(true);
+//                        mAddEventFab.startAnimation(animation1);
+//                        mAddEventFab.setVisibility(View.VISIBLE);
                 }
             }
         }

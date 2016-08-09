@@ -1,13 +1,13 @@
-package com.austindroids.austinfeedsme.events;
+package com.austindroids.austinfeedsme.choosemeetup;
 
 import com.austindroids.austinfeedsme.data.Event;
 
 import java.util.List;
 
 /**
- * Created by darrankelinske on 5/2/16.
+ * Created by darrankelinske on 8/4/16.
  */
-interface EventsContract {
+public class EventFilterContract {
 
     interface View {
 
@@ -18,8 +18,6 @@ interface EventsContract {
     interface UserActionsListener {
 
         void loadEvents();
-
-        void searchEvents(String searchTerm);
 
         void openEventDetails(Event clickedEvent);
 
