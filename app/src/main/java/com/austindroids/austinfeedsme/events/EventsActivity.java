@@ -3,10 +3,13 @@ package com.austindroids.austinfeedsme.events;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -80,7 +83,7 @@ public class EventsActivity extends AppCompatActivity
         mNavigationItems = getResources().getStringArray(R.array.navigation_items_array);
 
         // set a custom shadow that overlays the main content when the drawer opens
-//        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // improve performance by indicating the list if fixed size.
         mDrawerList.setHasFixedSize(true);
 
@@ -100,20 +103,32 @@ public class EventsActivity extends AppCompatActivity
                 mDrawerLayout,         /* DrawerLayout object */
                 R.drawable.ic_drawer,
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */
-        ) {
+                R.string.drawer_close  /* "close drawer" description for accessibility */)
+        {
             public void onDrawerClosed(View view) {
                 getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
             }
 
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
             }
         };
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
         mDrawerToggle.setDrawerIndicatorEnabled(true);
+
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                // To display hamburger icon in toolbar
+                mDrawerToggle.syncState();
+            }
+        });
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mEventItemListener);
 
@@ -132,6 +147,19 @@ public class EventsActivity extends AppCompatActivity
 
         mActionsListener.loadEvents();
 
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     /**
