@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,7 +29,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.austindroids.austinfeedsme.NavigationMenuAdapter;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
 import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
@@ -46,25 +46,27 @@ import java.util.List;
 
 
 public class EventsActivity extends AppCompatActivity
-        implements NavigationMenuAdapter.OnItemClickListener, EventsContract.View {
+        implements EventsContract.View {
+
+    private final static String TAG = "EventsActivity";
 
     public static final int RC_SIGN_IN = 7;
 
     // Navigation Menu member variables
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mDrawerList;
+    private NavigationView mNavigationView;
+
+    private SearchView searchViewForMenu;
+
     private FloatingActionButton mAddEventFab;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mNavigationItems;
-	
-	private final static String TAG = "EventsActivity";
-
     private EventsContract.UserActionsListener mActionsListener;
 
     private EventsAdapter mListAdapter;
+    FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,29 +75,20 @@ public class EventsActivity extends AppCompatActivity
 
         mActionsListener = new EventsPresenter(this, this);
 
-        mTitle = mDrawerTitle = getTitle();
-
-        mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
-        mDrawerList.setLayoutManager(new LinearLayoutManager(this));
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        mNavigationItems = getResources().getStringArray(R.array.navigation_items_array);
-
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        // improve performance by indicating the list if fixed size.
-        mDrawerList.setHasFixedSize(true);
-
-        // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new NavigationMenuAdapter(mNavigationItems, this));
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setLogo(R.drawable.ic_drawer);
         }
+
+        mTitle = mDrawerTitle = getTitle();
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView)  findViewById(R.id.navigation_view);
+        setupDrawerContent(mNavigationView);
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -147,6 +140,33 @@ public class EventsActivity extends AppCompatActivity
 
         mActionsListener.loadEvents();
 
+        // get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
+
+        // find MenuItem you want to change
+        final MenuItem navigationEventsFilter = menu.findItem(R.id.events_filter);
+
+        //Check if user logged in, change sign in/out button to correct text
+
+        navigationEventsFilter.setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
+
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                navigationEventsFilter.setVisible(
+                        FirebaseAuth.getInstance().getCurrentUser() != null);
+            }
+        };
+
+        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
     }
 
     @Override
@@ -180,6 +200,8 @@ public class EventsActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_events, menu);
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        searchViewForMenu = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -246,6 +268,11 @@ public class EventsActivity extends AppCompatActivity
         }
 
         switch (item.getItemId()) {
+
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+
             case R.id.login_menu_item:
 
                 startActivityForResult(
@@ -302,26 +329,54 @@ public class EventsActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onClick(View view, int position) {
-        Log.i(TAG, "Menu item with position: " + position + " was clicked.");
-        switch(getResources().getStringArray(R.array.navigation_items_array)[position]) {
-            case "Events List" :
-                startActivity(new Intent(EventsActivity.this, EventsActivity.class));
+    private void setupDrawerContent(NavigationView navigationView) {
+
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+
+//        Intent searchIntent = new Intent();
+//        searchIntent.setAction(Intent.ACTION_SEARCH);
+
+        switch (menuItem.getItemId()) {
+            case R.id.events_list:
+                searchViewForMenu.setQuery("reset", true);
                 break;
-            case "Events Map" :
+            case R.id.events_map:
                 startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
                 break;
-            case "Food Filter" :
+            case R.id.events_filter:
                 startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));
+                break;
+            case R.id.events_pizza:
+//                searchIntent.putExtra(SearchManager.QUERY, "pizza");
+//                startActivity(searchIntent);
+                searchViewForMenu.setQuery("pizza", true);
+                break;
+            case R.id.events_tacos:
+//                searchIntent.putExtra(SearchManager.QUERY, "taco");
+//                startActivity(searchIntent);
+                searchViewForMenu.setQuery("taco", true);
+                break;
+            case R.id.events_beer:
+//                searchIntent.putExtra(SearchManager.QUERY, "beer");
+//                startActivity(searchIntent);
+                searchViewForMenu.setQuery("beer", true);
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
                 break;
+
         }
-
-        mDrawerLayout.closeDrawer(mDrawerList);
-
     }
 
     @Override
@@ -434,6 +489,37 @@ public class EventsActivity extends AppCompatActivity
                 }
             }
         }
+
+    }
+
+    @Override
+    public void setPizzaCount(int count) {
+        // get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
+        // find MenuItem you want to change
+        final MenuItem navigationPizzaEvents = menu.findItem(R.id.events_pizza);
+        //Check if user logged in, change sign in/out button to correct text
+        navigationPizzaEvents.setTitle("Pizza: " +count);
+    }
+
+    @Override
+    public void setTacoCount(int count) {
+        // get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
+        // find MenuItem you want to change
+        final MenuItem navigationPizzaEvents = menu.findItem(R.id.events_tacos);
+        //Check if user logged in, change sign in/out button to correct text
+        navigationPizzaEvents.setTitle("Tacos: " +count);
+
+    }
+
+    @Override
+    public void setBeerCount(int count) {// get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
+        // find MenuItem you want to change
+        final MenuItem navigationPizzaEvents = menu.findItem(R.id.events_beer);
+        //Check if user logged in, change sign in/out button to correct text
+        navigationPizzaEvents.setTitle("Beer: " +count);
 
     }
 }

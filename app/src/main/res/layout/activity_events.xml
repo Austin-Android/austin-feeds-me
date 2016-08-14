@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    android:id="@+id/drawer_layout"
+<android.support.v4.widget.DrawerLayout android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".events.EventsActivity"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -37,13 +37,11 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="left|start"
-        android:choiceMode="singleChoice"
-        android:divider="@null"
-        android:scrollbars="vertical"
-        android:background="@color/colorAccent"/>
+        android:layout_gravity="start"
+        app:menu="@menu/navigation_items_events"
+        app:headerLayout="@layout/nav_header"/>
 </android.support.v4.widget.DrawerLayout>

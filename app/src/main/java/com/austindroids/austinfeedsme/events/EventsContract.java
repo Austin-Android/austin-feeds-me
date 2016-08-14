@@ -13,6 +13,12 @@ interface EventsContract {
 
         void showEvents(List<Event> events);
 
+        void setPizzaCount(int count);
+
+        void setTacoCount(int count);
+
+        void setBeerCount(int count);
+
     }
 
     interface UserActionsListener {
