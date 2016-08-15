@@ -26,6 +26,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
     @Override
     public void getEvents(final LoadEventsCallback callback) {
         final List<Event> events = new ArrayList<Event>();
+        fireBase.keepSynced(true);
         fireBase.orderByChild("time").startAt((new Date().getTime()));
         fireBase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
