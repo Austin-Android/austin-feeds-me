@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -411,13 +412,22 @@ public class EventsActivity extends AppCompatActivity
             viewHolder.title.setText(event.getName());
 
             Spanned result;
+            Spanned rsvpLink;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 result = Html.fromHtml(event.getDescription(),Html.FROM_HTML_MODE_LEGACY);
+                rsvpLink = Html.fromHtml(
+                        "<html><a href=\""+event.getEvent_url()+"\">RSVP Here!</a></html>",
+                        Html.FROM_HTML_MODE_LEGACY);
             } else {
                 result = Html.fromHtml(event.getDescription());
+                rsvpLink = Html.fromHtml(
+                        "<html><a href=\""+event.getEvent_url()+"\">RSVP Here!</a></html>");
             }
             viewHolder.description.setText(result);
-            viewHolder.eventUrl.setText(event.getEvent_url());
+
+
+            viewHolder.eventUrl.setMovementMethod(LinkMovementMethod.getInstance());
+            viewHolder.eventUrl.setText(rsvpLink);
         }
 
         public void replaceData(List<Event> Events) {

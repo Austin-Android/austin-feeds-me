@@ -15,7 +15,7 @@ public class DateUtils {
         TimeZone tz = cal.getTimeZone();
 
         /* date formatter in local timezone */
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEEE, MMMM d KK:mm a");
         sdf.setTimeZone(tz);
 
         String localTime = sdf.format(new Date(timestamp));

@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,18 +41,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class EventFilterActivity extends AppCompatActivity {
 
-        private static final String TAG ="MainActivity";
+    private static final String TAG ="EventFilterActivity";
 
-        private RecyclerView eventsRecyclerView;
+    private RecyclerView eventsRecyclerView;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_filter);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("events");
         myRef.keepSynced(true);
+
+        cleanEvents();
 
         eventsRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -118,6 +122,31 @@ public class EventFilterActivity extends AppCompatActivity {
 
 
 
+
+    }
+
+    public void cleanEvents() {
+        final List<Event> events = new ArrayList<Event>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("events");
+        myRef.orderByChild("time");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Event event = snapshot.getValue(Event.class);
+                    if(event.getTime() < (new Date().getTime() - 2678400000L)) {
+                        Log.i("clean", "onDataChange: " + snapshot.getRef());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError firebaseError) {
+
+            }
+        });
 
     }
 
