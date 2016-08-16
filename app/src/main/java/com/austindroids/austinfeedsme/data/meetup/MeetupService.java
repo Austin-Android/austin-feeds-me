@@ -22,6 +22,6 @@ public interface MeetupService {
     Call<Event> getEvent(@Path("group_urlname") String group_urlname,
                          @Path("event_id") String event_id);
 
-    @GET("/2/open_events?key="+ Constants.MEETUP_KEY+"&sign=true&photo-host=public&zip=78731&text=pizza&text=provided&page=300&radius=20")
+    @GET("/2/open_events?key="+ Constants.MEETUP_KEY+"&sign=true&photo-host=public&zip=78731&text=pizza&text=provided&page=300&radius=30")
     Call<Results> getEventsWithPizza();
 }

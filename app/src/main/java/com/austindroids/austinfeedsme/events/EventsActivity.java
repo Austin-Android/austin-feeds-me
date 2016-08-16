@@ -31,10 +31,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
 import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
 import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.firebase.ui.auth.AuthUI;
@@ -45,6 +47,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 
 public class EventsActivity extends AppCompatActivity
@@ -70,12 +74,17 @@ public class EventsActivity extends AppCompatActivity
     private EventsAdapter mListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
 
+    @Inject
+    EventsRepository repository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
 
-        mActionsListener = new EventsPresenter(this, this);
+        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+
+        mActionsListener = new EventsPresenter(repository, this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

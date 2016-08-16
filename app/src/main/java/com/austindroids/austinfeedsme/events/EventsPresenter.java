@@ -1,35 +1,28 @@
 package com.austindroids.austinfeedsme.events;
 
-import android.app.Activity;
 import android.util.Log;
 
-import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.inject.Inject;
 
 /**
  * Created by darrankelinske on 5/2/16.
  */
 public class EventsPresenter implements EventsContract.UserActionsListener {
 
-    @Inject
-    DatabaseReference firebase;
-    @Inject
-    EventsRepository repository;
 
-    EventsContract.View view;
+    private EventsRepository repository;
+    private EventsContract.View view;
 
-    public EventsPresenter(EventsContract.View view, Activity activity) {
+    public EventsPresenter(EventsRepository repository, EventsContract.View view) {
         this.view = view;
-        ((AustinFeedsMeApplication) activity.getApplication()).component().inject(this);
+        this.repository = repository;
+
     }
 
     @Override
