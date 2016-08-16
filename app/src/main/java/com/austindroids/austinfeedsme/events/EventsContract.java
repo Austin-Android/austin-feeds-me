@@ -25,6 +25,8 @@ interface EventsContract {
 
         void loadEvents();
 
+        void loadYummyCounts();
+
         void searchEvents(String searchTerm);
 
         void openEventDetails(Event clickedEvent);

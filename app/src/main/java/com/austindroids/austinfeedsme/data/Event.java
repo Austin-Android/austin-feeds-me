@@ -30,7 +30,6 @@ public final class Event {
     private Group group;
     private Long time;
     private Venue venue;
-
     private boolean isFood;
 
     public Event() {}
@@ -41,15 +40,24 @@ public final class Event {
         this.description = description;
     }
 
-    public Event(String uid, String name, String description, String date, String host,
+    public Event(String uid, String name, String description, Long time, String host,
                  String rsvpLink) {
 
         this.uid = uid;
         this.name = name;
         this.description = description;
-        this.date = date;
+        this.time = time;
         this.host = host;
+        this.event_url = rsvpLink;
     }
+
+    public Event(String uid, String name, String description, Long time, String host,
+                 String rsvpLink, boolean isFood) {
+
+        this(uid, name, description, time, host, rsvpLink);
+        this.isFood = isFood;
+    }
+
 
     public Event(String name) {
         this.name = name;

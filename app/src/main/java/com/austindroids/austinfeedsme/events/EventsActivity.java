@@ -152,6 +152,7 @@ public class EventsActivity extends AppCompatActivity
         });
 
         mActionsListener.loadEvents();
+        mActionsListener.loadYummyCounts();
 
         // get menu from navigationView
         Menu menu = mNavigationView.getMenu();

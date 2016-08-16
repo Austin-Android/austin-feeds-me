@@ -70,7 +70,7 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                     repository.saveEvent(new Event(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                             title.getText().toString(),
                             description.getText().toString(),
-                            date.getText().toString(),
+                            Long.parseLong(date.getText().toString()),
                             host.getText().toString(),
                             rsvpLink.getText().toString()),
                             new EventsDataSource.SaveEventCallback() {

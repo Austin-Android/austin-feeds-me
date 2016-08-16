@@ -50,8 +50,12 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
 
             }
         });
+    }
 
-        // Set Pizza Event Count
+    @Override
+    public void loadYummyCounts() {
+
+    // Set Pizza Event Count
         final String pizzaSearch = "Pizza".toLowerCase();
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
