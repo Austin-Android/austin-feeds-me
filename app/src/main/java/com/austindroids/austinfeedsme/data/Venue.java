@@ -1,20 +1,25 @@
 package com.austindroids.austinfeedsme.data;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by daz on 8/5/16.
  */
 public class Venue {
-    String address_1;
-    String address_2;
-    String address_3;
-    String lat;
-    String lon;
-    String zip;
-    String country;
-    String city;
-    String state;
-    String phone;
-    String name;
+
+    private String address_1;
+    private String address_2;
+    private String address_3;
+    @SerializedName(value = "lat", alternate = {"latitude"})
+    private String lat;
+    @SerializedName(value = "lon", alternate = {"longitude"})
+    private String lon;
+    private String zip;
+    private String country;
+    private String city;
+    private String state;
+    private String phone;
+    private String name;
 
     public String getState() {
         return state;

@@ -71,7 +71,6 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                             title.getText().toString(),
                             description.getText().toString(),
                             Long.parseLong(date.getText().toString()),
-                            host.getText().toString(),
                             rsvpLink.getText().toString()),
                             new EventsDataSource.SaveEventCallback() {
 

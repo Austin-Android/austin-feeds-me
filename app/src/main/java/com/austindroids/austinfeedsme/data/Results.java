@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Results {
 
-    @SerializedName("results")
+    @SerializedName(value="results")
     @Expose
     private List<Event> events;
 

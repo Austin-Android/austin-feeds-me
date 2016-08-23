@@ -6,6 +6,9 @@ import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -31,17 +34,24 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
             @Override
             public void onEventsLoaded(List<Event> events) {
 
-                Iterator<Event> iter = events.iterator();
 
-                while (iter.hasNext()) {
-                    Event nextEvent = iter.next();
-                    if (!nextEvent.isFood() ||
-                            (nextEvent.getTime() < new Date().getTime())) {
-                        iter.remove();
+                ArrayList<Event> currentEvents = new ArrayList<>();
+
+                for (Event nextEvent : events) {
+                    if (nextEvent.isFood() &&
+                            (nextEvent.getTime() > new Date().getTime())) {
+                        currentEvents.add(nextEvent);
                     }
                 }
 
-                view.showEvents(events);
+                Collections.sort(currentEvents, new Comparator<Event>() {
+                    @Override
+                    public int compare(Event event1, Event event2) {
+                        return event1.getTime().compareTo(event2.getTime()); // Ascending
+                    }
+                });
+
+                view.showEvents(currentEvents);
             }
 
             @Override

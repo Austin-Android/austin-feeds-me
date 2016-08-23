@@ -19,11 +19,8 @@ package com.austindroids.austinfeedsme.data;
 public final class Event {
 
     private String id;
-    private String uid;
     private String name;
     private String description;
-    private String date;
-    private String host;
     private String event_url;
     private String picture;
     private String tags;
@@ -35,29 +32,27 @@ public final class Event {
     public Event() {}
 
     public Event(String uid, String name, String description) {
-        this.uid = uid;
+        this.id = uid;
         this.name = name;
         this.description = description;
     }
 
-    public Event(String uid, String name, String description, Long time, String host,
+    public Event(String uid, String name, String description, Long time,
                  String rsvpLink) {
 
-        this.uid = uid;
+        this.id = uid;
         this.name = name;
         this.description = description;
         this.time = time;
-        this.host = host;
         this.event_url = rsvpLink;
     }
 
-    public Event(String uid, String name, String description, Long time, String host,
+    public Event(String uid, String name, String description, Long time,
                  String rsvpLink, boolean isFood) {
 
-        this(uid, name, description, time, host, rsvpLink);
+        this(uid, name, description, time, rsvpLink);
         this.isFood = isFood;
     }
-
 
     public Event(String name) {
         this.name = name;
@@ -75,24 +70,8 @@ public final class Event {
         return description;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
     public String getPicture() {
         return picture;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public boolean isFood() {
@@ -130,4 +109,13 @@ public final class Event {
     public Venue getVenue() {
         return venue;
     }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+    }
+
 }

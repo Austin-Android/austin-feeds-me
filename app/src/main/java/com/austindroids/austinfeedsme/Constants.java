@@ -5,5 +5,6 @@ package com.austindroids.austinfeedsme;
  */
 public class Constants {
     public static final String MEETUP_KEY = "4e754a34f24436aec7d2557e7b3d";
+    public static final String EVENTBRITE_TOKEN = "LUSN5NB333FAP6PUVJ4S";
 }
 

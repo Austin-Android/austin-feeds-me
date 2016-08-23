@@ -17,7 +17,11 @@ import android.widget.Toast;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.Results;
+import com.austindroids.austinfeedsme.data.eventbrite.EventbriteEvent;
+import com.austindroids.austinfeedsme.data.eventbrite.EventbriteEvents;
+import com.austindroids.austinfeedsme.data.eventbrite.EventbriteService;
 import com.austindroids.austinfeedsme.data.meetup.MeetupService;
+import com.austindroids.austinfeedsme.utility.TypeUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,11 +58,13 @@ public class EventFilterActivity extends AppCompatActivity {
         final DatabaseReference myRef = database.getReference("events");
         myRef.keepSynced(true);
 
-        cleanEvents();
-
         eventsRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final ChooseEventsAdapter eventFilterAdapter = new ChooseEventsAdapter(new ArrayList<Event>());
+        eventsRecyclerView.setAdapter(eventFilterAdapter);
 
+
+        //cleanEvents();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
@@ -68,14 +74,26 @@ public class EventFilterActivity extends AppCompatActivity {
 
         MeetupService meetupService = retrofit.create(MeetupService.class);
         Call<Results> call =
-                meetupService.getEventsWithPizza();
+                meetupService.getOpenEvents();
 
         call.enqueue(new Callback<Results>() {
             @Override
             public void onResponse(Call<Results> call, Response<Results> response) {
                 Results results = response.body();
-                Log.d(TAG, "Event count from API: " + results.getEvents().size());
-                final List<Event> eventsFromRest = results.getEvents();
+                Log.d(TAG, "Event count from Meetup API: " + results.getEvents().size());
+
+                final List<Event> meetupEventsFromTheFuture = results.getEvents();
+
+                Iterator<Event> iterToGetEventsInFuture = meetupEventsFromTheFuture.iterator();
+
+                while (iterToGetEventsInFuture.hasNext()) {
+                    Event nextEvent = iterToGetEventsInFuture.next();
+                    if (nextEvent.getTime() < new Date().getTime()) {
+                        iterToGetEventsInFuture.remove();
+                    }
+                }
+                Log.d(TAG, "Event count after cleaning past events: " +
+                        meetupEventsFromTheFuture.size());
 
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -83,27 +101,27 @@ public class EventFilterActivity extends AppCompatActivity {
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             Event event = postSnapshot.getValue(Event.class);
 
-
-                            Iterator<Event> iter = eventsFromRest.iterator();
+                            Iterator<Event> iter = meetupEventsFromTheFuture.iterator();
 
                             while (iter.hasNext()) {
                                 Event nextEvent = iter.next();
                                 if (event.getId() != null &&
-                                        event.getId().equals(nextEvent.getId()))
+                                        event.getId().equals(nextEvent.getId())) {
                                     iter.remove();
+                                }
                             }
-
-
                         }
-                        Log.d(TAG, "After cleaning we have this many events: " + eventsFromRest.size());
-                        if (eventsFromRest.size() == 0) {
+
+                        Log.d(TAG, "After cleaning we have this many events: " +
+                                meetupEventsFromTheFuture.size());
+                        if (meetupEventsFromTheFuture.size() == 0) {
                             Toast.makeText(EventFilterActivity.this,
                                     "All events for the next 3 months have been filtered!",
                                     Toast.LENGTH_SHORT).show();
+                        } else {
+                                eventFilterAdapter.addEvents(meetupEventsFromTheFuture);
                         }
 
-                        ChooseEventsAdapter adapter = new ChooseEventsAdapter(eventsFromRest);
-                        eventsRecyclerView.setAdapter(adapter);
                     }
 
                     @Override
@@ -120,8 +138,87 @@ public class EventFilterActivity extends AppCompatActivity {
             }
         });
 
+        Callback<EventbriteEvents> eventbriteEventsCallback = new Callback<EventbriteEvents>() {
+            @Override
+            public void onResponse(Call<EventbriteEvents> call, Response<EventbriteEvents> response) {
+                final Long callbackTimestamp = new Date().getTime();
+                Log.d(TAG, "onResponse: Event's from eventbrite " + callbackTimestamp + ":"
+                        +response.body().getEvents().size());
+
+                final List<Event> convertedEventbriteEvents = new ArrayList<Event>();
+                for (EventbriteEvent eventbriteEvent : response.body().getEvents()) {
+                    convertedEventbriteEvents.add(TypeUtils.transformEventBrite(eventbriteEvent));
+                }
 
 
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Event event = postSnapshot.getValue(Event.class);
+
+                            Iterator<Event> iter = convertedEventbriteEvents.iterator();
+
+                            while (iter.hasNext()) {
+                                Event nextEvent = iter.next();
+                                if (event.getId() != null &&
+                                        event.getId().equals(nextEvent.getId())) {
+                                    iter.remove();
+                                }
+
+                            }
+                        }
+
+                        Log.d(TAG, "onResponse: Event's from after cleaning " + callbackTimestamp + ":"
+                                +convertedEventbriteEvents.size());
+
+                        if (convertedEventbriteEvents.size() != 0) {
+                            eventFilterAdapter.addEvents(convertedEventbriteEvents);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<EventbriteEvents> call, Throwable t) {
+                Log.d(TAG, "onFailure: " +t);
+            }
+        };
+
+        Retrofit eventbriteRetrofit = new Retrofit.Builder()
+                .baseUrl("https://www.eventbriteapi.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+
+        EventbriteService eventbriteService = eventbriteRetrofit.create(EventbriteService.class);
+        Call<EventbriteEvents> eventbriteServiceTacoEvents =
+                eventbriteService.getEventsByKeyword("taco");
+        Call<EventbriteEvents> eventbriteServicePizzaEvents =
+                eventbriteService.getEventsByKeyword("pizza");
+        Call<EventbriteEvents> eventbriteServiceBeerEvents =
+                eventbriteService.getEventsByKeyword("beer");
+        Call<EventbriteEvents> eventbriteServiceBreakfastEvents =
+                eventbriteService.getEventsByKeyword("breakfast");
+        Call<EventbriteEvents> eventbriteServiceLunchEvents =
+                eventbriteService.getEventsByKeyword("lunch");
+        Call<EventbriteEvents> eventbriteServiceDinnerEvents =
+                eventbriteService.getEventsByKeyword("dinner");
+
+        eventbriteServiceTacoEvents.enqueue(eventbriteEventsCallback);
+        eventbriteServicePizzaEvents.enqueue(eventbriteEventsCallback);
+        eventbriteServiceBeerEvents.enqueue(eventbriteEventsCallback);
+        eventbriteServiceBreakfastEvents.enqueue(eventbriteEventsCallback);
+        eventbriteServiceLunchEvents.enqueue(eventbriteEventsCallback);
+        eventbriteServiceDinnerEvents.enqueue(eventbriteEventsCallback);
 
     }
 
@@ -136,7 +233,7 @@ public class EventFilterActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Event event = snapshot.getValue(Event.class);
                     if(event.getTime() < (new Date().getTime() - 2678400000L)) {
-                        Log.i("clean", "onDataChange: " + snapshot.getRef());
+                        Log.i(TAG, "this event could be cleaned from firebase" + snapshot.getRef());
                     }
                 }
 
@@ -149,6 +246,42 @@ public class EventFilterActivity extends AppCompatActivity {
         });
 
     }
+
+//    public List<Event> removeAlreadyFilteredEvents(final List<Event> events ) {
+//
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("events");
+//        myRef.keepSynced(true);
+//
+//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+//                    Event event = postSnapshot.getValue(Event.class);
+//
+//                    Iterator<Event> iter = events.iterator();
+//
+//                    while (iter.hasNext()) {
+//                        Event nextEvent = iter.next();
+//                        if (event.getId() != null &&
+//                                event.getId().equals(nextEvent.getId())) {
+//                            iter.remove();
+//                        }
+//
+//                    }
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//        return events;
+//    }
 
 
 
@@ -182,6 +315,9 @@ public class EventFilterActivity extends AppCompatActivity {
                 description = description.replaceAll("Pizza", "<font color='red'>" + "PIZZA" + "</font>");
                 description = description.replaceAll("provide", "<font color='red'>" + "PROVIDE" + "</font>");
                 description = description.replaceAll("provided", "<font color='red'>" + "PROVIDED" + "</font>");
+                description = description.replaceAll("taco", "<font color='red'>" + "taco" + "</font>");
+                description = description.replaceAll("beer", "<font color='red'>" + "beer" + "</font>");
+                description = description.replaceAll("drinks", "<font color='red'>" + "drinks" + "</font>");
 
                 viewHolder.quote.setText(Html.fromHtml(description));
             }
@@ -191,8 +327,18 @@ public class EventFilterActivity extends AppCompatActivity {
 
         }
 
-        private void setList(List<Event> quotes) {
-            events = quotes;
+        private void setList(List<Event> events) {
+            this.events = events;
+        }
+
+        public void addEvent(Event event) {
+            events.add(event);
+            notifyDataSetChanged();
+        }
+
+        public void addEvents(List<Event> events) {
+            this.events.addAll(events);
+            notifyDataSetChanged();
         }
 
         public void replaceData(List<Event> quotes){

@@ -30,11 +30,13 @@ android {
         targetSdkVersion 22
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key']]
-
         multiDexEnabled true
 
         versionCode 3
         versionName "1.3"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -97,6 +99,27 @@ dependencies {
     testCompile("org.powermock:powermock-module-junit4:1.6.2")
     testCompile("org.powermock:powermock-api-mockito:1.6.2")
     testCompile 'com.squareup.okhttp3:mockwebserver:3.2.0'
+
+    // Espresso Dependencies
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2', {
+        exclude module: 'support-annotations'
+        exclude module: 'support-v4'
+        exclude module: 'recyclerview-v7'
+        exclude module: 'design'
+    })
+
+    configurations.all {
+        resolutionStrategy {
+            force 'com.android.support:support-annotations:23.0.1'
+        }
+    }
+
+
+
+
 }
 
 // Needed for Firebase

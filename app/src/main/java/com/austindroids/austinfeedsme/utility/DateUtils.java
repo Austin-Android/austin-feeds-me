@@ -1,5 +1,7 @@
 package com.austindroids.austinfeedsme.utility;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +22,19 @@ public class DateUtils {
 
         String localTime = sdf.format(new Date(timestamp));
         return localTime;
+    }
+
+    public static Long getUnixTimeFromISO8601(String iso8601Date) {
+        DateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Long dateInMilli = null;
+        try {
+            dateInMilli = dateParser.parse(iso8601Date).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return dateInMilli;
     }
 
 }
