@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.choosemeetup;
+package com.austindroids.austinfeedsme.eventsfilter;
 
 import com.austindroids.austinfeedsme.data.Event;
 

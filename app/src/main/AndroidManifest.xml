@@ -37,7 +37,7 @@
         <activity android:name="com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity"
             android:parentActivityName=".events.EventsActivity"/>
 
-        <activity android:name="com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity"
+        <activity android:name="com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity"
             android:parentActivityName=".events.EventsActivity"
             android:theme="@style/AppTheme"
             android:exported="true" />

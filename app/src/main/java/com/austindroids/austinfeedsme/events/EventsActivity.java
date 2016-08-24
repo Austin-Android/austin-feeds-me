@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -34,9 +35,9 @@ import android.widget.TextView;
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
-import com.austindroids.austinfeedsme.choosemeetup.EventFilterActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
 import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.firebase.ui.auth.AuthUI;
@@ -152,6 +153,8 @@ public class EventsActivity extends AppCompatActivity
         });
 
         mActionsListener.loadEvents();
+
+        //Todo: Iterate through list once creating a Hashmap of counts
         mActionsListener.loadYummyCounts();
 
         // get menu from navigationView
@@ -363,28 +366,54 @@ public class EventsActivity extends AppCompatActivity
 
         switch (menuItem.getItemId()) {
             case R.id.events_list:
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                 searchViewForMenu.setQuery("reset", true);
+                    }
+                }, 300);
                 break;
             case R.id.events_map:
-                startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
+                    }
+                }, 300);
+                //startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
                 break;
             case R.id.events_filter:
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                 startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));
+                    }
+                }, 300);
                 break;
             case R.id.events_pizza:
-//                searchIntent.putExtra(SearchManager.QUERY, "pizza");
-//                startActivity(searchIntent);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                 searchViewForMenu.setQuery("pizza", true);
+                    }
+                }, 300);
                 break;
             case R.id.events_tacos:
-//                searchIntent.putExtra(SearchManager.QUERY, "taco");
-//                startActivity(searchIntent);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                 searchViewForMenu.setQuery("taco", true);
+                    }
+                }, 300);
                 break;
             case R.id.events_beer:
-//                searchIntent.putExtra(SearchManager.QUERY, "beer");
-//                startActivity(searchIntent);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                 searchViewForMenu.setQuery("beer", true);
+                    }
+                }, 300);
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));

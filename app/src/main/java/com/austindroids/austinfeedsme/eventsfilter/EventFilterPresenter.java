@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.choosemeetup;
+package com.austindroids.austinfeedsme.eventsfilter;
 
 /**
  * Created by darrankelinske on 8/4/16.
