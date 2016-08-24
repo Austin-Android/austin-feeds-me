@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    card_view:cardUseCompatPadding="true">
+    xmlns:app="http://schemas.android.com/tools"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    card_view:cardUseCompatPadding="true"
+    app:cardElevation="4dp">
 
     <LinearLayout
         style="@style/Widget.CardContent"
@@ -23,7 +25,9 @@
             android:id="@+id/event_detail_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"/>
 
         <TextView
             android:id="@+id/event_detail_description"
@@ -33,14 +37,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <Button
             android:id="@+id/event_link"
-            style="@android:style/TextAppearance.Medium"
+            style="@style/RaisedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_gravity="end"
-            android:hint="Link"/>
+            android:textColorHint="@android:color/white"
+            android:textColor="@android:color/white"
+            android:hint="RSVP"/>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

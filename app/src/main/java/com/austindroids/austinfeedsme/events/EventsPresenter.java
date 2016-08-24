@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,8 +66,8 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
     @Override
     public void loadYummyCounts() {
 
-    // Set Pizza Event Count
-        final String pizzaSearch = "Pizza".toLowerCase();
+        final HashMap<String, Integer> yummyCounts = new HashMap<>();
+
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
@@ -79,76 +80,25 @@ public class EventsPresenter implements EventsContract.UserActionsListener {
 
                     // Remove event if it doesn't have free food or is in the past
                     // or if the event name or description doesn't contain the search term
-                    if (!nextEvent.isFood()
-                            || (nextEvent.getTime() < new Date().getTime())
-                            || !nextEvent.getDescription().toLowerCase().contains(pizzaSearch)) {
-                        iter.remove();
+                    if (nextEvent.isFood()
+                            && (nextEvent.getTime() > new Date().getTime()))
+                    {
+                        if (nextEvent.getDescription().toLowerCase().contains("pizza")) {
+                            Integer previousValue = yummyCounts.get("pizza");
+                            yummyCounts.put("pizza", previousValue == null ? 1 : previousValue + 1);
+                        } else if (nextEvent.getDescription().toLowerCase().contains("beer")) {
+                            Integer previousValue = yummyCounts.get("beer");
+                            yummyCounts.put("beer", previousValue == null ? 1 : previousValue + 1);
+                        } else if (nextEvent.getDescription().toLowerCase().contains("tacos")) {
+                            Integer previousValue = yummyCounts.get("tacos");
+                            yummyCounts.put("tacos", previousValue == null ? 1 : previousValue + 1);
+                        }
                     }
                 }
 
-                view.setPizzaCount(events.size());
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
-
-            }
-        });
-
-        // Set Taco Event Count
-        final String tacoSearch = "taco".toLowerCase();
-
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @Override
-            public void onEventsLoaded(List<Event> events) {
-
-                Iterator<Event> iter = events.iterator();
-
-                while (iter.hasNext()) {
-                    Event nextEvent = iter.next();
-
-                    // Remove event if it doesn't have free food or is in the past
-                    // or if the event name or description doesn't contain the search term
-                    if (!nextEvent.isFood()
-                            || (nextEvent.getTime() < new Date().getTime())
-                            || !nextEvent.getDescription().toLowerCase().contains(tacoSearch)) {
-                        iter.remove();
-                    }
-                }
-
-                view.setTacoCount(events.size());
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
-
-            }
-        });
-
-        // Set Beer Event Count
-        final String beerSearch = "beer".toLowerCase();
-
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @Override
-            public void onEventsLoaded(List<Event> events) {
-
-                Iterator<Event> iter = events.iterator();
-
-                while (iter.hasNext()) {
-                    Event nextEvent = iter.next();
-
-                    // Remove event if it doesn't have free food or is in the past
-                    // or if the event name or description doesn't contain the search term
-                    if (!nextEvent.isFood()
-                            || (nextEvent.getTime() < new Date().getTime())
-                            || !nextEvent.getDescription().toLowerCase().contains(beerSearch)) {
-                        iter.remove();
-                    }
-                }
-
-                view.setBeerCount(events.size());
+                view.setPizzaCount(yummyCounts.get("pizza") == null ? 0 : yummyCounts.get("pizza"));
+                view.setTacoCount(yummyCounts.get("tacos") == null ? 0 : yummyCounts.get("tacos"));
+                view.setBeerCount(yummyCounts.get("beer") == null ? 0 : yummyCounts.get("beer"));
             }
 
             @Override

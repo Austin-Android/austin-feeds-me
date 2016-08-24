@@ -71,7 +71,7 @@ public class EventFilterActivity extends AppCompatActivity {
 
         eventsRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final ChooseEventsAdapter eventFilterAdapter = new ChooseEventsAdapter(new ArrayList<Event>());
+        final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<Event>());
         eventsRecyclerView.setAdapter(eventFilterAdapter);
 
 
@@ -161,22 +161,8 @@ public class EventFilterActivity extends AppCompatActivity {
 
         EventbriteService eventbriteService = eventbriteRetrofit.create(EventbriteService.class);
 
-        String[] searchList = new String[]{"taco","pizza", "beer", "breakfast", "lunch", "dinner"};
-
-//        Observable<EventbriteEvents> eventbriteServiceTacoEvents =
-//                eventbriteService.getEventsByKeyword("taco");
-//        Observable<EventbriteEvents> eventbriteServicePizzaEvents =
-//                eventbriteService.getEventsByKeyword("pizza");
-//        Observable<EventbriteEvents> eventbriteServiceBeerEvents =
-//                eventbriteService.getEventsByKeyword("beer");
-//        Observable<EventbriteEvents> eventbriteServiceBreakfastEvents =
-//                eventbriteService.getEventsByKeyword("breakfast");
-//        Observable<EventbriteEvents> eventbriteServiceLunchEvents =
-//                eventbriteService.getEventsByKeyword("lunch");
-//        Observable<EventbriteEvents> eventbriteServiceDinnerEvents =
-//                eventbriteService.getEventsByKeyword("dinner");
-
-
+        String[] searchList = new String[]{"taco","pizza", "beer", "breakfast", "lunch", "dinner",
+        "drinks", "spaghetti", "hamburger"};
 
         Subscriber<EventbriteEvents> eventbriteEventsSubscriber = new Subscriber<EventbriteEvents>() {
             @Override
@@ -200,35 +186,23 @@ public class EventFilterActivity extends AppCompatActivity {
             }
         };
 
+        List<Observable<EventbriteEvents>> observableList = new ArrayList<>();
+
         for (String searchTerm : searchList) {
-            Observable<EventbriteEvents> searchEventbriteEvents =
-                    eventbriteService.getEventsByKeyword(searchTerm);
-            Subscription searchSubscription = searchEventbriteEvents
-                    .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(eventbriteEventsSubscriber);
-
-            compositeSubscription.add(searchSubscription);
-
+            observableList.add(eventbriteService.getEventsByKeyword(searchTerm));
         }
 
-//        Subscription tacoSubscription = eventbriteServiceTacoEvents
-//                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
-//                .observeOn(AndroidSchedulers.mainThread()).subscribe(eventbriteEventsSubscriber);
-//
-//
-//        compositeSubscription.add(tacoSubscription);
+        Subscription searchSubscription = Observable.merge(observableList)
+                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(eventbriteEventsSubscriber);
 
-//        eventbriteServiceTacoEvents.defer()enqueue(eventbriteEventsCallback);
-//        eventbriteServicePizzaEvents.enqueue(eventbriteEventsCallback);
-//        eventbriteServiceBeerEvents.enqueue(eventbriteEventsCallback);
-//        eventbriteServiceBreakfastEvents.enqueue(eventbriteEventsCallback);
-//        eventbriteServiceLunchEvents.enqueue(eventbriteEventsCallback);
-//        eventbriteServiceDinnerEvents.enqueue(eventbriteEventsCallback);
+        compositeSubscription.add(searchSubscription);
 
     }
 
     private void cleanAndLoadEventbriteEvents(EventbriteEvents eventbriteEvents,
-                                              final ChooseEventsAdapter eventFilterAdapter) {
+                                              final EventFilterAdapter eventFilterAdapter) {
         final Long callbackTimestamp = new Date().getTime();
         Log.d(TAG, "onResponse: Event's from eventbrite " + callbackTimestamp + ":"
                 +eventbriteEvents.getEvents().size());
@@ -302,64 +276,25 @@ public class EventFilterActivity extends AppCompatActivity {
         });
 
     }
-
-//    public List<Event> removeAlreadyFilteredEvents(final List<Event> events ) {
-//
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("events");
-//        myRef.keepSynced(true);
-//
-//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-//                    Event event = postSnapshot.getValue(Event.class);
-//
-//                    Iterator<Event> iter = events.iterator();
-//
-//                    while (iter.hasNext()) {
-//                        Event nextEvent = iter.next();
-//                        if (event.getId() != null &&
-//                                event.getId().equals(nextEvent.getId())) {
-//                            iter.remove();
-//                        }
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//        return events;
-//    }
-
-
-
-    private static class ChooseEventsAdapter extends RecyclerView.Adapter<ChooseEventsAdapter.ViewHolder> {
+    private static class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.ViewHolder> {
 
         private List<Event> events;
 
-        public ChooseEventsAdapter(List<Event> events) {
+        public EventFilterAdapter(List<Event> events) {
             setList(events);
         }
 
         @Override
-        public ChooseEventsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public EventFilterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
             View quoteView = inflater.inflate(R.layout.choose_meetup_item, parent, false);
 
-            return new ChooseEventsAdapter.ViewHolder(quoteView);
+            return new EventFilterAdapter.ViewHolder(quoteView);
         }
 
         @Override
-        public void onBindViewHolder(ChooseEventsAdapter.ViewHolder viewHolder, int position) {
+        public void onBindViewHolder(EventFilterAdapter.ViewHolder viewHolder, int position) {
             Event event = events.get(position);
 
             viewHolder.author.setText(event.getName());
@@ -377,10 +312,7 @@ public class EventFilterActivity extends AppCompatActivity {
 
                 viewHolder.quote.setText(Html.fromHtml(description));
             }
-
             viewHolder.link.setText(event.getEvent_url());
-
-
         }
 
         private void setList(List<Event> events) {

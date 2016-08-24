@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -137,7 +139,8 @@ public class EventsActivity extends AppCompatActivity
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
-        mListAdapter = new EventsAdapter(new ArrayList<Event>(0), mEventItemListener);
+        mListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
+                mEventItemListener);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
         recyclerView.setAdapter(mListAdapter);
@@ -429,10 +432,12 @@ public class EventsActivity extends AppCompatActivity
 
     private static class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
+        private Context context;
         private List<Event> mEvents;
         private EventItemListener mItemListener;
 
-        public EventsAdapter(List<Event> Events, EventItemListener itemListener) {
+        public EventsAdapter(Context context, List<Event> Events, EventItemListener itemListener) {
+            this.context = context;
             setList(Events);
             mItemListener = itemListener;
         }
@@ -448,7 +453,7 @@ public class EventsActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            Event event = mEvents.get(position);
+            final Event event = mEvents.get(position);
 
             viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
             viewHolder.title.setText(event.getName());
@@ -469,7 +474,15 @@ public class EventsActivity extends AppCompatActivity
 
 
             viewHolder.eventUrl.setMovementMethod(LinkMovementMethod.getInstance());
-            viewHolder.eventUrl.setText(rsvpLink);
+//            viewHolder.eventUrl.setText(rsvpLink);
+            viewHolder.eventUrl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                    webIntent.setData(Uri.parse(event.getEvent_url()));
+                    context.startActivity(webIntent);
+                }
+            });
         }
 
         public void replaceData(List<Event> Events) {
@@ -495,7 +508,7 @@ public class EventsActivity extends AppCompatActivity
             public TextView eventDate;
             public TextView title;
             public TextView description;
-            public TextView eventUrl;
+            public Button eventUrl;
             private EventItemListener mItemListener;
 
             public ViewHolder(View itemView, EventItemListener listener) {
@@ -504,7 +517,7 @@ public class EventsActivity extends AppCompatActivity
                 eventDate = (TextView) itemView.findViewById(R.id.event_detail_time);
                 title = (TextView) itemView.findViewById(R.id.event_detail_title);
                 description = (TextView) itemView.findViewById(R.id.event_detail_description);
-                eventUrl = (TextView) itemView.findViewById(R.id.event_link);
+                eventUrl = (Button) itemView.findViewById(R.id.event_link);
                 itemView.setOnClickListener(this);
             }
 
