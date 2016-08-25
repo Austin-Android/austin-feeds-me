@@ -1,7 +1,5 @@
 <resources>
 
-    <style name="AppTheme" parent="BaseTheme"/>
-
     <!-- Base application theme. -->
     <style name="BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -9,6 +7,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="AppTheme" parent="BaseTheme"/>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -26,8 +26,8 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="RaisedButton" parent="android:style/Widget.Material.Button">
-        <item name="android:background">@drawable/raised_button_background</item>
+    <style name="RaisedButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/colorPrimaryDark</item>
     </style>
 
 </resources>

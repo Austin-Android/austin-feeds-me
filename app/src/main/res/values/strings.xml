@@ -49,5 +49,9 @@
     <string name="logout">Logout</string>
 
     <string name="search_hint">Search Events</string>
+    <string name="menu_filter">Filter</string>
+    <string name="nav_all_events">All</string>
+    <string name="nav_todays_events">Today</string>
+    <string name="nav_this_weeks_events">This Week</string>
 
 </resources>

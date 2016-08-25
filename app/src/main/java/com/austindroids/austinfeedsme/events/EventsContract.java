@@ -19,9 +19,12 @@ interface EventsContract {
 
         void setBeerCount(int count);
 
+        void setTotalCount(int count);
+
+        void showFilteringPopUpMenu();
     }
 
-    interface UserActionsListener {
+    interface Presenter {
 
         void loadEvents();
 
@@ -30,6 +33,8 @@ interface EventsContract {
         void searchEvents(String searchTerm);
 
         void openEventDetails(Event clickedEvent);
+
+        void setFiltering(EventsFilterType requestType);
 
     }
 

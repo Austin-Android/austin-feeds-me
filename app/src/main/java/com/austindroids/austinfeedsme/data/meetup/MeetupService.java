@@ -9,6 +9,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import rx.Observable;
 
 /**
  * Created by darrankelinske on 8/4/16.
@@ -35,5 +36,5 @@ public interface MeetupService {
             "&text=taco" +
             "&page=300" +
             "&radius=40")
-    Call<Results> getOpenEvents();
+    Observable<Results> getOpenEvents();
 }

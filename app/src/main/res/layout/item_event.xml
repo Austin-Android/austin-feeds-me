@@ -37,15 +37,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/event_link"
-            style="@style/RaisedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_gravity="end"
             android:textColorHint="@android:color/white"
             android:textColor="@android:color/white"
+            style="@style/RaisedButton"
             android:hint="RSVP"/>
 
     </LinearLayout>

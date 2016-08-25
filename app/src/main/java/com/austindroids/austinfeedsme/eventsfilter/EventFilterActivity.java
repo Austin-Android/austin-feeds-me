@@ -33,9 +33,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -74,84 +71,87 @@ public class EventFilterActivity extends AppCompatActivity {
         final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<Event>());
         eventsRecyclerView.setAdapter(eventFilterAdapter);
 
-
         //cleanEvents();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.meetup.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-
-        MeetupService meetupService = retrofit.create(MeetupService.class);
-        Call<Results> call =
-                meetupService.getOpenEvents();
-
-        call.enqueue(new Callback<Results>() {
-            @Override
-            public void onResponse(Call<Results> call, Response<Results> response) {
-                Results results = response.body();
-                Log.d(TAG, "Event count from Meetup API: " + results.getEvents().size());
-
-                final List<Event> meetupEventsFromTheFuture = results.getEvents();
-
-                Iterator<Event> iterToGetEventsInFuture = meetupEventsFromTheFuture.iterator();
-
-                while (iterToGetEventsInFuture.hasNext()) {
-                    Event nextEvent = iterToGetEventsInFuture.next();
-                    if (nextEvent.getTime() < new Date().getTime()) {
-                        iterToGetEventsInFuture.remove();
-                    }
-                }
-                Log.d(TAG, "Event count after cleaning past events: " +
-                        meetupEventsFromTheFuture.size());
-
-                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            Event event = postSnapshot.getValue(Event.class);
-
-                            Iterator<Event> iter = meetupEventsFromTheFuture.iterator();
-
-                            while (iter.hasNext()) {
-                                Event nextEvent = iter.next();
-                                if (event.getId() != null &&
-                                        event.getId().equals(nextEvent.getId())) {
-                                    iter.remove();
-                                }
-                            }
-                        }
-
-                        Log.d(TAG, "After cleaning we have this many events: " +
-                                meetupEventsFromTheFuture.size());
-                        if (meetupEventsFromTheFuture.size() == 0) {
-                            Toast.makeText(EventFilterActivity.this,
-                                    "Loading events that need to be filtered",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                                eventFilterAdapter.addEvents(meetupEventsFromTheFuture);
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure(Call<Results> call, Throwable t) {
-
-            }
-        });
 
         RxJavaCallAdapterFactory rxAdapter =
                 RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.meetup.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(rxAdapter)
+                .build();
+
+        MeetupService meetupService = retrofit.create(MeetupService.class);
+        Observable<Results> meetupObservable =
+                meetupService.getOpenEvents();
+
+        Subscription meetupSubscription = meetupObservable
+                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Results>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Results results) {
+                        Log.d(TAG, "Event count from Meetup API: " + results.getEvents().size());
+
+                        final List<Event> meetupEventsFromTheFuture = results.getEvents();
+
+                        Iterator<Event> iterToGetEventsInFuture = meetupEventsFromTheFuture.iterator();
+
+                        while (iterToGetEventsInFuture.hasNext()) {
+                            Event nextEvent = iterToGetEventsInFuture.next();
+                            if (nextEvent.getTime() < new Date().getTime()) {
+                                iterToGetEventsInFuture.remove();
+                            }
+                        }
+                        Log.d(TAG, "Event count after cleaning past events: " +
+                                meetupEventsFromTheFuture.size());
+
+                        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                    Event event = postSnapshot.getValue(Event.class);
+
+                                    Iterator<Event> iter = meetupEventsFromTheFuture.iterator();
+
+                                    while (iter.hasNext()) {
+                                        Event nextEvent = iter.next();
+                                        if (event.getId() != null &&
+                                                event.getId().equals(nextEvent.getId())) {
+                                            iter.remove();
+                                        }
+                                    }
+                                }
+
+                                Log.d(TAG, "After cleaning we have this many events: " +
+                                        meetupEventsFromTheFuture.size());
+                                if (meetupEventsFromTheFuture.size() != 0) {
+                                    eventFilterAdapter.addEvents(meetupEventsFromTheFuture);
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                });
+
+        compositeSubscription.add(meetupSubscription);
 
         Retrofit eventbriteRetrofit = new Retrofit.Builder()
                 .baseUrl("https://www.eventbriteapi.com")
@@ -192,12 +192,12 @@ public class EventFilterActivity extends AppCompatActivity {
             observableList.add(eventbriteService.getEventsByKeyword(searchTerm));
         }
 
-        Subscription searchSubscription = Observable.merge(observableList)
+        Subscription eventbriteSubscription = Observable.merge(observableList)
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(eventbriteEventsSubscriber);
 
-        compositeSubscription.add(searchSubscription);
+        compositeSubscription.add(eventbriteSubscription);
 
     }
 

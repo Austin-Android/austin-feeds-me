@@ -4,12 +4,12 @@ buildscript {
     }
 
     dependencies {
-//        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
-//apply plugin: 'io.fabric'
+apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -29,17 +29,19 @@ android {
         minSdkVersion 16
         targetSdkVersion 22
 
-        manifestPlaceholders = [google_maps_key: props['google_maps_key']]
-        multiDexEnabled true
+        manifestPlaceholders = [google_maps_key: props['google_maps_key'],
+                                fabricApiKey: props['fabric']]
+        multiDexEnabled false
 
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
 
     buildTypes {
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -81,7 +83,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:9.4.0'
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.google.firebase:firebase-core:9.4.0'
-    compile 'com.firebaseui:firebase-ui-auth:0.5.1'
+    compile 'com.firebaseui:firebase-ui-auth:0.4.4'
 
     // Needed for Authentication with these services
     compile 'com.google.android.gms:play-services-auth:9.4.0'
@@ -121,9 +123,6 @@ dependencies {
             force 'com.android.support:support-annotations:23.0.1'
         }
     }
-
-
-
 
 }
 

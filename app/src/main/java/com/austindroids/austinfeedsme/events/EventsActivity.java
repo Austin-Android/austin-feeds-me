@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -17,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +36,6 @@ import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
-import com.austindroids.austinfeedsme.addeditevent.AddEditEventActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
@@ -46,7 +45,10 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,14 +70,13 @@ public class EventsActivity extends AppCompatActivity
 
     private SearchView searchViewForMenu;
 
-    private FloatingActionButton mAddEventFab;
-
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private EventsContract.UserActionsListener mActionsListener;
+    private EventsContract.Presenter eventsPresenter;
 
     private EventsAdapter mListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
+    FirebaseAnalytics firebaseAnalytics;
 
     @Inject
     EventsRepository repository;
@@ -87,7 +88,7 @@ public class EventsActivity extends AppCompatActivity
 
         ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
 
-        mActionsListener = new EventsPresenter(repository, this);
+        eventsPresenter = new EventsPresenter(repository, this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -147,18 +148,10 @@ public class EventsActivity extends AppCompatActivity
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mAddEventFab = (FloatingActionButton) findViewById(R.id.add_event_fab);
-        mAddEventFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(EventsActivity.this, AddEditEventActivity.class));
-            }
-        });
-
-        mActionsListener.loadEvents();
+        eventsPresenter.loadEvents();
 
         //Todo: Iterate through list once creating a Hashmap of counts
-        mActionsListener.loadYummyCounts();
+        eventsPresenter.loadYummyCounts();
 
         // get menu from navigationView
         Menu menu = mNavigationView.getMenu();
@@ -179,7 +172,7 @@ public class EventsActivity extends AppCompatActivity
         };
 
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
     }
 
@@ -210,7 +203,7 @@ public class EventsActivity extends AppCompatActivity
     EventItemListener mEventItemListener = new EventItemListener() {
         @Override
         public void onEventClick(Event clickedEvent) {
-            mActionsListener.openEventDetails(clickedEvent);
+            eventsPresenter.openEventDetails(clickedEvent);
         }
     };
 
@@ -235,7 +228,7 @@ public class EventsActivity extends AppCompatActivity
                 new MenuItemCompat.OnActionExpandListener() {
                     @Override
                     public boolean onMenuItemActionCollapse(MenuItem item) {
-                        mActionsListener.loadEvents();
+                        eventsPresenter.loadEvents();
                         return true;  // Return true to collapse action view
                     }
 
@@ -293,6 +286,10 @@ public class EventsActivity extends AppCompatActivity
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
+            case R.id.menu_filter:
+                showFilteringPopUpMenu();
+                break;
+
             case R.id.login_menu_item:
 
                 startActivityForResult(
@@ -345,7 +342,7 @@ public class EventsActivity extends AppCompatActivity
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            mActionsListener.searchEvents(query);
+            eventsPresenter.searchEvents(query);
         }
     }
 
@@ -361,6 +358,33 @@ public class EventsActivity extends AppCompatActivity
                     }
                 });
     }
+
+    @Override
+    public void showFilteringPopUpMenu() {
+        PopupMenu popup = new PopupMenu(EventsActivity.this, findViewById(R.id.menu_filter));
+        popup.getMenuInflater().inflate(R.menu.filter_events, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.todays_events:
+                        eventsPresenter.setFiltering(EventsFilterType.TODAYS_EVENTS);
+                        break;
+                    case R.id.this_weeks_events:
+                        eventsPresenter.setFiltering(EventsFilterType.THIS_WEEKS_EVENTS);
+                        break;
+                    default:
+                        eventsPresenter.setFiltering(EventsFilterType.ALL_EVENTS);
+                        break;
+                }
+                eventsPresenter.loadEvents();
+                return true;
+            }
+        });
+
+        popup.show();
+    }
+
 
     public void selectDrawerItem(MenuItem menuItem) {
 
@@ -402,13 +426,18 @@ public class EventsActivity extends AppCompatActivity
                 }, 300);
                 break;
             case R.id.events_tacos:
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                 searchViewForMenu.setQuery("taco", true);
                     }
                 }, 300);
+
+                // Log an event when tacos are selected!
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "tacos");
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                 break;
             case R.id.events_beer:
                 new Handler().postDelayed(new Runnable() {
@@ -551,6 +580,11 @@ public class EventsActivity extends AppCompatActivity
 //                        animation1.setFillAfter(true);
 //                        mAddEventFab.startAnimation(animation1);
 //                        mAddEventFab.setVisibility(View.VISIBLE);
+                        DatabaseReference userReference =
+                                FirebaseDatabase.getInstance().getReference("user");
+                        userReference.child(
+                                FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .setValue(FirebaseAuth.getInstance().getCurrentUser());
                 }
             }
         }
@@ -585,6 +619,16 @@ public class EventsActivity extends AppCompatActivity
         final MenuItem navigationPizzaEvents = menu.findItem(R.id.events_beer);
         //Check if user logged in, change sign in/out button to correct text
         navigationPizzaEvents.setTitle("Beer: " +count);
+
+    }
+
+    @Override
+    public void setTotalCount(int count) {// get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
+        // find MenuItem you want to change
+        final MenuItem navigationPizzaEvents = menu.findItem(R.id.events_list);
+        //Check if user logged in, change sign in/out button to correct text
+        navigationPizzaEvents.setTitle("Events List: " +count);
 
     }
 }

@@ -6,4 +6,8 @@
         <item name="android:windowSharedElementsUseOverlay">false</item>
     </style>
 
+    <style name="RaisedButton" parent="android:style/Widget.Material.Button">
+        <item name="android:background">@drawable/raised_button_background</item>
+    </style>
+
 </resources>
