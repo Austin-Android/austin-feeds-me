@@ -43,10 +43,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_gravity="end"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
             android:textColorHint="@android:color/white"
             android:textColor="@android:color/white"
             style="@style/RaisedButton"
-            android:hint="RSVP"/>
+            android:hint="Event Details"/>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>
