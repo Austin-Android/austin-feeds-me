@@ -14,7 +14,7 @@ public class TypeUtils {
 
         Event returnEvent = new Event(event.getId(), event.getName().getText(),
                 event.getDescription().getText(), DateUtils.getUnixTimeFromISO8601(event.getStart().getUtc()),
-                event.getUrl());
+                event.getUrl(), event.getFood_type());
 
         returnEvent.setVenue(event.getVenue());
         returnEvent.setGroup(new Group(event.getOrganizer().getName()));

@@ -22,6 +22,7 @@ public final class Event {
     private String name;
     private String description;
     private String event_url;
+    private String foodType;
     private String picture;
     private String tags;
     private Group group;
@@ -38,19 +39,20 @@ public final class Event {
     }
 
     public Event(String uid, String name, String description, Long time,
-                 String rsvpLink) {
+                 String rsvpLink, String foodType) {
 
         this.id = uid;
         this.name = name;
         this.description = description;
         this.time = time;
         this.event_url = rsvpLink;
+        this.foodType = foodType;
     }
 
     public Event(String uid, String name, String description, Long time,
-                 String rsvpLink, boolean isFood) {
+                 String rsvpLink, String foodType, boolean isFood) {
 
-        this(uid, name, description, time, rsvpLink);
+        this(uid, name, description, time, rsvpLink, foodType);
         this.isFood = isFood;
     }
 
@@ -118,4 +120,11 @@ public final class Event {
         this.venue = venue;
     }
 
+    public String getFoodType() {
+        return foodType;
+    }
+
+    public void setFoodType(String foodType) {
+        this.foodType = foodType;
+    }
 }

@@ -116,12 +116,15 @@ public class EventsPresenter implements EventsContract.Presenter {
                             && (nextEvent.getTime() > new Date().getTime()))
                     {
                         if (nextEvent.getDescription().toLowerCase().contains("pizza")) {
+                            nextEvent.setFoodType("pizza");
                             Integer previousValue = yummyCounts.get("pizza");
                             yummyCounts.put("pizza", previousValue == null ? 1 : previousValue + 1);
                         } else if (nextEvent.getDescription().toLowerCase().contains("beer")) {
+                            nextEvent.setFoodType("beer");
                             Integer previousValue = yummyCounts.get("beer");
                             yummyCounts.put("beer", previousValue == null ? 1 : previousValue + 1);
                         } else if (nextEvent.getDescription().toLowerCase().contains("tacos")) {
+                            nextEvent.setFoodType("tacos");
                             Integer previousValue = yummyCounts.get("tacos");
                             yummyCounts.put("tacos", previousValue == null ? 1 : previousValue + 1);
                         }

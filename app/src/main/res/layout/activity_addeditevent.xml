@@ -63,6 +63,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/rsvp_link"/>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/food_type_add_edit_event_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/rsvp_link"/>
 
     </android.support.design.widget.TextInputLayout>
 
