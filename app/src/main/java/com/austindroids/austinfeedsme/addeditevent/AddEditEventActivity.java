@@ -44,6 +44,8 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
     EditText date;
     @Bind(R.id.rsvp_link_add_edit_event_edittext)
     EditText rsvpLink;
+    @Bind(R.id.food_type_add_edit_event_edittext)
+    EditText foodType;
     @Bind(R.id.add_edit_event_linear_layout)
     LinearLayout linearLayout;
 
@@ -71,7 +73,8 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
                             title.getText().toString(),
                             description.getText().toString(),
                             Long.parseLong(date.getText().toString()),
-                            rsvpLink.getText().toString()),
+                            rsvpLink.getText().toString(),
+                            foodType.getText().toString()),
                             new EventsDataSource.SaveEventCallback() {
 
                         @Override

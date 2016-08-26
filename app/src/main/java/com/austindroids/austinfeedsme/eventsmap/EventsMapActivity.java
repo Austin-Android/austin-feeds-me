@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -63,18 +64,51 @@ public class EventsMapActivity extends AppCompatActivity implements
 
                     if (event.isFood()
                             && event.getVenue() != null
-                            && event.getTime() > new Date().getTime()) {
+                            && event.getTime() > new Date().getTime())
+                    {if (event.getDescription().toLowerCase().contains("pizza")) {
+                        event.setFoodType("pizza");
+                    } else if (event.getDescription().toLowerCase().contains("beer")) {
+                        event.setFoodType("beer");
+                    } else if (event.getDescription().toLowerCase().contains("tacos")) {
+                        event.setFoodType("tacos");
+                    }else{
+                        event.setFoodType("noFood");
+                    }
 
                         LatLng eventLocation = new LatLng(
                                 Double.valueOf(event.getVenue().getLat()),
                                 Double.valueOf(event.getVenue().getLon()));
-                        map.addMarker(new MarkerOptions()
+                        if(event.getFoodType().equals("beer")) {
+                            map.addMarker(new MarkerOptions()
+                                    .position(eventLocation)
+                                    .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.beer_emoji))
+                                    .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                    .setTag(event.getEvent_url());
+                        }else if(event.getFoodType().equals("pizza")){
+                                map.addMarker(new MarkerOptions()
                                 .position(eventLocation)
                                 .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
-                                .snippet(event.getGroup().getName() + "\n" +event.getName()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pizza_emoji_smaller))
+                                .snippet(event.getGroup().getName() + "\n" + event.getName()))
                                 .setTag(event.getEvent_url());
-
+                        }else if(event.getFoodType().equals("tacos")){
+                            map.addMarker(new MarkerOptions()
+                                    .position(eventLocation)
+                                    .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taco_emoji))
+                                    .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                    .setTag(event.getEvent_url());
+                        }else {
+                            map.addMarker(new MarkerOptions()
+                                    .position(eventLocation)
+                                    .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.apple_emoji))
+                                    .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                    .setTag(event.getEvent_url());
+                            }
                     }
+
                 }
 
             }

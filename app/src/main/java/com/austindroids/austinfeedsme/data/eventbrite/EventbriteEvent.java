@@ -29,6 +29,8 @@ public class EventbriteEvent {
     private String organizer_id;
     @SerializedName("logo")
     Logo logo;
+    @SerializedName("food_type")
+    private String food_type;
     private Venue venue;
     private Group group;
     private Organizer organizer;
@@ -84,7 +86,6 @@ public class EventbriteEvent {
     public void setOrganizer(Organizer organizer) {
         this.organizer = organizer;
     }
-
 
     class BaseEventbriteField {
 
@@ -182,5 +183,13 @@ public class EventbriteEvent {
 
     public Group getGroup() {
         return group;
+    }
+
+    public String getFood_type() {
+        return food_type;
+    }
+
+    public void setFood_type(String food_type) {
+        this.food_type = food_type;
     }
 }
