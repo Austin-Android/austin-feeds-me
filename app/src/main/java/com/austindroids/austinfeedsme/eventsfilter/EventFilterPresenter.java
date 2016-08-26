@@ -1,17 +1,8 @@
 package com.austindroids.austinfeedsme.eventsfilter;
 
-import android.util.Log;
-
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,25 +12,23 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
 
     private static final String TAG ="EventFilterPresenter";
 
-    private EventsDataSource eventsRepository;
+    private EventsDataSource eventbriteRepository;
+    private EventsDataSource meetupRepository;
     private EventFilterContract.View view;
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final DatabaseReference myRef = database.getReference("events");
-
-    public EventFilterPresenter(EventsDataSource eventsDataSource, EventFilterContract.View view) {
-        this.eventsRepository = eventsDataSource;
+    public EventFilterPresenter(EventsDataSource eventsDataSource,
+                                EventsDataSource meetupDataSource, EventFilterContract.View view) {
+        this.eventbriteRepository = eventsDataSource;
+        this.meetupRepository = meetupDataSource;
         this.view = view;
     }
 
     @Override
     public void loadEvents() {
 
-
-        eventsRepository.getEvents(new EventsDataSource.LoadEventsCallback() {
+        eventbriteRepository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
             public void onEventsLoaded(List<Event> events) {
-                cleanAndLoadEventbriteEvents(events);
                 view.showEvents(events);
             }
 
@@ -49,45 +38,41 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
             }
         });
 
-
-
-    }
-
-    private void cleanAndLoadEventbriteEvents(final List<Event> events) {
-        final Long callbackTimestamp = new Date().getTime();
-        Log.d(TAG, "onResponse: Event's from eventbrite " + callbackTimestamp + ":"
-                +events.size());
-
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        meetupRepository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Event event = postSnapshot.getValue(Event.class);
-
-                    Iterator<Event> iter = events.iterator();
-
-                    while (iter.hasNext()) {
-                        Event nextEvent = iter.next();
-                        if (event.getId() != null &&
-                                event.getId().equals(nextEvent.getId())) {
-                            iter.remove();
-                        }
-                    }
-                }
-
-                Log.d(TAG, "onResponse: Event's from after cleaning " + callbackTimestamp + ":"
-                        +events.size());
-
+            public void onEventsLoaded(List<Event> events) {
+                view.showEvents(events);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onError(String error) {
 
             }
         });
 
     }
 
+//    public void cleanPastEvents() {
+//        final List<Event> events = new ArrayList<Event>();
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("events");
+//        myRef.orderByChild("time");
+//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Event event = snapshot.getValue(Event.class);
+//                    if(event.getTime() < (new Date().getTime() - 2678400000L)) {
+//                        Log.i(TAG, "this event could be cleaned from firebase" + snapshot.getRef());
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError firebaseError) {
+//
+//            }
+//        });
+//    }
 
 }

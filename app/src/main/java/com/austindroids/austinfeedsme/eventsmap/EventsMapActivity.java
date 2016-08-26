@@ -83,28 +83,28 @@ public class EventsMapActivity extends AppCompatActivity implements
                                     .position(eventLocation)
                                     .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.beer_emoji))
-                                    .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                    .snippet(event.getGroup().getName()))
                                     .setTag(event.getEvent_url());
                         }else if(event.getFoodType().equals("pizza")){
                                 map.addMarker(new MarkerOptions()
                                 .position(eventLocation)
                                 .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.pizza_emoji_smaller))
-                                .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                .snippet(event.getGroup().getName()))
                                 .setTag(event.getEvent_url());
                         }else if(event.getFoodType().equals("tacos")){
                             map.addMarker(new MarkerOptions()
                                     .position(eventLocation)
                                     .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.taco_emoji))
-                                    .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                    .snippet(event.getGroup().getName()))
                                     .setTag(event.getEvent_url());
                         }else {
                             map.addMarker(new MarkerOptions()
                                     .position(eventLocation)
                                     .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.apple_emoji))
-                                    .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                                    .snippet(event.getGroup().getName()))
                                     .setTag(event.getEvent_url());
                             }
                     }
