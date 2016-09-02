@@ -44,7 +44,8 @@
 
         <activity android:name=".eventsmap.EventsMapActivity"
             android:parentActivityName=".events.EventsActivity"
-            android:theme="@style/AppTheme"/>
+            android:label="@string/app_label"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
