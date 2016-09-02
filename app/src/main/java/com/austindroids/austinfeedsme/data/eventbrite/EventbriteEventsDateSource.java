@@ -1,10 +1,19 @@
 package com.austindroids.austinfeedsme.data.eventbrite;
 
+import android.util.Log;
+
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.utility.TypeUtils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Retrofit;
@@ -21,6 +30,10 @@ import rx.schedulers.Schedulers;
  * Created by darrankelinske on 8/26/16.
  */
 public class EventbriteEventsDateSource implements EventsDataSource {
+    private static final String TAG ="EventbriteEventsData";
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference myRef = database.getReference("events");
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
@@ -69,7 +82,12 @@ public class EventbriteEventsDateSource implements EventsDataSource {
                     convertedEventbriteEvents.add(TypeUtils.transformEventBrite(eventbriteEvent));
                 }
 
-                callback.onEventsLoaded(convertedEventbriteEvents);
+                cleanAndLoadEventbriteEvents(convertedEventbriteEvents, new CleanCallback() {
+                    @Override
+                    public void loadCleanEvents(List<Event> events) {
+                        callback.onEventsLoaded(events);
+                    }
+                });
             }
         };
 
@@ -89,4 +107,46 @@ public class EventbriteEventsDateSource implements EventsDataSource {
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
 
     }
+
+    private void cleanAndLoadEventbriteEvents(final List<Event> events, final CleanCallback callback) {
+        final Long callbackTimestamp = new Date().getTime();
+        Log.d(TAG, "onResponse: Event's from eventbrite " + callbackTimestamp + ":"
+                +events.size());
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Event event = postSnapshot.getValue(Event.class);
+
+                    Iterator<Event> iter = events.iterator();
+
+                    while (iter.hasNext()) {
+                        Event nextEvent = iter.next();
+                        if (event.getId() != null &&
+                                event.getId().equals(nextEvent.getId())) {
+                            iter.remove();
+                        }
+                    }
+                }
+
+                Log.d(TAG, "onResponse: Event's from after cleaning " + callbackTimestamp + ":"
+                        +events.size());
+                callback.loadCleanEvents(events);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    interface CleanCallback {
+        void loadCleanEvents(List<Event> events);
+    }
+
+
 }
