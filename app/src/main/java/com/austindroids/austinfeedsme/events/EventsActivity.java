@@ -286,7 +286,7 @@ public class EventsActivity extends AppCompatActivity
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
-            case R.id.menu_filter:
+            case R.id.map_filter:
                 showFilteringPopUpMenu();
                 break;
 
@@ -361,7 +361,7 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     public void showFilteringPopUpMenu() {
-        PopupMenu popup = new PopupMenu(EventsActivity.this, findViewById(R.id.menu_filter));
+        PopupMenu popup = new PopupMenu(EventsActivity.this, findViewById(R.id.map_filter));
         popup.getMenuInflater().inflate(R.menu.filter_events, popup.getMenu());
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
