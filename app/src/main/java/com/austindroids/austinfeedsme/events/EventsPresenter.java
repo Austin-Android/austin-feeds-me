@@ -114,23 +114,27 @@ public class EventsPresenter implements EventsContract.Presenter {
                 Iterator<Event> iter = events.iterator();
 
                 while (iter.hasNext()) {
-                    Event nextEvent = iter.next();
+                    Event event = iter.next();
 
                     // Remove event if it doesn't have free food or is in the past
                     // or if the event name or description doesn't contain the search term
-                    if (nextEvent.isFood()
-                            && (nextEvent.getTime() > new Date().getTime()))
+                    if (event.isFood()
+                            && (event.getTime() > new Date().getTime()))
                     {
-                        if (nextEvent.getDescription().toLowerCase().contains("pizza")) {
-                            nextEvent.setFoodType("pizza");
+                        if (event.getDescription().toLowerCase().contains("pizza")) {
+                            event.setFoodType("pizza");
                             Integer previousValue = yummyCounts.get("pizza");
                             yummyCounts.put("pizza", previousValue == null ? 1 : previousValue + 1);
-                        } else if (nextEvent.getDescription().toLowerCase().contains("beer")) {
-                            nextEvent.setFoodType("beer");
+                        }
+
+                        if (event.getDescription().toLowerCase().contains("beer")) {
+                            event.setFoodType("beer");
                             Integer previousValue = yummyCounts.get("beer");
                             yummyCounts.put("beer", previousValue == null ? 1 : previousValue + 1);
-                        } else if (nextEvent.getDescription().toLowerCase().contains("tacos")) {
-                            nextEvent.setFoodType("tacos");
+                        }
+
+                        if (event.getDescription().toLowerCase().contains("taco")) {
+                            event.setFoodType("tacos");
                             Integer previousValue = yummyCounts.get("tacos");
                             yummyCounts.put("tacos", previousValue == null ? 1 : previousValue + 1);
                         }
