@@ -67,6 +67,8 @@ public class EventsActivity extends AppCompatActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
+    RecyclerView mRecyclerView;
+    private View mNoEventsView;
 
     private SearchView searchViewForMenu;
 
@@ -102,6 +104,7 @@ public class EventsActivity extends AppCompatActivity
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView)  findViewById(R.id.navigation_view);
+        mNoEventsView = findViewById(R.id.noEventsView);
         setupDrawerContent(mNavigationView);
 
         // set a custom shadow that overlays the main content when the drawer opens
@@ -143,10 +146,10 @@ public class EventsActivity extends AppCompatActivity
         mListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
                 mEventItemListener);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-        recyclerView.setAdapter(mListAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
+        mRecyclerView.setAdapter(mListAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         eventsPresenter.loadEvents();
 
@@ -457,6 +460,8 @@ public class EventsActivity extends AppCompatActivity
     @Override
     public void showEvents(List<Event> events) {
         mListAdapter.replaceData(events);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mNoEventsView.setVisibility(View.GONE);
     }
 
     private static class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
@@ -630,5 +635,11 @@ public class EventsActivity extends AppCompatActivity
         //Check if user logged in, change sign in/out button to correct text
         navigationPizzaEvents.setTitle("Events List: " +count);
 
+    }
+
+    @Override
+    public void showNoEventsView() {
+        mRecyclerView.setVisibility(View.GONE);
+        mNoEventsView.setVisibility(View.VISIBLE);
     }
 }

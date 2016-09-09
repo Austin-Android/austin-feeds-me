@@ -84,7 +84,13 @@ public class EventsPresenter implements EventsContract.Presenter {
                     }
                 });
 
-                view.showEvents(currentEvents);
+                if (currentEvents.size() > 0 ) {
+                    view.showEvents(currentEvents);
+                } else {
+                    view.showNoEventsView();
+                }
+
+
             }
 
             @Override

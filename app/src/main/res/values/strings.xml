@@ -53,5 +53,6 @@
     <string name="nav_all_events">All</string>
     <string name="nav_todays_events">Today</string>
     <string name="nav_this_weeks_events">This Week</string>
+    <string name="no_events">no yummies returned</string>
 
 </resources>
