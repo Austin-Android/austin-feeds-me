@@ -69,9 +69,6 @@ public class MeetupDataSource implements EventsDataSource {
 
                         final List<Event> meetupEvents = results.getEvents();
 
-                        Log.d(TAG, "Event count after cleaning past events: " +
-                                meetupEvents.size());
-
                         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -25,16 +25,12 @@ public interface MeetupService {
 
     @GET("/2/open_events?key="+ Constants.MEETUP_KEY+"" +
             "&sign=true" +
+            "&and_text=False" +
             "&photo-host=public" +
             "&zip=78701" +
-            "&text=pizza" +
-            "&text=provided" +
-            "&text=beer" +
-            "&text=breakfast" +
-            "&text=lunch" +
-            "&text=dinner" +
-            "&text=taco" +
+            "&pizza+provided+beer+breakfast+lunch+dinner+taco" +
             "&page=300" +
+            "&status=upcoming" +
             "&radius=40")
     Observable<Results> getOpenEvents();
 }
