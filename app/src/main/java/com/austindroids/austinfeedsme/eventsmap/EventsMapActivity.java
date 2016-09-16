@@ -3,11 +3,15 @@ package com.austindroids.austinfeedsme.eventsmap;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
@@ -38,6 +42,9 @@ public class EventsMapActivity extends AppCompatActivity implements
     EventsMapContract.Presenter presenter;
     GoogleMap map;
     SupportMapFragment mapFragment;
+    private ViewPager viewPager;
+    private PagerAdapter CardPagerAdapter;
+
 
     @Inject
     EventsRepository repository;
@@ -62,6 +69,8 @@ public class EventsMapActivity extends AppCompatActivity implements
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(CardPagerAdapter);
     }
 
     @Override
@@ -71,6 +80,18 @@ public class EventsMapActivity extends AppCompatActivity implements
         this.map.setMyLocationEnabled(true);
         this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 13));
         this.map.setOnInfoWindowLongClickListener(this);
+
+        this.map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                //reference marker's event's position in arraylist (marker.getTag)
+                //viewpager.setcurrentitem(position)
+                int markerPosition = (int) marker.getTag();
+                Toast.makeText(EventsMapActivity.this, marker.getTag().toString(), Toast.LENGTH_SHORT).show();
+                viewPager.setCurrentItem(markerPosition);
+                return true;
+            }
+        });
         presenter.loadEvents();
     }
 
@@ -129,6 +150,9 @@ public class EventsMapActivity extends AppCompatActivity implements
     @Override
     public void showEvents(List<Event> events) {
         map.clear();
+        CardPagerAdapter adapter = new CardPagerAdapter(events);
+        viewPager.setAdapter(adapter);
+
         for (Event event : events) {
             LatLng eventLocation = new LatLng(
                     Double.valueOf(event.getVenue().getLat()),
@@ -139,29 +163,50 @@ public class EventsMapActivity extends AppCompatActivity implements
                         .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.beer_emoji))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
-                        .setTag(event.getEvent_url());
+                        .setTag(events.indexOf(event));
             } else if (event.getFoodType().equals("pizza")) {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
                         .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.pizza_emoji_smaller))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
-                        .setTag(event.getEvent_url());
+                        .setTag(events.indexOf(event));
             } else if (event.getFoodType().equals("tacos")) {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
                         .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.taco_emoji))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
-                        .setTag(event.getEvent_url());
+                        .setTag(events.indexOf(event));
             } else {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
                         .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.apple_emoji))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
-                        .setTag(event.getEvent_url());
+                        .setTag(events.indexOf(event));
             }
+        }
+    }
+
+    public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
+
+        public MarkerInfoWindowAdapter()
+        {
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            View v  = getLayoutInflater().inflate(R.layout.fragment_adapter, null);
+            //get event object from marker click
+            //identify views within infoWindow/viewpager
+            //assign data to text/image views
+            return v;
         }
     }
 
