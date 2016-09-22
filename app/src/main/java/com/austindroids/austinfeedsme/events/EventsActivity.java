@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,6 +52,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -334,7 +336,7 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
-      super.onPause();
+        super.onPause();
     }
 
     @Override
@@ -399,7 +401,7 @@ public class EventsActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                searchViewForMenu.setQuery("reset", true);
+                        searchViewForMenu.setQuery("reset", true);
                     }
                 }, 300);
                 break;
@@ -416,7 +418,7 @@ public class EventsActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));
+                        startActivity(new Intent(EventsActivity.this, EventFilterActivity.class));
                     }
                 }, 300);
                 break;
@@ -424,7 +426,7 @@ public class EventsActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                searchViewForMenu.setQuery("pizza", true);
+                        searchViewForMenu.setQuery("pizza", true);
                     }
                 }, 300);
                 break;
@@ -432,7 +434,7 @@ public class EventsActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                searchViewForMenu.setQuery("taco", true);
+                        searchViewForMenu.setQuery("taco", true);
                     }
                 }, 300);
 
@@ -446,7 +448,7 @@ public class EventsActivity extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                searchViewForMenu.setQuery("beer", true);
+                        searchViewForMenu.setQuery("beer", true);
                     }
                 }, 300);
                 break;
@@ -491,6 +493,22 @@ public class EventsActivity extends AppCompatActivity
 
             viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
             viewHolder.title.setText(event.getName());
+
+            // TODO: refactor 'foodType' in Event to be an enum, if possible with Firebase
+            if (event.isFood()
+                    && (event.getTime() > new Date().getTime())) {
+                String desc = event.getDescription();
+                if (desc.toLowerCase().contains("pizza")) {
+                    viewHolder.pizzaIcon.setImageResource(R.drawable.pizza_emoji_smaller);
+                }
+                if (desc.toLowerCase().contains("beer")) {
+                    viewHolder.beerIcon.setImageResource(R.drawable.beer_emoji);
+                }
+                if (desc.toLowerCase().contains("tacos")) {
+                    viewHolder.tacoIcon.setImageResource(R.drawable.taco_emoji);
+                }
+            }
+
 
             Spanned result;
             Spanned rsvpLink;
@@ -543,6 +561,9 @@ public class EventsActivity extends AppCompatActivity
             public TextView title;
             public TextView description;
             public Button eventUrl;
+            private ImageView pizzaIcon;
+            private ImageView beerIcon;
+            private ImageView tacoIcon;
             private EventItemListener mItemListener;
 
             public ViewHolder(View itemView, EventItemListener listener) {
@@ -551,6 +572,9 @@ public class EventsActivity extends AppCompatActivity
                 eventDate = (TextView) itemView.findViewById(R.id.event_detail_time);
                 title = (TextView) itemView.findViewById(R.id.event_detail_title);
                 description = (TextView) itemView.findViewById(R.id.event_detail_description);
+                pizzaIcon = (ImageView) itemView.findViewById(R.id.event_pizza_icon);
+                beerIcon = (ImageView) itemView.findViewById(R.id.event_beer_icon);
+                tacoIcon = (ImageView) itemView.findViewById(R.id.event_taco_icon);
                 eventUrl = (Button) itemView.findViewById(R.id.event_link);
                 itemView.setOnClickListener(this);
             }
@@ -578,18 +602,18 @@ public class EventsActivity extends AppCompatActivity
                         FirebaseAuth.getInstance().getCurrentUser().getEmail());
                 Log.d("EventsActivity", "This is the current uid: " +
                         FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
+                if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
 //                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
 //                        animation1.setDuration(1000);
 //                        animation1.setStartOffset(1000);
 //                        animation1.setFillAfter(true);
 //                        mAddEventFab.startAnimation(animation1);
 //                        mAddEventFab.setVisibility(View.VISIBLE);
-                        DatabaseReference userReference =
-                                FirebaseDatabase.getInstance().getReference("user");
-                        userReference.child(
-                                FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .setValue(FirebaseAuth.getInstance().getCurrentUser());
+                    DatabaseReference userReference =
+                            FirebaseDatabase.getInstance().getReference("user");
+                    userReference.child(
+                            FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .setValue(FirebaseAuth.getInstance().getCurrentUser());
                 }
             }
         }
