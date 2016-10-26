@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -41,6 +42,7 @@ public class EventsMapActivity extends AppCompatActivity implements
         GoogleMap.OnInfoWindowLongClickListener {
     EventsMapContract.Presenter presenter;
     GoogleMap map;
+    CameraPosition cameraPosition;
     SupportMapFragment mapFragment;
     private ViewPager viewPager;
     private PagerAdapter CardPagerAdapter;
@@ -182,8 +184,7 @@ public class EventsMapActivity extends AppCompatActivity implements
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
                         .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.apple_emoji))
-                        .snippet(event.getGroup().getName() + "\n" + event.getName()))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.apple_emoji)))
                         .setTag(events.indexOf(event));
             }
         }
@@ -209,5 +210,4 @@ public class EventsMapActivity extends AppCompatActivity implements
             return v;
         }
     }
-
 }
