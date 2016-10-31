@@ -46,7 +46,7 @@ public class EventsPresenterTest {
         // Test data
         EVENTS.add(
                 new Event("1", "Pizza Fest", "Pizza Everywhere", 33928672270000L,
-                        "www.pizza.com", true));
+                        "www.pizza.com", "true"));
 
         System.out.println("setUp: Events size is: " +EVENTS.size());
     }
