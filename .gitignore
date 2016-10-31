@@ -20,6 +20,7 @@ google-services.json
 /app/build/intermediates/res
 /app/build/intermediates/manifests
 /app/build/intermediates
+/app/app-release.apk
 /.idea
 austinfeedsme.properties
 *.iml

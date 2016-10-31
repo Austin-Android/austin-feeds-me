@@ -15,11 +15,9 @@ public class EventFilterContract {
 
     }
 
-    interface UserActionsListener {
+    interface Presenter {
 
         void loadEvents();
-
-        void openEventDetails(Event clickedEvent);
 
     }
 

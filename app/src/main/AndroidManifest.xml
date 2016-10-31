@@ -15,7 +15,7 @@
     <application
         android:name="com.austindroids.austinfeedsme.AustinFeedsMeApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_logo"
         android:label="@string/app_label"
         android:theme="@style/AppTheme" >
         <activity
@@ -57,6 +57,20 @@
         <!--<meta-data-->
             <!--android:name="com.firebase.ui.TwitterSecret"-->
             <!--android:value="${twitterSecret}"/>-->
+
+        <service
+            android:name=".notifications.AFMFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".notifications.AFMFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

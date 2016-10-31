@@ -22,6 +22,8 @@ interface EventsContract {
         void setTotalCount(int count);
 
         void showFilteringPopUpMenu();
+
+        void showNoEventsView();
     }
 
     interface Presenter {
