@@ -21,13 +21,13 @@ props.load(new FileInputStream(file(project.property("austinfeedsme.properties")
 
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "com.austindroids.austinfeedsme"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 25
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
@@ -64,11 +64,11 @@ android {
 dependencies {
 
     // Support Libs
-    compile 'com.android.support:support-v4:24.1.1'
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:recyclerview-v7:24.1.1'
-    compile 'com.android.support:cardview-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.android.support:cardview-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
 
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
