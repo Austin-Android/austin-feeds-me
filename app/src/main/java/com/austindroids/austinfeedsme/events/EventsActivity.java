@@ -8,12 +8,14 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +53,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +66,7 @@ public class EventsActivity extends AppCompatActivity
         implements EventsContract.View {
 
     private final static String TAG = "EventsActivity";
+    public static final String EVENTS_LIST = "eventsList";
 
     public static final int RC_SIGN_IN = 7;
 
@@ -71,6 +76,7 @@ public class EventsActivity extends AppCompatActivity
     private NavigationView mNavigationView;
     RecyclerView mRecyclerView;
     private View mNoEventsView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SearchView searchViewForMenu;
 
@@ -107,6 +113,17 @@ public class EventsActivity extends AppCompatActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView)  findViewById(R.id.navigation_view);
         mNoEventsView = findViewById(R.id.noEventsView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+
+        // swipe refresh logic
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshEvents();
+
+            }
+        });
+
         setupDrawerContent(mNavigationView);
 
         // set a custom shadow that overlays the main content when the drawer opens
@@ -145,18 +162,22 @@ public class EventsActivity extends AppCompatActivity
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
-        mListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
-                mEventItemListener);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-        mRecyclerView.setAdapter(mListAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        if(savedInstanceState!=null){
+            List<Event> currentEvents =
+                    Parcels.unwrap(savedInstanceState.getParcelable(EVENTS_LIST));
 
-        eventsPresenter.loadEvents();
+            mListAdapter = new EventsAdapter(EventsActivity.this, currentEvents,
+                    mEventItemListener);
 
-        //Todo: Iterate through list once creating a Hashmap of counts
-        eventsPresenter.loadYummyCounts();
+            mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
+            mRecyclerView.setAdapter(mListAdapter);
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            showEvents(currentEvents);
+        } else {
+            setupLoadEvents();
+        }
 
         // get menu from navigationView
         Menu menu = mNavigationView.getMenu();
@@ -665,5 +686,37 @@ public class EventsActivity extends AppCompatActivity
     public void showNoEventsView() {
         mRecyclerView.setVisibility(View.GONE);
         mNoEventsView.setVisibility(View.VISIBLE);
+    }
+
+    private void refreshEvents() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setupLoadEvents();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 2000);
+    }
+
+    private void setupLoadEvents(){
+        mListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
+                mEventItemListener);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
+        mRecyclerView.setAdapter(mListAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        eventsPresenter.loadEvents();
+
+        //Todo: Iterate through list once creating a Hashmap of counts
+        eventsPresenter.loadYummyCounts();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Parcelable listParcelable = Parcels.wrap(mListAdapter.mEvents);
+        savedInstanceState.putParcelable(EVENTS_LIST, listParcelable);
+        super.onSaveInstanceState(savedInstanceState);
     }
 }
