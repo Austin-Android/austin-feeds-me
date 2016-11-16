@@ -1,5 +1,6 @@
 package com.austindroids.austinfeedsme.events;
 
+import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;

@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;

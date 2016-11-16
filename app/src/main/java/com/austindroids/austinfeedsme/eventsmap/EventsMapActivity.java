@@ -17,7 +17,7 @@ import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.austindroids.austinfeedsme.events.EventsContract;
+import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;

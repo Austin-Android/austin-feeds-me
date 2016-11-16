@@ -1,6 +1,7 @@
-package com.austindroids.austinfeedsme.events;
+package com.austindroids.austinfeedsme.common;
 
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.List;
 

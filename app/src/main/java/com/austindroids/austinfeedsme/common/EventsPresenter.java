@@ -5,7 +5,6 @@ import android.util.Log;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.austindroids.austinfeedsme.events.EventsContract;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
