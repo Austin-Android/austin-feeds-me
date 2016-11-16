@@ -48,7 +48,7 @@ public class EventsPresenterTest {
         // Test data
         EVENTS.add(
                 new Event("1", "Pizza Fest", "Pizza Everywhere", 33928672270000L,
-                        "www.pizza.com", true));
+                        "www.pizza.com", "pizza", true));
 
         System.out.println("setUp: Events size is: " +EVENTS.size());
     }
@@ -59,7 +59,7 @@ public class EventsPresenterTest {
         // When loading of Events is requested
         eventsPresenter.loadEvents();
 
-        // Callback is captured and invoked with stubbed tasks
+        // Callback is captured and invoked with stubbed events
         verify(eventsRepository).getEvents(loadEventsCallbackCaptor.capture());
         loadEventsCallbackCaptor.getValue().onEventsLoaded(EVENTS);
 
