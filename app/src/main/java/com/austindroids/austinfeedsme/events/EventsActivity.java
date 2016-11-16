@@ -79,7 +79,7 @@ public class EventsActivity extends AppCompatActivity
     private CharSequence mTitle;
     private EventsContract.Presenter eventsPresenter;
 
-    private EventsAdapter mListAdapter;
+    private EventsAdapter eventListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseAnalytics firebaseAnalytics;
 
@@ -146,11 +146,11 @@ public class EventsActivity extends AppCompatActivity
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
-        mListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
+        eventListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
                 mEventItemListener);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-        mRecyclerView.setAdapter(mListAdapter);
+        mRecyclerView.setAdapter(eventListAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -462,7 +462,7 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     public void showEvents(List<Event> events) {
-        mListAdapter.replaceData(events);
+        eventListAdapter.replaceData(events);
         mRecyclerView.setVisibility(View.VISIBLE);
         mNoEventsView.setVisibility(View.GONE);
     }
