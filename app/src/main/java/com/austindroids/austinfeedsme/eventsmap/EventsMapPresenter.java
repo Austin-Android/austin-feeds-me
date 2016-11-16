@@ -88,6 +88,8 @@ public class EventsMapPresenter implements EventsMapContract.Presenter{
                     }
                 });
 
+                view.showEvents(currentEvents);
+
             }
 
             @Override
