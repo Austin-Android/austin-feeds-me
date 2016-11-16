@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class EventsPresenter implements EventsContract.Presenter {
 
-
     private EventsRepository repository;
     private EventsContract.View view;
 
@@ -100,8 +99,6 @@ public class EventsPresenter implements EventsContract.Presenter {
                 } else {
                     view.showNoEventsView();
                 }
-
-
             }
 
             @Override
