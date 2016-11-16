@@ -1,10 +1,12 @@
-package com.austindroids.austinfeedsme.events;
+package com.austindroids.austinfeedsme.common;
 
 import android.util.Log;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.events.EventsContract;
+import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +56,16 @@ public class EventsPresenter implements EventsContract.Presenter {
                 for (Event nextEvent : events) {
                     if (nextEvent.isFood() &&
                             (nextEvent.getTime() > new Date().getTime())) {
+
+                        if (nextEvent.getDescription().toLowerCase().contains("pizza")) {
+                            nextEvent.setFoodType("pizza");
+                        } else if (nextEvent.getDescription().toLowerCase().contains("beer")) {
+                            nextEvent.setFoodType("beer");
+                        } else if (nextEvent.getDescription().toLowerCase().contains("tacos")) {
+                            nextEvent.setFoodType("tacos");
+                        }else{
+                            nextEvent.setFoodType("noFood");
+                        }
 
                         switch (currentFiltering) {
                             case ALL_EVENTS:

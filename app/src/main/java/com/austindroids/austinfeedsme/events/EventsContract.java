@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by darrankelinske on 5/2/16.
  */
-interface EventsContract {
+public interface EventsContract {
 
     interface View {
 

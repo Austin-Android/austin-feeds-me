@@ -11,12 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.EventsPresenter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.events.EventsContract;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,10 +38,11 @@ import javax.inject.Inject;
  * Created by daz on 8/5/16.
  */
 public class EventsMapActivity extends AppCompatActivity implements
-        EventsMapContract.View,
+        EventsContract.View,
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowLongClickListener {
-    EventsMapContract.Presenter presenter;
+
+    EventsContract.Presenter presenter;
     GoogleMap map;
     CameraPosition cameraPosition;
     SupportMapFragment mapFragment;
@@ -58,7 +60,7 @@ public class EventsMapActivity extends AppCompatActivity implements
 
         ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
 
-        presenter = new EventsMapPresenter(repository, this);
+        presenter = new EventsPresenter(repository, this);
 
         Toolbar mapToolbar = (Toolbar) findViewById(R.id.map_toolbar);
         setSupportActionBar(mapToolbar);
@@ -89,7 +91,7 @@ public class EventsMapActivity extends AppCompatActivity implements
                 //reference marker's event's position in arraylist (marker.getTag)
                 //viewpager.setcurrentitem(position)
                 int markerPosition = (int) marker.getTag();
-                Toast.makeText(EventsMapActivity.this, marker.getTag().toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(EventsMapActivity.this, marker.getTag().toString(), Toast.LENGTH_SHORT).show();
                 viewPager.setCurrentItem(markerPosition);
                 return true;
             }
@@ -191,6 +193,31 @@ public class EventsMapActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void setPizzaCount(int count) {
+
+    }
+
+    @Override
+    public void setTacoCount(int count) {
+
+    }
+
+    @Override
+    public void setBeerCount(int count) {
+
+    }
+
+    @Override
+    public void setTotalCount(int count) {
+
+    }
+
+    @Override
+    public void showNoEventsView() {
+
+    }
+
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
         public MarkerInfoWindowAdapter()
@@ -211,4 +238,5 @@ public class EventsMapActivity extends AppCompatActivity implements
             return v;
         }
     }
+
 }
