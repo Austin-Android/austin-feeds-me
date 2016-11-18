@@ -50,7 +50,10 @@ public class EventsPresenterTest {
                 new Event("1", "Pizza Fest", "Pizza Everywhere", 33928672270000L,
                         "www.pizza.com", "pizza", true));
 
-        System.out.println("setUp: Events size is: " +EVENTS.size());
+        EVENTS.add(
+                new Event("2", "Beer", "Duff Everywhere", 33928672270777L,
+                        "www.duffman.com", "beer", true));
+
     }
 
     @Test
@@ -63,8 +66,9 @@ public class EventsPresenterTest {
         verify(eventsRepository).getEvents(loadEventsCallbackCaptor.capture());
         loadEventsCallbackCaptor.getValue().onEventsLoaded(EVENTS);
 
+        //Verify that view is given a list of one event from the presenter
         ArgumentCaptor<List> showEventsArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(eventsView).showEvents(showEventsArgumentCaptor.capture());
-        assertTrue(showEventsArgumentCaptor.getValue().size() == 1);
+        assertTrue(showEventsArgumentCaptor.getValue().size() == 2);
     }
 }
