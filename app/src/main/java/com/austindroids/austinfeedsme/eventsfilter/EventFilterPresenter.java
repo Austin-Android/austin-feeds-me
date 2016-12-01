@@ -1,8 +1,17 @@
 package com.austindroids.austinfeedsme.eventsfilter;
 
+import android.util.Log;
+
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +34,8 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
 
     @Override
     public void loadEvents() {
+
+        cleanPastEvents();
 
         eventbriteRepository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
@@ -52,27 +63,28 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
 
     }
 
-//    public void cleanPastEvents() {
-//        final List<Event> events = new ArrayList<Event>();
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("events");
-//        myRef.orderByChild("time");
-//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    Event event = snapshot.getValue(Event.class);
-//                    if(event.getTime() < (new Date().getTime() - 2678400000L)) {
-//                        Log.i(TAG, "this event could be cleaned from firebase" + snapshot.getRef());
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError firebaseError) {
-//
-//            }
-//        });
-//    }
+    public void cleanPastEvents() {
+        final List<Event> events = new ArrayList<Event>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("events");
+        myRef.orderByChild("time");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Event event = snapshot.getValue(Event.class);
+                    if(event.getTime() < (new Date().getTime() - 2678400000L)) {
+                        Log.i(TAG, "this event could be cleaned from firebase" + snapshot.getRef());
+                        snapshot.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError firebaseError) {
+
+            }
+        });
+    }
 
 }

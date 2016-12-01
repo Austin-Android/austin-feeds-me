@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class MeetupDataSource implements EventsDataSource {
         Observable<Results> meetupObservable =
                 meetupService.getOpenEvents();
 
+        Log.d(TAG, "Getting events from Meetup.");
         Subscription meetupSubscription = meetupObservable
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                 .observeOn(AndroidSchedulers.mainThread())
@@ -68,7 +70,7 @@ public class MeetupDataSource implements EventsDataSource {
                         Log.d(TAG, "Event count from Meetup API: " + results.getEvents().size());
 
                         final List<Event> meetupEvents = results.getEvents();
-
+                        myRef.orderByChild("time").startAt((new Date().getTime()));
                         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {

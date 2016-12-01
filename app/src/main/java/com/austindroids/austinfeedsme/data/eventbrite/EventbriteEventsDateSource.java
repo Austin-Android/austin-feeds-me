@@ -113,6 +113,7 @@ public class EventbriteEventsDateSource implements EventsDataSource {
         Log.d(TAG, "onResponse: Event's from eventbrite " + callbackTimestamp + ":"
                 +events.size());
 
+        myRef.orderByChild("time").startAt((new Date().getTime()));
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
