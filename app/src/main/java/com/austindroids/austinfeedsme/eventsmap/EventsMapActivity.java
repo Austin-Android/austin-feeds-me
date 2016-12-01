@@ -239,6 +239,16 @@ public class EventsMapActivity extends AppCompatActivity implements
         viewPager.setAdapter(null);
     }
 
+    @Override
+    public void showProgress() {
+
+    }
+
+    @Override
+    public void hideProgress() {
+
+    }
+
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
         public MarkerInfoWindowAdapter()

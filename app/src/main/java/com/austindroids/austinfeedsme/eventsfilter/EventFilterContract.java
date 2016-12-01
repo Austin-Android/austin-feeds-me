@@ -10,15 +10,11 @@ import java.util.List;
 public class EventFilterContract {
 
     interface View {
-
         void showEvents(List<Event> events);
-
     }
 
     interface Presenter {
-
         void loadEvents();
-
     }
 
 }

@@ -19,6 +19,8 @@ public interface EventsContract {
         void setTotalCount(int count);
         void showFilteringPopUpMenu();
         void showNoEventsView();
+        void showProgress();
+        void hideProgress();
     }
 
     interface Presenter {

@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -58,6 +59,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 public class EventsActivity extends AppCompatActivity
         implements EventsContract.View {
@@ -83,6 +87,9 @@ public class EventsActivity extends AppCompatActivity
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseAnalytics firebaseAnalytics;
 
+    @Bind(R.id.progress_overlay)
+    FrameLayout progressOverlay;
+
     @Inject
     EventsRepository repository;
 
@@ -90,6 +97,8 @@ public class EventsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
+
+        ButterKnife.bind(this);
 
         ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
 
@@ -666,5 +675,15 @@ public class EventsActivity extends AppCompatActivity
     public void showNoEventsView() {
         mRecyclerView.setVisibility(View.GONE);
         mNoEventsView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showProgress() {
+        progressOverlay.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressOverlay.setVisibility(View.GONE);
     }
 }

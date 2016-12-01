@@ -34,6 +34,7 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     @Override
     public void loadEvents() {
+        view.showProgress();
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
             public void onEventsLoaded(List<Event> events) {
@@ -99,12 +100,14 @@ public class EventsPresenter implements EventsContract.Presenter {
                 } else {
                     view.showNoEventsView();
                 }
+
+                view.hideProgress();
             }
 
             @Override
             public void onError(String error) {
                 Log.e("OOPS", "We have an errorrrrr");
-
+                view.hideProgress();
             }
         });
     }

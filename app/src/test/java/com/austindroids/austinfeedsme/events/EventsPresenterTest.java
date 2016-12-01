@@ -38,7 +38,7 @@ public class EventsPresenterTest {
      * perform further actions or assertions on them.
      */
     @Captor
-    private ArgumentCaptor<EventsDataSource.LoadEventsCallback> loadEventsCallbackCapto
+    private ArgumentCaptor<EventsDataSource.LoadEventsCallback> loadEventsCallbackCaptor;
 
     @Before
     public void setUp() throws Exception {
