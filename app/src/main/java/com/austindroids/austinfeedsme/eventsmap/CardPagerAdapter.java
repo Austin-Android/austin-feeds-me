@@ -94,4 +94,8 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         mViews.set(position, null);
     }
 
+    public Event getEventAtPosition(int position) {
+        return events.get(position);
+    }
+
 }

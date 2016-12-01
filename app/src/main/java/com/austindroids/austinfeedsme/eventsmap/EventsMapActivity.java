@@ -48,7 +48,7 @@ public class EventsMapActivity extends AppCompatActivity implements
     SupportMapFragment mapFragment;
     private ViewPager viewPager;
     private PagerAdapter CardPagerAdapter;
-
+    CardPagerAdapter adapter;
 
     @Inject
     EventsRepository repository;
@@ -75,6 +75,25 @@ public class EventsMapActivity extends AppCompatActivity implements
         mapFragment.getMapAsync(this);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(CardPagerAdapter);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                Event selectedEvent = adapter.getEventAtPosition(position);
+                LatLng selectedLocation = new LatLng(Double.parseDouble(selectedEvent.getVenue().getLat()),
+                        Double.parseDouble(selectedEvent.getVenue().getLon()));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 13));
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -155,7 +174,8 @@ public class EventsMapActivity extends AppCompatActivity implements
     @Override
     public void showEvents(List<Event> events) {
         map.clear();
-        CardPagerAdapter adapter = new CardPagerAdapter(events);
+
+        adapter = new CardPagerAdapter(events);
         viewPager.setAdapter(adapter);
 
         for (Event event : events) {
@@ -215,7 +235,8 @@ public class EventsMapActivity extends AppCompatActivity implements
 
     @Override
     public void showNoEventsView() {
-
+        map.clear();
+        viewPager.setAdapter(null);
     }
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
