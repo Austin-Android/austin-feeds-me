@@ -51,21 +51,6 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
         viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
         viewHolder.title.setText(event.getName());
 
-        // TODO: refactor 'foodType' in Event to be an enum, if possible with Firebase
-//        if (event.isFood()
-//                && (event.getTime() > new Date().getTime())) {
-//            String desc = event.getDescription();
-//            if (desc.toLowerCase().contains("pizza")) {
-//                viewHolder.pizzaIcon.setImageResource(R.drawable.pizza_emoji_smaller);
-//            }
-//            if (desc.toLowerCase().contains("beer")) {
-//                viewHolder.beerIcon.setImageResource(R.drawable.beer_emoji);
-//            }
-//            if (desc.toLowerCase().contains("tacos")) {
-//                viewHolder.tacoIcon.setImageResource(R.drawable.taco_emoji);
-//            }
-//        }
-
         Spanned result;
         Spanned rsvpLink;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
