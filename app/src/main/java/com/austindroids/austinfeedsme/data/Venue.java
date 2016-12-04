@@ -2,9 +2,12 @@ package com.austindroids.austinfeedsme.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 /**
  * Created by daz on 8/5/16.
  */
+@Parcel
 public class Venue {
 
     private String address_1;

@@ -54,6 +54,7 @@ public class EventsPresenterTest {
                 new Event("2", "Beer", "Duff Everywhere", 33928672270777L,
                         "www.duffman.com", "beer", true));
 
+
     }
 
     @Test

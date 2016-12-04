@@ -8,4 +8,6 @@ When the application is in a useable state it will be published to the Google Pl
 
 The application uses Firebase for local and remote storage, MVP architecture, and elements of Material Design.
 
+Contributors please branch off of the develop branch.
+
 Thank you to all of our contributors and users!
