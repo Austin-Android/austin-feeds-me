@@ -14,11 +14,13 @@ import android.view.View;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
+import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
+import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,7 +44,7 @@ public class EventsMapActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowLongClickListener {
 
-    EventsContract.Presenter presenter;
+
     GoogleMap map;
     CameraPosition cameraPosition;
     SupportMapFragment mapFragment;
@@ -53,14 +55,22 @@ public class EventsMapActivity extends AppCompatActivity implements
     @Inject
     EventsRepository repository;
 
+    @Inject
+    EventsPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_map);
 
-        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+//        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+//
+//        presenter = new EventsPresenter(repository, this);
 
-        presenter = new EventsPresenter(repository, this);
+        DaggerEventsComponent.builder()
+                .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
+                .eventsPresenterModule(new EventsPresenterModule(EventsMapActivity.this)).build()
+                .inject(this);
 
         Toolbar mapToolbar = (Toolbar) findViewById(R.id.map_toolbar);
         setSupportActionBar(mapToolbar);

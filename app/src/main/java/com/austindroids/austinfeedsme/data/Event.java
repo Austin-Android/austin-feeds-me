@@ -16,9 +16,6 @@
 
 package com.austindroids.austinfeedsme.data;
 
-import org.parceler.Parcel;
-
-@Parcel
 public final class Event {
 
     private String id;

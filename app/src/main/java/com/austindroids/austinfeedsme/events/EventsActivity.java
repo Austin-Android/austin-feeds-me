@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -33,10 +32,12 @@ import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
+import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
+import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,8 +46,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,6 @@ public class EventsActivity extends AppCompatActivity
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private EventsContract.Presenter eventsPresenter;
 
     private EventsAdapter eventListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
@@ -89,6 +87,9 @@ public class EventsActivity extends AppCompatActivity
     @Inject
     EventsRepository repository;
 
+    @Inject
+    EventsPresenter eventsPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +97,28 @@ public class EventsActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+//        ApplicationComponent applicationComponent =
+//                ((AustinFeedsMeApplication) this.getApplication()).component();
 
-        eventsPresenter = new EventsPresenter(repository, this);
+
+        // Create the presenter
+        DaggerEventsComponent.builder()
+                .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
+                .eventsPresenterModule(new EventsPresenterModule(EventsActivity.this)).build()
+                .inject(this);
+//
+////        AustinFeedsMeApplication.get(this)
+////                .getAppComponent()
+////                .plus(new SplashActivityModule(this))
+////                .inject(this);
+//
+////        Dagger_MainActivityComponent.builder()
+////                .appComponent( ((MyApplication)getApplication()).getComponent() )
+////                .mainActivityModule( new MainActivityModule( this ) )
+////                .build();
+
+
+//        eventsPresenter = new EventsPresenter(repository, this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -170,22 +190,22 @@ public class EventsActivity extends AppCompatActivity
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if(savedInstanceState!=null){
-            List<Event> currentEvents =
-                    Parcels.unwrap(savedInstanceState.getParcelable(EVENTS_LIST));
-
-
-            eventListAdapter = new EventsAdapter(EventsActivity.this, currentEvents,
-                    mEventItemListener);
-
-            mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-            mRecyclerView.setAdapter(eventListAdapter);
-            mRecyclerView.setHasFixedSize(true);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            showEvents(currentEvents);
-        } else {
+//        if(savedInstanceState!=null){
+//            List<Event> currentEvents =
+//                    Parcels.unwrap(savedInstanceState.getParcelable(EVENTS_LIST));
+//
+//
+//            eventListAdapter = new EventsAdapter(EventsActivity.this, currentEvents,
+//                    mEventItemListener);
+//
+//            mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
+//            mRecyclerView.setAdapter(eventListAdapter);
+//            mRecyclerView.setHasFixedSize(true);
+//            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//            showEvents(currentEvents);
+//        } else {
             setupLoadEvents();
-        }
+//        }
 
         // get menu from navigationView
         Menu menu = mNavigationView.getMenu();
@@ -611,8 +631,8 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Parcelable listParcelable = Parcels.wrap(eventListAdapter.getEvents());
-        savedInstanceState.putParcelable(EVENTS_LIST, listParcelable);
+//        Parcelable listParcelable = Parcels.wrap(eventListAdapter.getEvents());
+//        savedInstanceState.putParcelable(EVENTS_LIST, listParcelable);
         super.onSaveInstanceState(savedInstanceState);
     }
 }

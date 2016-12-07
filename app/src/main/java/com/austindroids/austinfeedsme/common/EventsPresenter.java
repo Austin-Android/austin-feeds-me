@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by darrankelinske on 5/2/16.
  */
@@ -26,6 +28,7 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     private EventsFilterType currentFiltering = EventsFilterType.ALL_EVENTS;
 
+    @Inject
     public EventsPresenter(EventsRepository repository, EventsContract.View view) {
         this.view = view;
         this.repository = repository;
