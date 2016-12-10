@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.austindroids.austinfeedsme.components.ApplicationComponent;
 import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
-import com.austindroids.austinfeedsme.modules.AustinFeedsMeApplicationModule;
+import com.austindroids.austinfeedsme.modules.ApplicationModule;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -23,7 +23,7 @@ public class AustinFeedsMeApplication extends Application {
         Fabric.with(this, new Crashlytics());
 
         applicationComponent = DaggerApplicationComponent.builder()
-                .austinFeedsMeApplicationModule(new AustinFeedsMeApplicationModule(this))
+                .applicationModule(new ApplicationModule(this))
                 .build();
     }
 

@@ -18,7 +18,6 @@ package com.austindroids.austinfeedsme.data;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
@@ -28,7 +27,6 @@ import javax.inject.Singleton;
 public class EventsRepository implements EventsDataSource {
     private final EventsDataSource mEventsRemoteDataSource;
 
-    @Inject
     public EventsRepository(EventsDataSource eventsDataSource) {
         this.mEventsRemoteDataSource = eventsDataSource;
     }

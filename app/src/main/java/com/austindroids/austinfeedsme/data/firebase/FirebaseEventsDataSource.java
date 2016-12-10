@@ -1,7 +1,9 @@
-package com.austindroids.austinfeedsme.data;
+package com.austindroids.austinfeedsme.data.firebase;
 
 import android.util.Log;
 
+import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

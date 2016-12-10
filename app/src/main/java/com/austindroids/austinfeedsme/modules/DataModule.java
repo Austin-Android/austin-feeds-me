@@ -1,10 +1,14 @@
 package com.austindroids.austinfeedsme.modules;
 
 import com.austindroids.austinfeedsme.data.EventsDataSource;
-import com.austindroids.austinfeedsme.data.FirebaseEventsDataSource;
+import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.data.eventbrite.EventbriteDataSource;
+import com.austindroids.austinfeedsme.data.firebase.FirebaseEventsDataSource;
+import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -20,7 +24,17 @@ public class DataModule {
     }
 
     @Provides @Singleton
-    EventsDataSource eventsDataSource(FirebaseEventsDataSource firebaseEventsDataSource) {
-        return firebaseEventsDataSource;
+    EventsRepository eventsRepository(FirebaseEventsDataSource firebaseEventsDataSource) {
+        return new EventsRepository(firebaseEventsDataSource);
+    }
+
+    @Provides @Named("meetup") @Singleton
+    EventsDataSource meetupDataSource() {
+        return new MeetupDataSource();
+    }
+
+    @Provides @Named("eventbrite") @Singleton
+    EventsDataSource eventbriteDataSource() {
+        return new EventbriteDataSource();
     }
 }

@@ -5,16 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.austindroids.austinfeedsme.data.eventbrite.EventbriteEventsDateSource;
-import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 
 /**
@@ -32,19 +35,22 @@ public class EventFilterActivity extends AppCompatActivity implements EventFilte
     final DatabaseReference myRef = database.getReference("events");
     final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<Event>());
 
+    @Inject @Named("eventbrite") EventsDataSource eventbriteDataSource;
+    @Inject @Named("meetup") EventsDataSource meetupDataSource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_filter);
-
-        myRef.keepSynced(true);
+        ((AustinFeedsMeApplication) getApplication()).component().inject(this);
 
         eventsRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventsRecyclerView.setAdapter(eventFilterAdapter);
 
-        EventsRepository eventbriteRepository = new EventsRepository(new EventbriteEventsDateSource());
-        EventsRepository meetupRepository = new EventsRepository(new MeetupDataSource());
+        EventsRepository eventbriteRepository = new EventsRepository(eventbriteDataSource);
+        EventsRepository meetupRepository = new EventsRepository(meetupDataSource);
+
         eventFilterPresenter =
                 new EventFilterPresenter(eventbriteRepository, meetupRepository, this);
 

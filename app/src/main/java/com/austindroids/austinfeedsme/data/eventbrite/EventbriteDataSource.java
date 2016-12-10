@@ -29,7 +29,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by darrankelinske on 8/26/16.
  */
-public class EventbriteEventsDateSource implements EventsDataSource {
+public class EventbriteDataSource implements EventsDataSource {
     private static final String TAG ="EventbriteEventsData";
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();

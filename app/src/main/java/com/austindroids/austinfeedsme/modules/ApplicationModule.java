@@ -8,10 +8,10 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class AustinFeedsMeApplicationModule {
+public class ApplicationModule {
     private final Application application;
 
-    public AustinFeedsMeApplicationModule(Application application) {
+    public ApplicationModule(Application application) {
         this.application = application;
     }
 
