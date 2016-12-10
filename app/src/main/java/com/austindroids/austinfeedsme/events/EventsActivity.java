@@ -51,9 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -67,22 +66,22 @@ public class EventsActivity extends AppCompatActivity
 
     // Navigation Menu member variables
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    RecyclerView mRecyclerView;
-    private View mNoEventsView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.navigation_view) NavigationView mNavigationView;
+    @BindView(R.id.event_list_recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.noEventsView) View mNoEventsView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SearchView searchViewForMenu;
 
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
     private EventsAdapter eventListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseAnalytics firebaseAnalytics;
 
-    @Bind(R.id.progress_overlay)
+    @BindView(R.id.progress_overlay)
     FrameLayout progressOverlay;
 
     @Inject
@@ -96,45 +95,18 @@ public class EventsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
 
+        // Bind views
         ButterKnife.bind(this);
 
-//        ApplicationComponent applicationComponent =
-//                ((AustinFeedsMeApplication) this.getApplication()).component();
-
-
-        // Create the presenter
+        // Satisfy Dependencies
         DaggerEventsComponent.builder()
                 .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
                 .eventsPresenterModule(new EventsPresenterModule(EventsActivity.this)).build()
                 .inject(this);
-//
-////        AustinFeedsMeApplication.get(this)
-////                .getAppComponent()
-////                .plus(new SplashActivityModule(this))
-////                .inject(this);
-//
-////        Dagger_MainActivityComponent.builder()
-////                .appComponent( ((MyApplication)getApplication()).getComponent() )
-////                .mainActivityModule( new MainActivityModule( this ) )
-////                .build();
 
+        setupActionBar();
 
-//        eventsPresenter = new EventsPresenter(repository, this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        mTitle = mDrawerTitle = getTitle();
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationView = (NavigationView)  findViewById(R.id.navigation_view);
-        mNoEventsView = findViewById(R.id.noEventsView);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        mTitle = getTitle();
 
         // swipe refresh logic
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -145,86 +117,11 @@ public class EventsActivity extends AppCompatActivity
             }
         });
 
-        setupDrawerContent(mNavigationView);
+        setupNavigationDrawer(mNavigationView);
 
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        setupEventsList();
 
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */)
-        {
-            public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-
-            }
-        };
-
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                // To display hamburger icon in toolbar
-                mDrawerToggle.syncState();
-            }
-        });
-
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-
-        eventListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
-                mEventItemListener);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-        mRecyclerView.setAdapter(eventListAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-//        if(savedInstanceState!=null){
-//            List<Event> currentEvents =
-//                    Parcels.unwrap(savedInstanceState.getParcelable(EVENTS_LIST));
-//
-//
-//            eventListAdapter = new EventsAdapter(EventsActivity.this, currentEvents,
-//                    mEventItemListener);
-//
-//            mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-//            mRecyclerView.setAdapter(eventListAdapter);
-//            mRecyclerView.setHasFixedSize(true);
-//            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//            showEvents(currentEvents);
-//        } else {
-            setupLoadEvents();
-//        }
-
-        // get menu from navigationView
-        Menu menu = mNavigationView.getMenu();
-
-        // find MenuItem you want to change
-        final MenuItem navigationEventsFilter = menu.findItem(R.id.events_filter);
-
-        //Check if user logged in, change sign in/out button to correct text
-
-        navigationEventsFilter.setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
-
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                navigationEventsFilter.setVisible(
-                        FirebaseAuth.getInstance().getCurrentUser() != null);
-            }
-        };
+        setupMenu();
 
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -232,25 +129,10 @@ public class EventsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
-    }
-
-    @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-
 
     /**
      * Listener for clicks on events in the RecyclerView.
@@ -261,6 +143,38 @@ public class EventsActivity extends AppCompatActivity
             eventsPresenter.openEventDetails(clickedEvent);
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
+//            mAddEventFab.setVisibility(View.VISIBLE);
+//        } else {
+//            mAddEventFab.setVisibility(View.GONE);
+//        }
+
+        eventsPresenter.loadEvents();
+
+        eventsPresenter.loadYummyCounts();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -375,21 +289,6 @@ public class EventsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
-//            mAddEventFab.setVisibility(View.VISIBLE);
-//        } else {
-//            mAddEventFab.setVisibility(View.GONE);
-//        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
@@ -401,7 +300,7 @@ public class EventsActivity extends AppCompatActivity
         }
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
+    private void setupNavigationDrawer(NavigationView navigationView) {
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -412,6 +311,42 @@ public class EventsActivity extends AppCompatActivity
                         return true;
                     }
                 });
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */)
+        {
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                // To display hamburger icon in toolbar
+                mDrawerToggle.syncState();
+            }
+        });
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
     }
 
     @Override
@@ -507,6 +442,36 @@ public class EventsActivity extends AppCompatActivity
                 break;
 
         }
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void setupMenu() {
+        // get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
+
+        // find MenuItem you want to change
+        final MenuItem navigationEventsFilter = menu.findItem(R.id.events_filter);
+
+        //Check if user logged in, change sign in/out button to correct text
+
+        navigationEventsFilter.setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
+
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                navigationEventsFilter.setVisible(
+                        FirebaseAuth.getInstance().getCurrentUser() != null);
+            }
+        };
     }
 
     @Override
@@ -609,25 +574,19 @@ public class EventsActivity extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setupLoadEvents();
+                setupEventsList();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 2000);
     }
 
-    private void setupLoadEvents(){
+    private void setupEventsList(){
         eventListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
                 mEventItemListener);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
         mRecyclerView.setAdapter(eventListAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        eventsPresenter.loadEvents();
-
-        //Todo: Iterate through list once creating a Hashmap of counts
-        eventsPresenter.loadYummyCounts();
     }
 
     @Override

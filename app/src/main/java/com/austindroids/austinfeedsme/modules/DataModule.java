@@ -8,6 +8,8 @@ import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.mockito.Mockito;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -35,6 +37,6 @@ public class DataModule {
 
     @Provides @Named("eventbrite") @Singleton
     EventsDataSource eventbriteDataSource() {
-        return new EventbriteDataSource();
+        return Mockito.mock(EventbriteDataSource.class);
     }
 }

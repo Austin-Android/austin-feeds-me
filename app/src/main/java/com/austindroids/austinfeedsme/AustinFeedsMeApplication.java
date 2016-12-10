@@ -1,6 +1,6 @@
 package com.austindroids.austinfeedsme;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.austindroids.austinfeedsme.components.ApplicationComponent;
 import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
@@ -13,7 +13,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by darrankelinske on 4/7/16.
  */
-public class AustinFeedsMeApplication extends Application {
+public class AustinFeedsMeApplication extends MultiDexApplication {
     private ApplicationComponent applicationComponent;
 
     @Override
