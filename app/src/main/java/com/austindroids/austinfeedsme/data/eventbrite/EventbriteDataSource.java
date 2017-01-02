@@ -22,7 +22,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -91,7 +90,7 @@ public class EventbriteDataSource implements EventsDataSource {
             }
         };
 
-        Subscription eventbriteSubscription = Observable.merge(observableList)
+        Observable.merge(observableList)
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(eventbriteEventsSubscriber);
