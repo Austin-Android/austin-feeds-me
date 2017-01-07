@@ -77,6 +77,8 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
+    <include layout="@layout/include_progress_overlay"/>
+
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
@@ -84,4 +86,5 @@
         android:layout_gravity="start"
         app:menu="@menu/navigation_items_events"
         app:headerLayout="@layout/nav_header"/>
+
 </android.support.v4.widget.DrawerLayout>

@@ -23,7 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -34,19 +34,19 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
     DatabaseReference firebase;
     @Inject EventsRepository repository;
 
-    @Bind(R.id.title_add_edit_event_edittext)
+    @BindView(R.id.title_add_edit_event_edittext)
     EditText title;
-    @Bind(R.id.description_add_edit_event_edittext)
+    @BindView(R.id.description_add_edit_event_edittext)
     EditText description;
-    @Bind(R.id.host_add_edit_event_edittext)
+    @BindView(R.id.host_add_edit_event_edittext)
     EditText host;
-    @Bind(R.id.date_add_edit_event_edittext)
+    @BindView(R.id.date_add_edit_event_edittext)
     EditText date;
-    @Bind(R.id.rsvp_link_add_edit_event_edittext)
+    @BindView(R.id.rsvp_link_add_edit_event_edittext)
     EditText rsvpLink;
-    @Bind(R.id.food_type_add_edit_event_edittext)
+    @BindView(R.id.food_type_add_edit_event_edittext)
     EditText foodType;
-    @Bind(R.id.add_edit_event_linear_layout)
+    @BindView(R.id.add_edit_event_linear_layout)
     LinearLayout linearLayout;
 
     @Override

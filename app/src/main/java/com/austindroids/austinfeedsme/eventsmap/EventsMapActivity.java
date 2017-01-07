@@ -11,13 +11,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.EventsContract;
+import com.austindroids.austinfeedsme.common.EventsPresenter;
+import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
+import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.austindroids.austinfeedsme.utility.DateUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,33 +35,43 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by daz on 8/5/16.
  */
 public class EventsMapActivity extends AppCompatActivity implements
-        EventsMapContract.View,
+        EventsContract.View,
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowLongClickListener {
-    EventsMapContract.Presenter presenter;
+
+
     GoogleMap map;
     CameraPosition cameraPosition;
     SupportMapFragment mapFragment;
     private ViewPager viewPager;
     private PagerAdapter CardPagerAdapter;
-
+    CardPagerAdapter adapter;
 
     @Inject
     EventsRepository repository;
+
+    @Inject
+    EventsPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_map);
 
-        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+//        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+//
+//        presenter = new EventsPresenter(repository, this);
 
-        presenter = new EventsMapPresenter(repository, this);
+        DaggerEventsComponent.builder()
+                .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
+                .eventsPresenterModule(new EventsPresenterModule(EventsMapActivity.this)).build()
+                .inject(this);
 
         Toolbar mapToolbar = (Toolbar) findViewById(R.id.map_toolbar);
         setSupportActionBar(mapToolbar);
@@ -73,6 +86,25 @@ public class EventsMapActivity extends AppCompatActivity implements
         mapFragment.getMapAsync(this);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(CardPagerAdapter);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                Event selectedEvent = adapter.getEventAtPosition(position);
+                LatLng selectedLocation = new LatLng(Double.parseDouble(selectedEvent.getVenue().getLat()),
+                        Double.parseDouble(selectedEvent.getVenue().getLon()));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 13));
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -89,7 +121,7 @@ public class EventsMapActivity extends AppCompatActivity implements
                 //reference marker's event's position in arraylist (marker.getTag)
                 //viewpager.setcurrentitem(position)
                 int markerPosition = (int) marker.getTag();
-                Toast.makeText(EventsMapActivity.this, marker.getTag().toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(EventsMapActivity.this, marker.getTag().toString(), Toast.LENGTH_SHORT).show();
                 viewPager.setCurrentItem(markerPosition);
                 return true;
             }
@@ -153,7 +185,8 @@ public class EventsMapActivity extends AppCompatActivity implements
     @Override
     public void showEvents(List<Event> events) {
         map.clear();
-        CardPagerAdapter adapter = new CardPagerAdapter(events);
+
+        adapter = new CardPagerAdapter(events);
         viewPager.setAdapter(adapter);
 
         for (Event event : events) {
@@ -191,6 +224,42 @@ public class EventsMapActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void setPizzaCount(int count) {
+
+    }
+
+    @Override
+    public void setTacoCount(int count) {
+
+    }
+
+    @Override
+    public void setBeerCount(int count) {
+
+    }
+
+    @Override
+    public void setTotalCount(int count) {
+
+    }
+
+    @Override
+    public void showNoEventsView() {
+        map.clear();
+        viewPager.setAdapter(null);
+    }
+
+    @Override
+    public void showProgress() {
+
+    }
+
+    @Override
+    public void hideProgress() {
+
+    }
+
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
         public MarkerInfoWindowAdapter()
@@ -211,4 +280,5 @@ public class EventsMapActivity extends AppCompatActivity implements
             return v;
         }
     }
+
 }

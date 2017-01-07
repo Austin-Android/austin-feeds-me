@@ -1,10 +1,10 @@
 package com.austindroids.austinfeedsme;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.austindroids.austinfeedsme.components.ApplicationComponent;
 import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
-import com.austindroids.austinfeedsme.modules.AustinFeedsMeApplicationModule;
+import com.austindroids.austinfeedsme.modules.ApplicationModule;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -13,7 +13,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by darrankelinske on 4/7/16.
  */
-public class AustinFeedsMeApplication extends Application {
+public class AustinFeedsMeApplication extends MultiDexApplication {
     private ApplicationComponent applicationComponent;
 
     @Override
@@ -23,7 +23,7 @@ public class AustinFeedsMeApplication extends Application {
         Fabric.with(this, new Crashlytics());
 
         applicationComponent = DaggerApplicationComponent.builder()
-                .austinFeedsMeApplicationModule(new AustinFeedsMeApplicationModule(this))
+                .applicationModule(new ApplicationModule(this))
                 .build();
     }
 

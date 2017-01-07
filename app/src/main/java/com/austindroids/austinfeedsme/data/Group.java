@@ -1,11 +1,8 @@
 package com.austindroids.austinfeedsme.data;
 
-import org.parceler.Parcel;
-
 /**
  * Created by darrankelinske on 8/4/16.
  */
-@Parcel
 public class Group {
     private String name;
 

@@ -4,11 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -23,27 +20,24 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.EventsContract;
+import com.austindroids.austinfeedsme.common.EventsPresenter;
+import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
-import com.austindroids.austinfeedsme.utility.DateUtils;
+import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -53,13 +47,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class EventsActivity extends AppCompatActivity
@@ -72,48 +66,47 @@ public class EventsActivity extends AppCompatActivity
 
     // Navigation Menu member variables
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    RecyclerView mRecyclerView;
-    private View mNoEventsView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.navigation_view) NavigationView mNavigationView;
+    @BindView(R.id.event_list_recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.noEventsView) View mNoEventsView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SearchView searchViewForMenu;
 
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private EventsContract.Presenter eventsPresenter;
 
-    private EventsAdapter mListAdapter;
+    private EventsAdapter eventListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
     FirebaseAnalytics firebaseAnalytics;
 
+    @BindView(R.id.progress_overlay)
+    FrameLayout progressOverlay;
+
     @Inject
     EventsRepository repository;
+
+    @Inject
+    EventsPresenter eventsPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
 
-        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
+        // Bind views
+        ButterKnife.bind(this);
 
-        eventsPresenter = new EventsPresenter(repository, this);
+        // Satisfy Dependencies
+        DaggerEventsComponent.builder()
+                .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
+                .eventsPresenterModule(new EventsPresenterModule(EventsActivity.this)).build()
+                .inject(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setupActionBar();
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        mTitle = mDrawerTitle = getTitle();
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationView = (NavigationView)  findViewById(R.id.navigation_view);
-        mNoEventsView = findViewById(R.id.noEventsView);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        mTitle = getTitle();
 
         // swipe refresh logic
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -124,78 +117,11 @@ public class EventsActivity extends AppCompatActivity
             }
         });
 
-        setupDrawerContent(mNavigationView);
+        setupNavigationDrawer(mNavigationView);
 
-        // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        setupEventsList();
 
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */)
-        {
-            public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-
-            }
-        };
-
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                // To display hamburger icon in toolbar
-                mDrawerToggle.syncState();
-            }
-        });
-
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-
-
-        if(savedInstanceState!=null){
-            List<Event> currentEvents =
-                    Parcels.unwrap(savedInstanceState.getParcelable(EVENTS_LIST));
-
-            mListAdapter = new EventsAdapter(EventsActivity.this, currentEvents,
-                    mEventItemListener);
-
-            mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-            mRecyclerView.setAdapter(mListAdapter);
-            mRecyclerView.setHasFixedSize(true);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            showEvents(currentEvents);
-        } else {
-            setupLoadEvents();
-        }
-
-        // get menu from navigationView
-        Menu menu = mNavigationView.getMenu();
-
-        // find MenuItem you want to change
-        final MenuItem navigationEventsFilter = menu.findItem(R.id.events_filter);
-
-        //Check if user logged in, change sign in/out button to correct text
-
-        navigationEventsFilter.setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
-
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                navigationEventsFilter.setVisible(
-                        FirebaseAuth.getInstance().getCurrentUser() != null);
-            }
-        };
+        setupMenu();
 
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -203,25 +129,10 @@ public class EventsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
-    }
-
-    @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-
 
     /**
      * Listener for clicks on events in the RecyclerView.
@@ -232,6 +143,38 @@ public class EventsActivity extends AppCompatActivity
             eventsPresenter.openEventDetails(clickedEvent);
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
+//            mAddEventFab.setVisibility(View.VISIBLE);
+//        } else {
+//            mAddEventFab.setVisibility(View.GONE);
+//        }
+
+        eventsPresenter.loadEvents();
+
+        eventsPresenter.loadYummyCounts();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -346,21 +289,6 @@ public class EventsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
-//            mAddEventFab.setVisibility(View.VISIBLE);
-//        } else {
-//            mAddEventFab.setVisibility(View.GONE);
-//        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
@@ -372,7 +300,7 @@ public class EventsActivity extends AppCompatActivity
         }
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
+    private void setupNavigationDrawer(NavigationView navigationView) {
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -383,6 +311,42 @@ public class EventsActivity extends AppCompatActivity
                         return true;
                     }
                 });
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */)
+        {
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                // To display hamburger icon in toolbar
+                mDrawerToggle.syncState();
+            }
+        });
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
     }
 
     @Override
@@ -480,134 +444,41 @@ public class EventsActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void showEvents(List<Event> events) {
-        mListAdapter.replaceData(events);
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mNoEventsView.setVisibility(View.GONE);
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    private static class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
+    private void setupMenu() {
+        // get menu from navigationView
+        Menu menu = mNavigationView.getMenu();
 
-        private Context context;
-        private List<Event> mEvents;
-        private EventItemListener mItemListener;
+        // find MenuItem you want to change
+        final MenuItem navigationEventsFilter = menu.findItem(R.id.events_filter);
 
-        public EventsAdapter(Context context, List<Event> Events, EventItemListener itemListener) {
-            this.context = context;
-            setList(Events);
-            mItemListener = itemListener;
-        }
+        //Check if user logged in, change sign in/out button to correct text
 
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Context context = parent.getContext();
-            LayoutInflater inflater = LayoutInflater.from(context);
-            View EventView = inflater.inflate(R.layout.item_event, parent, false);
+        navigationEventsFilter.setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
 
-            return new ViewHolder(EventView, mItemListener);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            final Event event = mEvents.get(position);
-
-            viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
-            viewHolder.title.setText(event.getName());
-
-            // TODO: refactor 'foodType' in Event to be an enum, if possible with Firebase
-            if (event.isFood()
-                    && (event.getTime() > new Date().getTime())) {
-                String desc = event.getDescription();
-                if (desc.toLowerCase().contains("pizza")) {
-                    viewHolder.pizzaIcon.setImageResource(R.drawable.pizza_emoji_smaller);
-                }
-                if (desc.toLowerCase().contains("beer")) {
-                    viewHolder.beerIcon.setImageResource(R.drawable.beer_emoji);
-                }
-                if (desc.toLowerCase().contains("tacos")) {
-                    viewHolder.tacoIcon.setImageResource(R.drawable.taco_emoji);
-                }
-            }
-
-
-            Spanned result;
-            Spanned rsvpLink;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                result = Html.fromHtml(event.getDescription(),Html.FROM_HTML_MODE_LEGACY);
-                rsvpLink = Html.fromHtml(
-                        "<html><a href=\""+event.getEvent_url()+"\">RSVP Here!</a></html>",
-                        Html.FROM_HTML_MODE_LEGACY);
-            } else {
-                result = Html.fromHtml(event.getDescription());
-                rsvpLink = Html.fromHtml(
-                        "<html><a href=\""+event.getEvent_url()+"\">RSVP Here!</a></html>");
-            }
-            viewHolder.description.setText(result);
-
-
-            viewHolder.eventUrl.setMovementMethod(LinkMovementMethod.getInstance());
-//            viewHolder.eventUrl.setText(rsvpLink);
-            viewHolder.eventUrl.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                    webIntent.setData(Uri.parse(event.getEvent_url()));
-                    context.startActivity(webIntent);
-                }
-            });
-        }
-
-        public void replaceData(List<Event> Events) {
-            setList(Events);
-            notifyDataSetChanged();
-        }
-
-        private void setList(List<Event> Events) {
-            mEvents = Events;
-        }
-
-        @Override
-        public int getItemCount() {
-            return mEvents.size();
-        }
-
-        public Event getItem(int position) {
-            return mEvents.get(position);
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-            public TextView eventDate;
-            public TextView title;
-            public TextView description;
-            public Button eventUrl;
-            private ImageView pizzaIcon;
-            private ImageView beerIcon;
-            private ImageView tacoIcon;
-            private EventItemListener mItemListener;
-
-            public ViewHolder(View itemView, EventItemListener listener) {
-                super(itemView);
-                mItemListener = listener;
-                eventDate = (TextView) itemView.findViewById(R.id.event_detail_time);
-                title = (TextView) itemView.findViewById(R.id.event_detail_title);
-                description = (TextView) itemView.findViewById(R.id.event_detail_description);
-                pizzaIcon = (ImageView) itemView.findViewById(R.id.event_pizza_icon);
-                beerIcon = (ImageView) itemView.findViewById(R.id.event_beer_icon);
-                tacoIcon = (ImageView) itemView.findViewById(R.id.event_taco_icon);
-                eventUrl = (Button) itemView.findViewById(R.id.event_link);
-                itemView.setOnClickListener(this);
-            }
-
+        authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onClick(View v) {
-                int position = getAdapterPosition();
-                Event Event = getItem(position);
-                mItemListener.onEventClick(Event);
-
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                navigationEventsFilter.setVisible(
+                        FirebaseAuth.getInstance().getCurrentUser() != null);
             }
-        }
+        };
+    }
+
+    @Override
+    public void showEvents(List<Event> events) {
+        eventListAdapter.replaceData(events);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mNoEventsView.setVisibility(View.GONE);
     }
 
     public interface EventItemListener {
@@ -688,35 +559,40 @@ public class EventsActivity extends AppCompatActivity
         mNoEventsView.setVisibility(View.VISIBLE);
     }
 
+
+    @Override
+    public void showProgress() {
+        progressOverlay.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressOverlay.setVisibility(View.GONE);
+    }
+
     private void refreshEvents() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setupLoadEvents();
+                setupEventsList();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 2000);
     }
 
-    private void setupLoadEvents(){
-        mListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
+    private void setupEventsList(){
+        eventListAdapter = new EventsAdapter(EventsActivity.this, new ArrayList<Event>(0),
                 mEventItemListener);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.event_list_recycler_view);
-        mRecyclerView.setAdapter(mListAdapter);
+        mRecyclerView.setAdapter(eventListAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        eventsPresenter.loadEvents();
-
-        //Todo: Iterate through list once creating a Hashmap of counts
-        eventsPresenter.loadYummyCounts();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Parcelable listParcelable = Parcels.wrap(mListAdapter.mEvents);
-        savedInstanceState.putParcelable(EVENTS_LIST, listParcelable);
+//        Parcelable listParcelable = Parcels.wrap(eventListAdapter.getEvents());
+//        savedInstanceState.putParcelable(EVENTS_LIST, listParcelable);
         super.onSaveInstanceState(savedInstanceState);
     }
 }
