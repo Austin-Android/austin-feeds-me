@@ -22,7 +22,7 @@ props.load(new FileInputStream(file(project.property("austinfeedsme.properties")
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.austindroids.austinfeedsme"
@@ -82,11 +82,11 @@ android {
 dependencies {
 
     // Support Libs
-    compile 'com.android.support:support-v4:25.0.1'
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.android.support:recyclerview-v7:25.0.1'
-    compile 'com.android.support:cardview-v7:25.0.1'
-    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'com.android.support:cardview-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
 
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
@@ -112,6 +112,8 @@ dependencies {
 
     // Needed for Authentication with these services
     compile 'com.google.android.gms:play-services-auth:10.0.1'
+    // Needed for MapView
+    compile 'com.google.android.gms:play-services-maps:10.0.1'
 
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.0.0'
@@ -122,14 +124,12 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
 
-    compile 'com.google.android.gms:play-services-maps:10.0.1'
-
     // Unit testing dependencies
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-all:1.10.19"
     testCompile "org.hamcrest:hamcrest-all:1.3"
-    testCompile("org.powermock:powermock-module-junit4:1.6.2")
-    testCompile("org.powermock:powermock-api-mockito:1.6.2")
+    testCompile "org.powermock:powermock-module-junit4:1.6.2"
+    testCompile "org.powermock:powermock-api-mockito:1.6.2"
     testCompile 'com.squareup.okhttp3:mockwebserver:3.2.0'
 
     // Espresso Dependencies
