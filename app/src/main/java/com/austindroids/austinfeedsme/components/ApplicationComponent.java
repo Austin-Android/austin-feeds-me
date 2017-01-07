@@ -8,6 +8,7 @@ import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.modules.ApplicationModule;
 import com.austindroids.austinfeedsme.modules.DataModule;
 
+
 import javax.inject.Singleton;
 
 import dagger.Component;
