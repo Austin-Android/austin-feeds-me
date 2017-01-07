@@ -18,7 +18,8 @@ import dagger.Provides;
 
 @Module
 public class DataModule {
-    private static final String FIREBASE_URL = "https://austin-feeds-me.firebaseio.com/events";
+    private static final String FIREBASE_URL =
+            "https://austin-feeds-me-ec3e5.firebaseio.com//events";
 
     @Provides @Singleton
     DatabaseReference firebase() {

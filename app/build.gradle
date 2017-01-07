@@ -51,8 +51,7 @@ android {
     // If you need to add more flavors, consider using flavor dimensions.
     productFlavors {
         mock {
-            // Need to distribute new version of google-service.json before changing
-//            applicationIdSuffix = ".mock"
+            applicationIdSuffix = ".mock"
         }
         prod {
 
