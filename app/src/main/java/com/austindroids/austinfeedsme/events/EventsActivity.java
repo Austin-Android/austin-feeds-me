@@ -127,6 +127,8 @@ public class EventsActivity extends BaseActivity
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        eventsPresenter.loadEvents();
+        eventsPresenter.loadYummyCounts();
     }
 
     @Override
@@ -154,9 +156,6 @@ public class EventsActivity extends BaseActivity
 //            mAddEventFab.setVisibility(View.GONE);
 //        }
 
-        eventsPresenter.loadEvents();
-
-        eventsPresenter.loadYummyCounts();
     }
 
     @Override
@@ -291,6 +290,7 @@ public class EventsActivity extends BaseActivity
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         handleIntent(intent);
     }
 

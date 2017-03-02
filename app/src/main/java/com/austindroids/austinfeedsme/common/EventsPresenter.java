@@ -18,9 +18,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-/**
- * Created by darrankelinske on 5/2/16.
- */
 public class EventsPresenter implements EventsContract.Presenter {
 
     private EventsRepository repository;
