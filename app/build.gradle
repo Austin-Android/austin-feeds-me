@@ -103,17 +103,17 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
 
     // Firebase dependencies
-    compile 'com.google.firebase:firebase-database:10.0.1'
-    compile 'com.google.firebase:firebase-auth:10.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-database:10.2.0'
+    compile 'com.google.firebase:firebase-auth:10.2.0'
+    compile 'com.google.firebase:firebase-core:10.2.0'
 
-    compile 'com.firebaseui:firebase-ui-auth:1.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
+    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
 
     // Needed for Authentication with these services
-    compile 'com.google.android.gms:play-services-auth:10.0.1'
+    compile 'com.google.android.gms:play-services-auth:10.2.0'
     // Needed for MapView
-    compile 'com.google.android.gms:play-services-maps:10.0.1'
+    compile 'com.google.android.gms:play-services-maps:10.2.0'
 
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.0.0'

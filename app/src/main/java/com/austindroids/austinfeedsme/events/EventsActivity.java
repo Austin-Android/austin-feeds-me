@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -14,7 +15,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +30,7 @@ import android.widget.ImageView;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.BaseActivity;
 import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
 import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
@@ -56,7 +57,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class EventsActivity extends AppCompatActivity
+public class EventsActivity extends BaseActivity
         implements EventsContract.View {
 
     private final static String TAG = "EventsActivity";
@@ -378,9 +379,6 @@ public class EventsActivity extends AppCompatActivity
 
     public void selectDrawerItem(MenuItem menuItem) {
 
-//        Intent searchIntent = new Intent();
-//        searchIntent.setAction(Intent.ACTION_SEARCH);
-
         switch (menuItem.getItemId()) {
             case R.id.events_list:
                 new Handler().postDelayed(new Runnable() {
@@ -436,6 +434,10 @@ public class EventsActivity extends AppCompatActivity
                         searchViewForMenu.setQuery("beer", true);
                     }
                 }, 300);
+                break;
+            case R.id.privacy_policy:
+                Intent privacyIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://whereisdarran.com/privacy_policy.html"));
+                startActivity(privacyIntent);
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));

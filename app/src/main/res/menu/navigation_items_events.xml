@@ -24,6 +24,10 @@
             android:title="Beer" />
     </menu>
     </item>
-
+    <item android:title="boring stuff" >
+    <item
+            android:id="@+id/privacy_policy"
+            android:title="Privacy Policy" />
+    </item>
 
 </menu>

@@ -1,12 +1,12 @@
 package com.austindroids.austinfeedsme.eventsfilter;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.BaseActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
@@ -19,11 +19,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static com.austindroids.austinfeedsme.utility.NetworkUtils.isNetworkAvailable;
+
 
 /**
  * Created by darrankelinske on 8/4/16.
  */
-public class EventFilterActivity extends AppCompatActivity implements EventFilterContract.View {
+public class EventFilterActivity extends BaseActivity implements EventFilterContract.View {
 
     private static final String TAG ="EventFilterActivity";
 
@@ -59,6 +61,9 @@ public class EventFilterActivity extends AppCompatActivity implements EventFilte
     @Override
     protected void onResume() {
         super.onResume();
+        if (!isNetworkAvailable(this)) {
+            showSnackbar(getString(R.string.network_unavailable));
+        }
         eventFilterAdapter.replaceData(new ArrayList<Event>());
         eventFilterPresenter.loadEvents();
     }
