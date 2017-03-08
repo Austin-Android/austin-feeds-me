@@ -11,7 +11,6 @@ import java.util.List;
 public interface EventsContract {
 
     interface View {
-
         void showEvents(List<Event> events);
         void setPizzaCount(int count);
         void setTacoCount(int count);
@@ -24,7 +23,6 @@ public interface EventsContract {
     }
 
     interface Presenter {
-
         void loadEvents();
         void loadYummyCounts();
         void searchEvents(String searchTerm);

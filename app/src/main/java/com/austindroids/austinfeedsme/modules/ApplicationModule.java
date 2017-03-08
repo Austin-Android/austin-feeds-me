@@ -18,4 +18,5 @@ public class ApplicationModule {
     @Provides @Singleton Application application() {
         return application;
     }
+
 }

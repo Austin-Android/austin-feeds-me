@@ -60,9 +60,7 @@ import butterknife.ButterKnife;
 public class EventsActivity extends BaseActivity
         implements EventsContract.View {
 
-    private final static String TAG = "EventsActivity";
-    public static final String EVENTS_LIST = "eventsList";
-
+    private final static String TAG = EventsActivity.class.getSimpleName();
     public static final int RC_SIGN_IN = 7;
 
     // Navigation Menu member variables

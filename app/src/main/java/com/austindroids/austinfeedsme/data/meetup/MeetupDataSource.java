@@ -1,5 +1,6 @@
 package com.austindroids.austinfeedsme.data.meetup;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.austindroids.austinfeedsme.data.Event;
@@ -10,11 +11,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,9 +33,14 @@ import rx.schedulers.Schedulers;
 
 public class MeetupDataSource implements EventsDataSource {
     private static final String TAG = "MeetupDataSource";
+    private Context context;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference myRef = database.getReference("events");
+
+    public MeetupDataSource(Context context) {
+        this.context = context;
+    }
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
@@ -42,6 +50,9 @@ public class MeetupDataSource implements EventsDataSource {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
+                .client(new OkHttpClient.Builder()
+                        .addInterceptor(new ChuckInterceptor(context))
+                        .build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)
                 .build();

@@ -5,6 +5,7 @@ import android.support.multidex.MultiDexApplication;
 import com.austindroids.austinfeedsme.components.ApplicationComponent;
 import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
 import com.austindroids.austinfeedsme.modules.ApplicationModule;
+import com.austindroids.austinfeedsme.modules.DataModule;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,6 +25,7 @@ public class AustinFeedsMeApplication extends MultiDexApplication {
 
         applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
+                .dataModule(new DataModule(this))
                 .build();
     }
 
