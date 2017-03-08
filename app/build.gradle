@@ -128,6 +128,9 @@ dependencies {
     debugCompile 'com.readystatesoftware.chuck:library:1.0.0'
     releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.0'
 
+    compile 'com.facebook.stetho:stetho:1.4.2'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+
     // Unit testing dependencies
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-all:1.10.19"

@@ -184,7 +184,7 @@ public class EventsMapActivity extends AppCompatActivity implements
         for (Event event : events) {
             if (event.getVenue() == null) {
                 Log.v(TAG, "The venue for the following event was null: " +event.getName());
-                return;
+                continue;
             }
             LatLng eventLocation = new LatLng(
                     Double.valueOf(event.getVenue().getLat()),

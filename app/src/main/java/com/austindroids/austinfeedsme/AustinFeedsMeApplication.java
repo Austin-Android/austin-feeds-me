@@ -7,6 +7,7 @@ import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
 import com.austindroids.austinfeedsme.modules.ApplicationModule;
 import com.austindroids.austinfeedsme.modules.DataModule;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.fabric.sdk.android.Fabric;
@@ -22,6 +23,9 @@ public class AustinFeedsMeApplication extends MultiDexApplication {
         super.onCreate();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Fabric.with(this, new Crashlytics());
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this);
+        }
 
         applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
