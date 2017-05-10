@@ -168,7 +168,6 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
         public void removeAt(int position) {
             events.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, events.size());
         }
     }
 }
