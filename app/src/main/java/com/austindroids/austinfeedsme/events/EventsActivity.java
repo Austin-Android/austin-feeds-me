@@ -35,18 +35,12 @@ import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
 import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
-import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
 import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +54,6 @@ import butterknife.ButterKnife;
 public class EventsActivity extends BaseActivity
         implements EventsContract.View {
 
-    private final static String TAG = EventsActivity.class.getSimpleName();
     public static final int RC_SIGN_IN = 7;
 
     // Navigation Menu member variables
@@ -71,6 +64,7 @@ public class EventsActivity extends BaseActivity
     @BindView(R.id.event_list_recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.noEventsView) View mNoEventsView;
     @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.progress_overlay) FrameLayout progressOverlay;
 
     private SearchView searchViewForMenu;
 
@@ -78,16 +72,20 @@ public class EventsActivity extends BaseActivity
 
     private EventsAdapter eventListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
-    FirebaseAnalytics firebaseAnalytics;
-
-    @BindView(R.id.progress_overlay)
-    FrameLayout progressOverlay;
-
-    @Inject
-    EventsRepository repository;
 
     @Inject
     EventsPresenter eventsPresenter;
+
+    /**
+     * Listener for clicks on events in the RecyclerView.
+     */
+    EventItemListener mEventItemListener = new EventItemListener() {
+        @Override
+        public void onEventClick(Event clickedEvent) {
+            eventsPresenter.openEventDetails(clickedEvent);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +121,6 @@ public class EventsActivity extends BaseActivity
         setupMenu();
 
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         eventsPresenter.loadEvents();
         eventsPresenter.loadYummyCounts();
@@ -133,27 +130,6 @@ public class EventsActivity extends BaseActivity
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
-    }
-
-    /**
-     * Listener for clicks on events in the RecyclerView.
-     */
-    EventItemListener mEventItemListener = new EventItemListener() {
-        @Override
-        public void onEventClick(Event clickedEvent) {
-            eventsPresenter.openEventDetails(clickedEvent);
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
-//            mAddEventFab.setVisibility(View.VISIBLE);
-//        } else {
-//            mAddEventFab.setVisibility(View.GONE);
-//        }
-
     }
 
     @Override
@@ -242,13 +218,11 @@ public class EventsActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
@@ -268,19 +242,8 @@ public class EventsActivity extends BaseActivity
                 return true;
 
             case R.id.logout_menu_item:
-
                 AuthUI.getInstance(FirebaseApp.getInstance())
-                        .signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // user is now signed out
-//                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
-//                        animation1.setDuration(1000);
-//                        animation1.setStartOffset(1000);
-//                        animation1.setFillAfter(true);
-//                        mAddEventFab.startAnimation(animation1);
-//                        mAddEventFab.setVisibility(View.GONE);
-                    }
-                });
+                        .signOut(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -374,7 +337,6 @@ public class EventsActivity extends BaseActivity
         popup.show();
     }
 
-
     public void selectDrawerItem(MenuItem menuItem) {
 
         switch (menuItem.getItemId()) {
@@ -418,12 +380,6 @@ public class EventsActivity extends BaseActivity
                         searchViewForMenu.setQuery("taco", true);
                     }
                 }, 300);
-
-                // Log an event when tacos are selected!
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "tacos");
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
                 break;
             case R.id.events_beer:
                 new Handler().postDelayed(new Runnable() {
@@ -494,22 +450,8 @@ public class EventsActivity extends BaseActivity
                         FirebaseAuth.getInstance().getCurrentUser().getEmail());
                 Log.d("EventsActivity", "This is the current uid: " +
                         FirebaseAuth.getInstance().getCurrentUser().getUid());
-                if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-//                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-//                        animation1.setDuration(1000);
-//                        animation1.setStartOffset(1000);
-//                        animation1.setFillAfter(true);
-//                        mAddEventFab.startAnimation(animation1);
-//                        mAddEventFab.setVisibility(View.VISIBLE);
-                    DatabaseReference userReference =
-                            FirebaseDatabase.getInstance().getReference("user");
-                    userReference.child(
-                            FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .setValue(FirebaseAuth.getInstance().getCurrentUser());
-                }
             }
         }
-
     }
 
     @Override
