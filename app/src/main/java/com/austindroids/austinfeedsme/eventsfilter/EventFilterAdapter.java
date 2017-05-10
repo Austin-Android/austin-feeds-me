@@ -124,7 +124,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                         event.setFoodType(BEER.name());
                     } else if (event.getDescription().toUpperCase().contains(TACO.name())) {
                         event.setFoodType(TACO.name());
-                    }else{
+                    } else {
                         event.setFoodType(NONE.name());
                     }
 
@@ -170,6 +170,5 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, events.size());
         }
-
     }
 }
