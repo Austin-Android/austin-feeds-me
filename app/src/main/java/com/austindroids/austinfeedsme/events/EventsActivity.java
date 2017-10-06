@@ -43,6 +43,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -237,8 +238,11 @@ public class EventsActivity extends BaseActivity
                         // Get an instance of AuthUI based on the default app
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
-                                .setProviders(AuthUI.EMAIL_PROVIDER).build(),
-                        RC_SIGN_IN);
+                                .setAvailableProviders(
+                                        Arrays.asList((
+                                                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())))
+
+                .build(), RC_SIGN_IN);
                 return true;
 
             case R.id.logout_menu_item:
