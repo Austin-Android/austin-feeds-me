@@ -3,14 +3,13 @@ package com.austindroids.austinfeedsme.eventsmap;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -35,7 +33,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Created by daz on 8/5/16.
@@ -45,12 +42,11 @@ public class EventsMapActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowLongClickListener {
 
+    public static final String TAG = EventsMapActivity.class.getSimpleName();
 
     GoogleMap map;
-    CameraPosition cameraPosition;
     SupportMapFragment mapFragment;
     private ViewPager viewPager;
-    private PagerAdapter CardPagerAdapter;
     CardPagerAdapter adapter;
 
     @Inject
@@ -63,10 +59,6 @@ public class EventsMapActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_map);
-
-//        ((AustinFeedsMeApplication) this.getApplication()).component().inject(this);
-//
-//        presenter = new EventsPresenter(repository, this);
 
         DaggerEventsComponent.builder()
                 .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
@@ -85,7 +77,7 @@ public class EventsMapActivity extends AppCompatActivity implements
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(CardPagerAdapter);
+        viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -190,6 +182,10 @@ public class EventsMapActivity extends AppCompatActivity implements
         viewPager.setAdapter(adapter);
 
         for (Event event : events) {
+            if (event.getVenue() == null) {
+                Log.v(TAG, "The venue for the following event was null: " +event.getName());
+                continue;
+            }
             LatLng eventLocation = new LatLng(
                     Double.valueOf(event.getVenue().getLat()),
                     Double.valueOf(event.getVenue().getLon()));
@@ -259,26 +255,4 @@ public class EventsMapActivity extends AppCompatActivity implements
     public void hideProgress() {
 
     }
-
-    public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
-
-        public MarkerInfoWindowAdapter()
-        {
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            return null;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            View v  = getLayoutInflater().inflate(R.layout.fragment_adapter, null);
-            //get event object from marker click
-            //identify views within infoWindow/viewpager
-            //assign data to text/image views
-            return v;
-        }
-    }
-
 }

@@ -32,6 +32,8 @@ public class FakeEventbriteDataSource implements EventsDataSource {
 
     public FakeEventbriteDataSource() {
 
+        // We need to create groups for events used in FakeEventbriteDataSource
+
         Event testEventOne = new Event("1", "Pizza Fest", "Pizza Everywhere", 33928672270000L,
                 "www.pizza.com", "pizza", true);
         Event testEventTwo = new Event("2", "Beer", "Duff Everywhere", 33928672270777L,

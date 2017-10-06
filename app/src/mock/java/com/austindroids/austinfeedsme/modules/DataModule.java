@@ -1,5 +1,7 @@
 package com.austindroids.austinfeedsme.modules;
 
+import android.content.Context;
+
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.data.eventbrite.FakeEventbriteDataSource;
@@ -7,8 +9,6 @@ import com.austindroids.austinfeedsme.data.firebase.FirebaseEventsDataSource;
 import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.mockito.Mockito;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -20,6 +20,12 @@ import dagger.Provides;
 public class DataModule {
     private static final String FIREBASE_URL =
             "https://austin-feeds-me-ec3e5.firebaseio.com//events";
+
+    private final Context context;
+
+    public DataModule(Context context) {
+        this.context = context;
+    }
 
     @Provides @Singleton
     DatabaseReference firebase() {
@@ -33,7 +39,7 @@ public class DataModule {
 
     @Provides @Named("meetup") @Singleton
     EventsDataSource meetupDataSource() {
-        return Mockito.mock(MeetupDataSource.class);
+        return new MeetupDataSource(context);
     }
 
     @Provides @Named("eventbrite") @Singleton

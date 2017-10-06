@@ -20,9 +20,6 @@ import java.util.List;
 
 import javax.inject.Singleton;
 
-/**
- * Concrete implementation to load Events from the a data source.
- */
 @Singleton
 public class EventsRepository implements EventsDataSource {
     private final EventsDataSource mEventsRemoteDataSource;
