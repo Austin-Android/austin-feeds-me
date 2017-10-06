@@ -51,13 +51,6 @@
             android:value="${fabricApiKey}"
             tools:replace="android:value"/>
 
-        <!--<meta-data-->
-            <!--android:name="com.firebase.ui.TwitterKey"-->
-            <!--android:value="${twitterKey}"/>-->
-        <!--<meta-data-->
-            <!--android:name="com.firebase.ui.TwitterSecret"-->
-            <!--android:value="${twitterSecret}"/>-->
-
         <service
             android:name=".notifications.AFMFirebaseMessagingService">
             <intent-filter>
@@ -75,11 +68,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_maps_key}"/>
-
-        <uses-feature
-            android:glEsVersion="0x00020000"
-            android:required="true"/>
-
     </application>
 
 </manifest>
