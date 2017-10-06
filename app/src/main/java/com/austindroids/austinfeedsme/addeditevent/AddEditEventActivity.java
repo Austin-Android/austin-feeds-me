@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.addeditevent.AddEditEventContract.View;
 import com.austindroids.austinfeedsme.data.Event;
@@ -52,7 +51,6 @@ public class AddEditEventActivity extends AppCompatActivity implements View {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((AustinFeedsMeApplication) getApplication()).component().inject(this);
         setContentView(R.layout.activity_addeditevent);
         ButterKnife.bind(this);
     }

@@ -106,9 +106,11 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // Dagger 2
-    compile 'com.google.dagger:dagger:2.11'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
-    provided 'javax.annotation:jsr250-api:1.0'
+    annotationProcessor "com.google.dagger:dagger-compiler:2.11"
+    annotationProcessor "com.google.dagger:dagger-android-processor:2.11"
+    compile "com.google.dagger:dagger:2.11"
+    compile "com.google.dagger:dagger-android:2.11"
+    compile "com.google.dagger:dagger-android-support:2.11"
 
     // Firebase dependencies
     compile 'com.google.firebase:firebase-database:11.4.2'

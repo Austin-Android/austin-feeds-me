@@ -38,7 +38,6 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     }
 
-    @DebugLog
     @Override
     public void loadEvents() {
         view.showProgress();
@@ -112,7 +111,6 @@ public class EventsPresenter implements EventsContract.Presenter {
         });
     }
 
-    @DebugLog
     @Override
     public void loadYummyCounts() {
 

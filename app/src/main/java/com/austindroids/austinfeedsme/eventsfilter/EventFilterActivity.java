@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.common.BaseActivity;
 import com.austindroids.austinfeedsme.data.Event;
@@ -47,7 +46,6 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_filter);
-        ((AustinFeedsMeApplication) getApplication()).component().inject(this);
 
         eventsRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
