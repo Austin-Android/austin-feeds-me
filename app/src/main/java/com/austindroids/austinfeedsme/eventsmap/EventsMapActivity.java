@@ -174,8 +174,9 @@ public class EventsMapActivity extends BaseActivity implements
         viewPager.setAdapter(adapter);
 
         for (Event event : events) {
-            if (event.getVenue() == null) {
-                Log.v(TAG, "The venue for the following event was null: " +event.getName());
+            if (event.getVenue() == null || event.getFoodType() == null) {
+                Log.v(TAG, "The venue or food type for the following event was null: "
+                        +event.getName());
                 continue;
             }
             LatLng eventLocation = new LatLng(

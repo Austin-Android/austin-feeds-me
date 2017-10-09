@@ -5,6 +5,7 @@ import android.util.Log;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.di.modules.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
 import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
+@ActivityScoped
 public class EventsPresenter implements EventsContract.Presenter {
 
     private EventsRepository repository;

@@ -38,7 +38,7 @@ android {
                                 fabricApiKey: props['fabric']]
         multiDexEnabled true
 
-        versionCode 8
+        versionCode 9
         versionName "1.7"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

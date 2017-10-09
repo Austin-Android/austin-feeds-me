@@ -1,5 +1,8 @@
 package com.austindroids.austinfeedsme;
 
+import android.content.Context;
+import android.support.multidex.MultiDex;
+
 import com.austindroids.austinfeedsme.di.components.DaggerAppComponent;
 import com.austindroids.austinfeedsme.di.modules.DataModule;
 import com.crashlytics.android.Crashlytics;
@@ -33,5 +36,11 @@ public class AustinFeedsMeApplication extends DaggerApplication {
                 .application(this)
                 .dataModule(new DataModule())
                 .create(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }
