@@ -6,7 +6,6 @@ import android.util.Log;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.Results;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,9 +53,7 @@ public class MeetupDataSource implements EventsDataSource {
         RxJava2CallAdapterFactory rxAdapter =
                 RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io());
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
