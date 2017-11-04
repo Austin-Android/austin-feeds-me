@@ -5,6 +5,7 @@ import android.util.Log;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.di.modules.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import hugo.weaving.DebugLog;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
 import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
+@ActivityScoped
 public class EventsPresenter implements EventsContract.Presenter {
 
     private EventsRepository repository;
@@ -38,13 +39,11 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     }
 
-    @DebugLog
     @Override
     public void loadEvents() {
         view.showProgress();
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
 
-            @DebugLog
             @Override
             public void onEventsLoaded(List<Event> events) {
 
@@ -112,14 +111,12 @@ public class EventsPresenter implements EventsContract.Presenter {
         });
     }
 
-    @DebugLog
     @Override
     public void loadYummyCounts() {
 
         final HashMap<String, Integer> yummyCounts = new HashMap<>();
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @DebugLog
             @Override
             public void onEventsLoaded(List<Event> events) {
 

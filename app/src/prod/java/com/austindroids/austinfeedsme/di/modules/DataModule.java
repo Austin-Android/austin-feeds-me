@@ -1,6 +1,4 @@
-package com.austindroids.austinfeedsme.modules;
-
-import android.content.Context;
+package com.austindroids.austinfeedsme.di.modules;
 
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
@@ -20,12 +18,6 @@ import dagger.Provides;
 public class DataModule {
     private static final String FIREBASE_URL = "https://austin-feeds-me.firebaseio.com/events";
 
-    private final Context context;
-
-    public DataModule(Context context) {
-        this.context = context;
-    }
-
     @Provides @Singleton
     DatabaseReference firebase() {
         return FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_URL);
@@ -38,7 +30,7 @@ public class DataModule {
 
     @Provides @Named("meetup") @Singleton
     EventsDataSource meetupDataSource() {
-        return new MeetupDataSource(context);
+        return new MeetupDataSource();
     }
 
     @Provides @Named("eventbrite") @Singleton

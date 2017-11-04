@@ -28,16 +28,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.common.BaseActivity;
 import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
-import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
-import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -95,12 +92,6 @@ public class EventsActivity extends BaseActivity
 
         // Bind views
         ButterKnife.bind(this);
-
-        // Satisfy Dependencies
-        DaggerEventsComponent.builder()
-                .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
-                .eventsPresenterModule(new EventsPresenterModule(EventsActivity.this)).build()
-                .inject(this);
 
         setupActionBar();
 

@@ -12,7 +12,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,15 +40,12 @@ import rx.schedulers.Schedulers;
 
 public class MeetupDataSource implements EventsDataSource {
     private static final String TAG = "MeetupDataSource";
-    private Context context;
     private static final String CACHE_CONTROL = "Cache-Control";
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final DatabaseReference myRef = database.getReference("events");
+    final DatabaseReference eventsReference = database.getReference("events");
 
-    public MeetupDataSource(Context context) {
-        this.context = context;
-    }
+    public MeetupDataSource() {}
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
@@ -58,10 +54,7 @@ public class MeetupDataSource implements EventsDataSource {
                 RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new ChuckInterceptor(context))
                 .addNetworkInterceptor(new StethoInterceptor())
-                .addNetworkInterceptor( provideCacheInterceptor() )
-                .cache(provideCache(context))
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -95,8 +88,8 @@ public class MeetupDataSource implements EventsDataSource {
                         Log.d(TAG, "Event count from Meetup API: " + results.getEvents().size());
 
                         final List<Event> meetupEvents = results.getEvents();
-                        myRef.orderByChild("time").startAt((new Date().getTime()));
-                        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        eventsReference.orderByChild("time").startAt((new Date().getTime()));
+                        eventsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
