@@ -16,14 +16,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.HttpException;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+
 
 /**
  * Created by darrankelinske on 8/26/16.
@@ -37,8 +39,8 @@ public class EventbriteDataSource implements EventsDataSource {
     @Override
     public void getEvents(final LoadEventsCallback callback) {
 
-        RxJavaCallAdapterFactory rxAdapter =
-                RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        RxJava2CallAdapterFactory rxAdapter =
+                RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io());
 
         Retrofit eventbriteRetrofit = new Retrofit.Builder()
                 .baseUrl("https://www.eventbriteapi.com")
@@ -57,9 +59,15 @@ public class EventbriteDataSource implements EventsDataSource {
             observableList.add(eventbriteService.getEventsByKeyword(searchTerm));
         }
 
-        Subscriber<EventbriteEvents> eventbriteEventsSubscriber = new Subscriber<EventbriteEvents>() {
+        Observer<EventbriteEvents> eventbriteEventsSubscriber = new Observer<EventbriteEvents>() {
+
             @Override
-            public void onCompleted() {
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
 
             }
 
@@ -91,7 +99,7 @@ public class EventbriteDataSource implements EventsDataSource {
         };
 
         Observable.merge(observableList)
-                .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(eventbriteEventsSubscriber);
 
@@ -147,6 +155,4 @@ public class EventbriteDataSource implements EventsDataSource {
     interface CleanCallback {
         void loadCleanEvents(List<Event> events);
     }
-
-
 }

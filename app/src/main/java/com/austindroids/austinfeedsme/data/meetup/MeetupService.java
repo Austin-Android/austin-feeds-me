@@ -6,10 +6,10 @@ import com.austindroids.austinfeedsme.data.Results;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import rx.Observable;
 
 /**
  * Created by darrankelinske on 8/4/16.
