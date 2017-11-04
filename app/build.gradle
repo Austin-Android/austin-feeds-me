@@ -10,23 +10,20 @@ buildscript {
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'com.frogermcs.androiddevmetrics'
-apply plugin: 'com.jakewharton.hugo'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     google()
 }
 
-
 Properties props = new Properties()
 props.load(new FileInputStream(file(project.property("austinfeedsme.properties"))))
 
-
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '26.0.2'
 
     defaultConfig {
@@ -46,7 +43,7 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         release {
@@ -134,9 +131,9 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.6'
 
     // Debugging
-    debugCompile 'com.amitshekhar.android:debug-db:1.0.0'
-    debugCompile 'com.readystatesoftware.chuck:library:1.1.0'
-    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.1.0'
+//    debugCompile 'com.amitshekhar.android:debug-db:1.0.0'
+//    debugCompile 'com.readystatesoftware.chuck:library:1.1.0'
+//    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
