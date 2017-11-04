@@ -7,7 +7,6 @@ import com.austindroids.austinfeedsme.di.components.DaggerAppComponent;
 import com.austindroids.austinfeedsme.di.modules.DataModule;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
-import com.frogermcs.androiddevmetrics.AndroidDevMetrics;
 import com.google.firebase.database.FirebaseDatabase;
 
 import dagger.android.AndroidInjector;
@@ -26,7 +25,6 @@ public class AustinFeedsMeApplication extends DaggerApplication {
         Fabric.with(this, new Crashlytics());
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);
-            AndroidDevMetrics.initWith(this);
         }
     }
 

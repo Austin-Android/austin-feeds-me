@@ -18,8 +18,6 @@ import dagger.Provides;
 public class DataModule {
     private static final String FIREBASE_URL = "https://austin-feeds-me.firebaseio.com/events";
 
-    public DataModule() {}
-
     @Provides @Singleton
     DatabaseReference firebase() {
         return FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_URL);

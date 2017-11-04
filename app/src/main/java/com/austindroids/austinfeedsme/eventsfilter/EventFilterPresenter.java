@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import hugo.weaving.DebugLog;
-
 /**
  * Created by darrankelinske on 8/4/16.
  */
@@ -27,7 +25,6 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
     private EventsDataSource meetupRepository;
     private EventFilterContract.View view;
 
-    @DebugLog
     public EventFilterPresenter(EventsDataSource eventsDataSource,
                                 EventsDataSource meetupDataSource, EventFilterContract.View view) {
         this.eventbriteRepository = eventsDataSource;
@@ -35,7 +32,6 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
         this.view = view;
     }
 
-    @DebugLog
     @Override
     public void loadEvents() {
 

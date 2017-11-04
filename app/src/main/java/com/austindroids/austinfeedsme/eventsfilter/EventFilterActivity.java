@@ -16,8 +16,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import hugo.weaving.DebugLog;
-
 import static com.austindroids.austinfeedsme.utility.NetworkUtils.isNetworkAvailable;
 
 
@@ -33,7 +31,6 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
     @Inject @Named("eventbrite") EventsDataSource eventbriteDataSource;
     @Inject @Named("meetup") EventsDataSource meetupDataSource;
 
-    @DebugLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

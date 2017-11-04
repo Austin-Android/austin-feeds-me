@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import hugo.weaving.DebugLog;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
@@ -45,7 +44,6 @@ public class EventsPresenter implements EventsContract.Presenter {
         view.showProgress();
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
 
-            @DebugLog
             @Override
             public void onEventsLoaded(List<Event> events) {
 
@@ -119,7 +117,6 @@ public class EventsPresenter implements EventsContract.Presenter {
         final HashMap<String, Integer> yummyCounts = new HashMap<>();
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @DebugLog
             @Override
             public void onEventsLoaded(List<Event> events) {
 
