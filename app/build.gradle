@@ -32,7 +32,6 @@ android {
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
-        multiDexEnabled true
 
         versionCode 9
         versionName "1.7"
@@ -164,12 +163,7 @@ dependencies {
         }
     }
 
-    compile 'org.parceler:parceler-api:1.1.9'
-    annotationProcessor 'org.parceler:parceler:1.1.9'
-
-    compile 'org.mockito:mockito-all:1.10.19'
-
-    compile 'com.android.support:multidex:1.0.2'
+    testCompile 'org.mockito:mockito-all:1.10.19'
 }
 
 // Needed for Firebase
