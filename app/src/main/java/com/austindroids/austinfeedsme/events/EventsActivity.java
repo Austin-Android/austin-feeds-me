@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -14,7 +15,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -28,26 +28,19 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.BaseActivity;
 import com.austindroids.austinfeedsme.common.EventsContract;
 import com.austindroids.austinfeedsme.common.EventsPresenter;
-import com.austindroids.austinfeedsme.components.DaggerEventsComponent;
 import com.austindroids.austinfeedsme.data.Event;
-import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
-import com.austindroids.austinfeedsme.modules.EventsPresenterModule;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -56,11 +49,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class EventsActivity extends AppCompatActivity
+public class EventsActivity extends BaseActivity
         implements EventsContract.View {
-
-    private final static String TAG = "EventsActivity";
-    public static final String EVENTS_LIST = "eventsList";
 
     public static final int RC_SIGN_IN = 7;
 
@@ -72,6 +62,7 @@ public class EventsActivity extends AppCompatActivity
     @BindView(R.id.event_list_recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.noEventsView) View mNoEventsView;
     @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.progress_overlay) FrameLayout progressOverlay;
 
     private SearchView searchViewForMenu;
 
@@ -79,16 +70,20 @@ public class EventsActivity extends AppCompatActivity
 
     private EventsAdapter eventListAdapter;
     FirebaseAuth.AuthStateListener authStateListener;
-    FirebaseAnalytics firebaseAnalytics;
-
-    @BindView(R.id.progress_overlay)
-    FrameLayout progressOverlay;
-
-    @Inject
-    EventsRepository repository;
 
     @Inject
     EventsPresenter eventsPresenter;
+
+    /**
+     * Listener for clicks on events in the RecyclerView.
+     */
+    EventItemListener mEventItemListener = new EventItemListener() {
+        @Override
+        public void onEventClick(Event clickedEvent) {
+            eventsPresenter.openEventDetails(clickedEvent);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,12 +92,6 @@ public class EventsActivity extends AppCompatActivity
 
         // Bind views
         ButterKnife.bind(this);
-
-        // Satisfy Dependencies
-        DaggerEventsComponent.builder()
-                .applicationComponent(((AustinFeedsMeApplication) this.getApplication()).component())
-                .eventsPresenterModule(new EventsPresenterModule(EventsActivity.this)).build()
-                .inject(this);
 
         setupActionBar();
 
@@ -124,38 +113,15 @@ public class EventsActivity extends AppCompatActivity
         setupMenu();
 
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        eventsPresenter.loadEvents();
+        eventsPresenter.loadYummyCounts();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
-    }
-
-    /**
-     * Listener for clicks on events in the RecyclerView.
-     */
-    EventItemListener mEventItemListener = new EventItemListener() {
-        @Override
-        public void onEventClick(Event clickedEvent) {
-            eventsPresenter.openEventDetails(clickedEvent);
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        if (null != FirebaseAuth.getInstance().getCurrentUser()) {
-//            mAddEventFab.setVisibility(View.VISIBLE);
-//        } else {
-//            mAddEventFab.setVisibility(View.GONE);
-//        }
-
-        eventsPresenter.loadEvents();
-
-        eventsPresenter.loadYummyCounts();
     }
 
     @Override
@@ -244,13 +210,11 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
@@ -265,24 +229,16 @@ public class EventsActivity extends AppCompatActivity
                         // Get an instance of AuthUI based on the default app
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
-                                .setProviders(AuthUI.EMAIL_PROVIDER).build(),
-                        RC_SIGN_IN);
+                                .setAvailableProviders(
+                                        Arrays.asList((
+                                                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())))
+
+                .build(), RC_SIGN_IN);
                 return true;
 
             case R.id.logout_menu_item:
-
                 AuthUI.getInstance(FirebaseApp.getInstance())
-                        .signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // user is now signed out
-//                        AlphaAnimation animation1 = new AlphaAnimation(1, 0);
-//                        animation1.setDuration(1000);
-//                        animation1.setStartOffset(1000);
-//                        animation1.setFillAfter(true);
-//                        mAddEventFab.startAnimation(animation1);
-//                        mAddEventFab.setVisibility(View.GONE);
-                    }
-                });
+                        .signOut(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -290,6 +246,7 @@ public class EventsActivity extends AppCompatActivity
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         handleIntent(intent);
     }
 
@@ -375,11 +332,7 @@ public class EventsActivity extends AppCompatActivity
         popup.show();
     }
 
-
     public void selectDrawerItem(MenuItem menuItem) {
-
-//        Intent searchIntent = new Intent();
-//        searchIntent.setAction(Intent.ACTION_SEARCH);
 
         switch (menuItem.getItemId()) {
             case R.id.events_list:
@@ -422,12 +375,6 @@ public class EventsActivity extends AppCompatActivity
                         searchViewForMenu.setQuery("taco", true);
                     }
                 }, 300);
-
-                // Log an event when tacos are selected!
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "tacos");
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
                 break;
             case R.id.events_beer:
                 new Handler().postDelayed(new Runnable() {
@@ -436,6 +383,10 @@ public class EventsActivity extends AppCompatActivity
                         searchViewForMenu.setQuery("beer", true);
                     }
                 }, 300);
+                break;
+            case R.id.privacy_policy:
+                Intent privacyIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://whereisdarran.com/privacy_policy.html"));
+                startActivity(privacyIntent);
                 break;
             default:
                 startActivity(new Intent(EventsActivity.this, EventsActivity.class));
@@ -494,22 +445,8 @@ public class EventsActivity extends AppCompatActivity
                         FirebaseAuth.getInstance().getCurrentUser().getEmail());
                 Log.d("EventsActivity", "This is the current uid: " +
                         FirebaseAuth.getInstance().getCurrentUser().getUid());
-                if (!FirebaseAuth.getInstance().getCurrentUser().isAnonymous()) {
-//                        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
-//                        animation1.setDuration(1000);
-//                        animation1.setStartOffset(1000);
-//                        animation1.setFillAfter(true);
-//                        mAddEventFab.startAnimation(animation1);
-//                        mAddEventFab.setVisibility(View.VISIBLE);
-                    DatabaseReference userReference =
-                            FirebaseDatabase.getInstance().getReference("user");
-                    userReference.child(
-                            FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .setValue(FirebaseAuth.getInstance().getCurrentUser());
-                }
             }
         }
-
     }
 
     @Override

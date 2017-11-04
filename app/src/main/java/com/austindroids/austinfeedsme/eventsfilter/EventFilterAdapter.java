@@ -17,6 +17,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
+import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
+import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
+import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
+
 /**
  * Created by darrankelinske on 8/26/16.
  */
@@ -113,12 +118,22 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                     Event event = getItem(getAdapterPosition());
                     event.setFood(true);
 
+                    if (event.getDescription().toUpperCase().contains(PIZZA.name())) {
+                        event.setFoodType(PIZZA.name());
+                    } else if (event.getDescription().toUpperCase().contains(BEER.name())) {
+                        event.setFoodType(BEER.name());
+                    } else if (event.getDescription().toUpperCase().contains(TACO.name())) {
+                        event.setFoodType(TACO.name());
+                    } else {
+                        event.setFoodType(NONE.name());
+                    }
+
                     String eventName = event.getName();
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("events");
+                    DatabaseReference eventsReference = database.getReference("events");
 
-                    myRef.push().setValue(event);
+                    eventsReference.push().setValue(event);
                     Toast.makeText(v.getContext(), eventName + " added!",
                             Toast.LENGTH_SHORT).show();
 
@@ -153,8 +168,6 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
         public void removeAt(int position) {
             events.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, events.size());
         }
-
     }
 }

@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.modules;
+package com.austindroids.austinfeedsme.di.modules;
 
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;

@@ -1,20 +1,30 @@
 package com.austindroids.austinfeedsme.data.meetup;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.Results;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
+import okhttp3.CacheControl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,9 +40,12 @@ import rx.schedulers.Schedulers;
 
 public class MeetupDataSource implements EventsDataSource {
     private static final String TAG = "MeetupDataSource";
+    private static final String CACHE_CONTROL = "Cache-Control";
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final DatabaseReference myRef = database.getReference("events");
+    final DatabaseReference eventsReference = database.getReference("events");
+
+    public MeetupDataSource() {}
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
@@ -40,8 +53,13 @@ public class MeetupDataSource implements EventsDataSource {
         RxJavaCallAdapterFactory rxAdapter =
                 RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)
                 .build();
@@ -70,8 +88,8 @@ public class MeetupDataSource implements EventsDataSource {
                         Log.d(TAG, "Event count from Meetup API: " + results.getEvents().size());
 
                         final List<Event> meetupEvents = results.getEvents();
-                        myRef.orderByChild("time").startAt((new Date().getTime()));
-                        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        eventsReference.orderByChild("time").startAt((new Date().getTime()));
+                        eventsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
@@ -114,5 +132,41 @@ public class MeetupDataSource implements EventsDataSource {
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
 
+    }
+
+    private static Cache provideCache (Context context)
+    {
+        Cache cache = null;
+        try
+        {
+            cache = new Cache( new File(context.getCacheDir(), "http-cache" ),
+                    10 * 1024 * 1024 ); // 10 MB
+        }
+        catch (Exception e)
+        {
+            Log.e( TAG, "Could not create Cache!" );
+        }
+        return cache;
+    }
+
+    public static Interceptor provideCacheInterceptor ()
+    {
+        return new Interceptor()
+        {
+            @Override
+            public Response intercept (Chain chain) throws IOException
+            {
+                Response response = chain.proceed( chain.request() );
+
+                // re-write response header to force use of cache
+                CacheControl cacheControl = new CacheControl.Builder()
+                        .maxAge( 7, TimeUnit.MINUTES )
+                        .build();
+
+                return response.newBuilder()
+                        .header(CACHE_CONTROL, cacheControl.toString() )
+                        .build();
+            }
+        };
     }
 }

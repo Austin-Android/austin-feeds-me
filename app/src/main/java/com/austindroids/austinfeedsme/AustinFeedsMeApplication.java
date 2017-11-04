@@ -1,33 +1,44 @@
 package com.austindroids.austinfeedsme;
 
-import android.support.multidex.MultiDexApplication;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
-import com.austindroids.austinfeedsme.components.ApplicationComponent;
-import com.austindroids.austinfeedsme.components.DaggerApplicationComponent;
-import com.austindroids.austinfeedsme.modules.ApplicationModule;
+import com.austindroids.austinfeedsme.di.components.DaggerAppComponent;
+import com.austindroids.austinfeedsme.di.modules.DataModule;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
 import com.google.firebase.database.FirebaseDatabase;
 
+import dagger.android.AndroidInjector;
+import dagger.android.support.DaggerApplication;
 import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by darrankelinske on 4/7/16.
  */
-public class AustinFeedsMeApplication extends MultiDexApplication {
-    private ApplicationComponent applicationComponent;
+public class AustinFeedsMeApplication extends DaggerApplication {
 
     @Override
     public void onCreate() {
         super.onCreate();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Fabric.with(this, new Crashlytics());
-
-        applicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .build();
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this);
+        }
     }
 
-    public ApplicationComponent component() {
-        return applicationComponent;
+    @Override
+    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+        return DaggerAppComponent.builder()
+                .application(this)
+                .dataModule(new DataModule())
+                .create(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

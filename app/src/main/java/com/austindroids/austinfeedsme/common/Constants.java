@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme;
+package com.austindroids.austinfeedsme.common;
 
 /**
  * Created by darrankelinske on 8/4/16.

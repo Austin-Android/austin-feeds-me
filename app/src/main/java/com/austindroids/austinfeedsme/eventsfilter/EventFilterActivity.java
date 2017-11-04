@@ -1,17 +1,14 @@
 package com.austindroids.austinfeedsme.eventsfilter;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.R;
+import com.austindroids.austinfeedsme.common.BaseActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,20 +16,16 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static com.austindroids.austinfeedsme.utility.NetworkUtils.isNetworkAvailable;
+
 
 /**
  * Created by darrankelinske on 8/4/16.
  */
-public class EventFilterActivity extends AppCompatActivity implements EventFilterContract.View {
-
-    private static final String TAG ="EventFilterActivity";
-
-    private RecyclerView eventsRecyclerView;
+public class EventFilterActivity extends BaseActivity implements EventFilterContract.View {
 
     EventFilterPresenter eventFilterPresenter;
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final DatabaseReference myRef = database.getReference("events");
     final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<Event>());
 
     @Inject @Named("eventbrite") EventsDataSource eventbriteDataSource;
@@ -42,9 +35,8 @@ public class EventFilterActivity extends AppCompatActivity implements EventFilte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_filter);
-        ((AustinFeedsMeApplication) getApplication()).component().inject(this);
 
-        eventsRecyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
+        RecyclerView eventsRecyclerView = findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventsRecyclerView.setAdapter(eventFilterAdapter);
 
@@ -59,6 +51,9 @@ public class EventFilterActivity extends AppCompatActivity implements EventFilte
     @Override
     protected void onResume() {
         super.onResume();
+        if (!isNetworkAvailable(this)) {
+            showSnackbar(getString(R.string.network_unavailable));
+        }
         eventFilterAdapter.replaceData(new ArrayList<Event>());
         eventFilterPresenter.loadEvents();
     }

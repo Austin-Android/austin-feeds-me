@@ -1,6 +1,6 @@
 package com.austindroids.austinfeedsme.data.eventbrite;
 
-import com.austindroids.austinfeedsme.Constants;
+import com.austindroids.austinfeedsme.common.Constants;
 import com.austindroids.austinfeedsme.data.Group;
 import com.austindroids.austinfeedsme.data.Venue;
 

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.di.modules.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
@@ -18,9 +19,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-/**
- * Created by darrankelinske on 5/2/16.
- */
+
+import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
+import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
+import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
+
+@ActivityScoped
 public class EventsPresenter implements EventsContract.Presenter {
 
     private EventsRepository repository;
@@ -39,6 +43,7 @@ public class EventsPresenter implements EventsContract.Presenter {
     public void loadEvents() {
         view.showProgress();
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
+
             @Override
             public void onEventsLoaded(List<Event> events) {
 
@@ -58,16 +63,6 @@ public class EventsPresenter implements EventsContract.Presenter {
                 for (Event nextEvent : events) {
                     if (nextEvent.isFood() &&
                             (nextEvent.getTime() > new Date().getTime())) {
-
-                        if (nextEvent.getDescription().toLowerCase().contains("pizza")) {
-                            nextEvent.setFoodType("pizza");
-                        } else if (nextEvent.getDescription().toLowerCase().contains("beer")) {
-                            nextEvent.setFoodType("beer");
-                        } else if (nextEvent.getDescription().toLowerCase().contains("tacos")) {
-                            nextEvent.setFoodType("tacos");
-                        }else{
-                            nextEvent.setFoodType("noFood");
-                        }
 
                         switch (currentFiltering) {
                             case ALL_EVENTS:
@@ -100,6 +95,7 @@ public class EventsPresenter implements EventsContract.Presenter {
 
                 if (currentEvents.size() > 0 ) {
                     view.showEvents(currentEvents);
+                    view.setTotalCount(currentEvents.size());
                 } else {
                     view.showNoEventsView();
                 }
@@ -120,48 +116,38 @@ public class EventsPresenter implements EventsContract.Presenter {
 
         final HashMap<String, Integer> yummyCounts = new HashMap<>();
 
-
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
             public void onEventsLoaded(List<Event> events) {
 
-                Iterator<Event> iter = events.iterator();
+                Iterator<Event> iterator = events.iterator();
 
-                while (iter.hasNext()) {
-                    Event event = iter.next();
+                while (iterator.hasNext()) {
+                    Event event = iterator.next();
 
                     // Remove event if it doesn't have free food or is in the past
                     // or if the event name or description doesn't contain the search term
-                    if (event.isFood()
+                    if (event.isFood() && event.getFoodType() != null
                             && (event.getTime() > new Date().getTime()))
                     {
-                        if (event.getDescription().toLowerCase().contains("pizza")) {
-                            event.setFoodType("pizza");
-                            Integer previousValue = yummyCounts.get("pizza");
-                            yummyCounts.put("pizza", previousValue == null ? 1 : previousValue + 1);
+                        if (event.getFoodType().equals(PIZZA.name())) {
+                            Integer previousValue = yummyCounts.get(PIZZA.name());
+                            yummyCounts.put(PIZZA.name(), previousValue == null ? 1 : previousValue + 1);
                         }
-
-                        if (event.getDescription().toLowerCase().contains("beer")) {
-                            event.setFoodType("beer");
-                            Integer previousValue = yummyCounts.get("beer");
-                            yummyCounts.put("beer", previousValue == null ? 1 : previousValue + 1);
+                        if (event.getFoodType().equals(BEER.name())) {
+                            Integer previousValue = yummyCounts.get(BEER.name());
+                            yummyCounts.put(BEER.name(), previousValue == null ? 1 : previousValue + 1);
                         }
-
-                        if (event.getDescription().toLowerCase().contains("taco")) {
-                            event.setFoodType("tacos");
-                            Integer previousValue = yummyCounts.get("tacos");
-                            yummyCounts.put("tacos", previousValue == null ? 1 : previousValue + 1);
+                        if (event.getFoodType().equals(TACO.name())) {
+                            Integer previousValue = yummyCounts.get(TACO.name());
+                            yummyCounts.put(TACO.name(), previousValue == null ? 1 : previousValue + 1);
                         }
-
-                        Integer previousValue = yummyCounts.get("total");
-                        yummyCounts.put("total", previousValue == null ? 1 : previousValue + 1);
                     }
                 }
 
-                view.setPizzaCount(yummyCounts.get("pizza") == null ? 0 : yummyCounts.get("pizza"));
-                view.setTacoCount(yummyCounts.get("tacos") == null ? 0 : yummyCounts.get("tacos"));
-                view.setBeerCount(yummyCounts.get("beer") == null ? 0 : yummyCounts.get("beer"));
-                view.setTotalCount(yummyCounts.get("total") == null ? 0 : yummyCounts.get("total"));
+                view.setPizzaCount(yummyCounts.get(PIZZA.name()) == null ? 0 : yummyCounts.get(PIZZA.name()));
+                view.setTacoCount(yummyCounts.get(TACO.name()) == null ? 0 : yummyCounts.get(TACO.name()));
+                view.setBeerCount(yummyCounts.get(BEER.name()) == null ? 0 : yummyCounts.get(BEER.name()));
             }
 
             @Override

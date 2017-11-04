@@ -30,6 +30,10 @@ public final class Event {
     private Venue venue;
     private boolean isFood;
 
+    public enum Type {
+        PIZZA, BEER, TACO, NONE
+    }
+
     public Event() {}
 
     public Event(String uid, String name, String description) {

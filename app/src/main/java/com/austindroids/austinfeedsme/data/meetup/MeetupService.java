@@ -1,6 +1,6 @@
 package com.austindroids.austinfeedsme.data.meetup;
 
-import com.austindroids.austinfeedsme.Constants;
+import com.austindroids.austinfeedsme.common.Constants;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.Results;
 
