@@ -4,10 +4,10 @@ import com.austindroids.austinfeedsme.common.Constants;
 import com.austindroids.austinfeedsme.data.Group;
 import com.austindroids.austinfeedsme.data.Venue;
 
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * Created by daz on 8/19/16.

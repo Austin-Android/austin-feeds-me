@@ -6,7 +6,6 @@ import android.util.Log;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.Results;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,19 +19,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+
 
 /**
  * Created by daz on 8/26/16.
@@ -50,12 +50,10 @@ public class MeetupDataSource implements EventsDataSource {
     @Override
     public void getEvents(final LoadEventsCallback callback) {
 
-        RxJavaCallAdapterFactory rxAdapter =
-                RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        RxJava2CallAdapterFactory rxAdapter =
+                RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io());
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
@@ -65,16 +63,21 @@ public class MeetupDataSource implements EventsDataSource {
                 .build();
 
         MeetupService meetupService = retrofit.create(MeetupService.class);
-        Observable<Results> meetupObservable =
-                meetupService.getOpenEvents();
+        Observable<Results> meetupObservable = meetupService.getOpenEvents();
 
         Log.d(TAG, "Getting events from Meetup.");
-        Subscription meetupSubscription = meetupObservable
+        meetupService.getOpenEvents()
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Results>() {
+                .subscribe(new Observer<Results>() {
+
                     @Override
-                    public void onCompleted() {
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
 
                     }
 
