@@ -6,7 +6,6 @@ buildscript {
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'com.frogermcs.androiddevmetrics:androiddevmetrics-plugin:0.5'
     }
 }
 
@@ -33,7 +32,7 @@ android {
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
 
-        versionCode 9
+        versionCode 10
         versionName "1.7"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
