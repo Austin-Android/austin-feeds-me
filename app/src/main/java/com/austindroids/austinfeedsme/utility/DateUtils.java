@@ -12,7 +12,7 @@ import java.util.TimeZone;
  */
 public class DateUtils {
 
-    public static String getLocalDateFromTimestamp (Long timestamp) {
+    public static String getLocalDateFromTimestamp(Long timestamp) {
         Calendar cal = Calendar.getInstance();
         TimeZone tz = cal.getTimeZone();
 

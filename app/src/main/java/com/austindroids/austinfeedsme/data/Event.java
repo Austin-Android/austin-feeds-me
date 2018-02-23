@@ -21,7 +21,7 @@ public final class Event {
     private String id;
     private String name;
     private String description;
-    private String event_url;
+    private String eventUrl;
     private String foodType;
     private String picture;
     private String tags;
@@ -49,7 +49,7 @@ public final class Event {
         this.name = name;
         this.description = description;
         this.time = time;
-        this.event_url = rsvpLink;
+        this.eventUrl = rsvpLink;
         this.foodType = foodType;
     }
 
@@ -96,8 +96,8 @@ public final class Event {
         return id;
     }
 
-    public void setEvent_url(String event_url) {
-        this.event_url = event_url;
+    public void setEventUrl(String eventUrl) {
+        this.eventUrl = eventUrl;
     }
 
     public void setTime(Long time) {
@@ -108,8 +108,8 @@ public final class Event {
         return time;
     }
 
-    public String getEvent_url() {
-        return event_url;
+    public String getEventUrl() {
+        return eventUrl;
     }
 
     public Venue getVenue() {

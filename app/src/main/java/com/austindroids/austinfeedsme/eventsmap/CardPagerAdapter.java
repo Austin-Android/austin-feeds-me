@@ -65,7 +65,7 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         rsvpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String rsvpLink = events.get(position).getEvent_url();
+                String rsvpLink = events.get(position).getEventUrl();
                 if (rsvpLink != null)
                 {
                     Intent i = new Intent(Intent.ACTION_VIEW);

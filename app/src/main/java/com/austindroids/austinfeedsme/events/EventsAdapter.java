@@ -56,12 +56,12 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             result = Html.fromHtml(event.getDescription(), Html.FROM_HTML_MODE_LEGACY);
             rsvpLink = Html.fromHtml(
-                    "<html><a href=\"" + event.getEvent_url() + "\">RSVP Here!</a></html>",
+                    "<html><a href=\"" + event.getEventUrl() + "\">RSVP Here!</a></html>",
                     Html.FROM_HTML_MODE_LEGACY);
         } else {
             result = Html.fromHtml(event.getDescription());
             rsvpLink = Html.fromHtml(
-                    "<html><a href=\"" + event.getEvent_url() + "\">RSVP Here!</a></html>");
+                    "<html><a href=\"" + event.getEventUrl() + "\">RSVP Here!</a></html>");
         }
         viewHolder.description.setText(result);
 
@@ -72,7 +72,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                webIntent.setData(Uri.parse(event.getEvent_url()));
+                webIntent.setData(Uri.parse(event.getEventUrl()));
                 context.startActivity(webIntent);
             }
         });
