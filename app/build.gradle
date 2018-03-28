@@ -27,7 +27,7 @@ android {
     defaultConfig {
         applicationId "com.austindroids.austinfeedsme"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 27
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
@@ -89,11 +89,11 @@ android {
 dependencies {
 
     // Support Libs
-    compile 'com.android.support:support-v4:27.0.2'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    compile 'com.android.support:cardview-v7:27.0.2'
-    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support:support-v4:27.1.0'
+    compile 'com.android.support:appcompat-v7:27.1.0'
+    compile 'com.android.support:recyclerview-v7:27.1.0'
+    compile 'com.android.support:cardview-v7:27.1.0'
+    compile 'com.android.support:design:27.1.0'
 
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
@@ -112,16 +112,16 @@ dependencies {
     compile "com.google.dagger:dagger-android-support:2.13"
 
     // Firebase dependencies
-    compile 'com.google.firebase:firebase-database:11.8.0'
-    compile 'com.google.firebase:firebase-auth:11.8.0'
-    compile 'com.google.firebase:firebase-core:11.8.0'
-    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    compile 'com.google.firebase:firebase-database:12.0.1'
+    compile 'com.google.firebase:firebase-auth:12.0.1'
+    compile 'com.google.firebase:firebase-core:12.0.1'
+    compile 'com.google.firebase:firebase-messaging:12.0.1'
     compile 'com.firebaseui:firebase-ui-auth:3.1.0'
 
     // Needed for Authentication with these services
-    compile 'com.google.android.gms:play-services-auth:11.8.0'
+    compile 'com.google.android.gms:play-services-auth:12.0.1'
     // Needed for MapView
-    compile 'com.google.android.gms:play-services-maps:11.8.0'
+    compile 'com.google.android.gms:play-services-maps:12.0.1'
 
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
