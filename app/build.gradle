@@ -27,7 +27,7 @@ android {
     defaultConfig {
         applicationId "com.austindroids.austinfeedsme"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 22
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]

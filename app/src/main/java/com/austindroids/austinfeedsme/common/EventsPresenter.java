@@ -202,11 +202,6 @@ public class EventsPresenter implements EventsContract.Presenter {
     }
 
     @Override
-    public void openEventDetails(Event clickedEvent) {
-
-    }
-
-    @Override
     public void setFiltering(EventsFilterType requestType) {
         currentFiltering = requestType;
     }

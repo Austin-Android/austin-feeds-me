@@ -49,13 +49,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class EventsActivity extends BaseActivity
-        implements EventsContract.View {
+public class EventsActivity extends BaseActivity implements EventsContract.View {
 
     public static final int RC_SIGN_IN = 7;
 
-    // Navigation Menu member variables
-    private ActionBarDrawerToggle mDrawerToggle;
+    @Inject EventsPresenter eventsPresenter;
 
     @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
     @BindView(R.id.navigation_view) NavigationView mNavigationView;
@@ -64,26 +62,18 @@ public class EventsActivity extends BaseActivity
     @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.progress_overlay) FrameLayout progressOverlay;
 
+    private CharSequence activityTitle;
+    private ActionBarDrawerToggle mDrawerToggle;
     private SearchView searchViewForMenu;
-
-    private CharSequence mTitle;
-
     private EventsAdapter eventListAdapter;
+
     FirebaseAuth.AuthStateListener authStateListener;
 
-    @Inject
-    EventsPresenter eventsPresenter;
-
-    /**
-     * Listener for clicks on events in the RecyclerView.
-     */
     EventItemListener mEventItemListener = new EventItemListener() {
         @Override
         public void onEventClick(Event clickedEvent) {
-            eventsPresenter.openEventDetails(clickedEvent);
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +85,7 @@ public class EventsActivity extends BaseActivity
 
         setupActionBar();
 
-        mTitle = getTitle();
+        activityTitle = getTitle();
 
         // swipe refresh logic
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -281,13 +271,13 @@ public class EventsActivity extends BaseActivity
                 R.string.drawer_close  /* "close drawer" description for accessibility */)
         {
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
+                getSupportActionBar().setTitle(activityTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 
             }
 
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mTitle);
+                getSupportActionBar().setTitle(activityTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 
             }
