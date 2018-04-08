@@ -21,9 +21,7 @@ import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
 import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
-/**
- * Created by darrankelinske on 8/26/16.
- */
+
 public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.ViewHolder> {
 
     private List<Event> events;
