@@ -26,7 +26,7 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
 
     EventFilterPresenter eventFilterPresenter;
 
-    final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<Event>());
+    final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<>());
 
     @Inject @Named("eventbrite") EventsDataSource eventbriteDataSource;
     @Inject @Named("meetup") EventsDataSource meetupDataSource;
@@ -54,7 +54,7 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
         if (!isNetworkAvailable(this)) {
             showSnackbar(getString(R.string.network_unavailable));
         }
-        eventFilterAdapter.replaceData(new ArrayList<Event>());
+        eventFilterAdapter.replaceData(new ArrayList<>());
         eventFilterPresenter.loadEvents();
     }
 

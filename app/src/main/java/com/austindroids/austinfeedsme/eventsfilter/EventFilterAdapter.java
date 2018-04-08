@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
@@ -105,12 +104,12 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
         public ViewHolder(View itemView) {
             super(itemView);
 
-            author = (TextView) itemView.findViewById(R.id.event_title);
-            group = (TextView) itemView.findViewById(R.id.event_group_name);
-            quote = (TextView) itemView.findViewById(R.id.event_text);
-            link = (TextView) itemView.findViewById(R.id.event_link);
-            addEvent = (Button) itemView.findViewById(R.id.add_event);
-            removeEvent = (Button) itemView.findViewById(R.id.remove_event);
+            author = itemView.findViewById(R.id.event_title);
+            group = itemView.findViewById(R.id.event_group_name);
+            quote = itemView.findViewById(R.id.event_text);
+            link = itemView.findViewById(R.id.event_link);
+            addEvent = itemView.findViewById(R.id.add_event);
+            removeEvent = itemView.findViewById(R.id.remove_event);
 
             addEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -128,17 +127,11 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                         event.setFoodType(NONE.name());
                     }
 
-                    String eventName = event.getName();
-
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference eventsReference = database.getReference("events");
 
                     eventsReference.push().setValue(event);
-                    Toast.makeText(v.getContext(), eventName + " added!",
-                            Toast.LENGTH_SHORT).show();
-
                     removeAt(getAdapterPosition());
-
                 }
             });
 
@@ -148,18 +141,11 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                     Event event = getItem(getAdapterPosition());
                     event.setFood(false);
 
-                    String eventName = event.getName();
-
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("events");
-
                     myRef.push().setValue(event);
 
-                    Toast.makeText(v.getContext(), eventName + " removed!",
-                            Toast.LENGTH_SHORT).show();
-
                     removeAt(getAdapterPosition());
-
                 }
             });
 
