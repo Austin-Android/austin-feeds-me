@@ -46,33 +46,28 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        final Event event = mEvents.get(position);
+        final Event event = getItem(position);
+
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(event.getDescription(), Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(event.getDescription());
+        }
 
         viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
         viewHolder.title.setText(event.getName());
-
-        Spanned result;
-        Spanned rsvpLink;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(event.getDescription(), Html.FROM_HTML_MODE_LEGACY);
-            rsvpLink = Html.fromHtml(
-                    "<html><a href=\"" + event.getEventUrl() + "\">RSVP Here!</a></html>",
-                    Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            result = Html.fromHtml(event.getDescription());
-            rsvpLink = Html.fromHtml(
-                    "<html><a href=\"" + event.getEventUrl() + "\">RSVP Here!</a></html>");
-        }
         viewHolder.description.setText(result);
-
-
         viewHolder.eventUrl.setMovementMethod(LinkMovementMethod.getInstance());
-//            viewHolder.eventUrl.setText(rsvpLink);
         viewHolder.eventUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String eventUrl = event.getEventUrl();
+                if (eventUrl == null) {
+                    return;
+                }
                 Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                webIntent.setData(Uri.parse(event.getEventUrl()));
+                webIntent.setData(Uri.parse(eventUrl));
                 context.startActivity(webIntent);
             }
         });
