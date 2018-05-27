@@ -11,6 +11,11 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
+          name: Get properties
+          command: |
+                  wget http://whereisdarran.com/austinfeedsme.properties
+                  wget http://whereisdarran.com/google-services.json -P app/
+      - run:
           name: Download Dependencies
           command: |
                   sudo chmod +x gradlew
