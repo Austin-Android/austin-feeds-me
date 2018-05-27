@@ -220,10 +220,9 @@ public class EventsActivity extends BaseActivity implements EventsContract.View 
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .setAvailableProviders(
-                                        Arrays.asList((
-                                                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())))
-
-                .build(), RC_SIGN_IN);
+                                        Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
+                                                .build(),
+                                        RC_SIGN_IN);
                 return true;
 
             case R.id.logout_menu_item:
