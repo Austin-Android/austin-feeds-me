@@ -32,4 +32,4 @@ jobs:
           destination: app-debug.apk
       - run:
           name: Uploading on Beta
-          command: ./gradlew crashlyticsUploadDistributionDebug
+          command: ./gradlew crashlyticsUploadDistributionProdDebug
