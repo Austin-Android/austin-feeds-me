@@ -86,6 +86,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    crashlytics {
+        manifestPath = "src/main/AndroidManifest.xml"
+    }
 }
 
 dependencies {
