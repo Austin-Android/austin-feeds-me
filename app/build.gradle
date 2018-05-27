@@ -10,11 +10,13 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     google()
+    mavenCentral()
 }
 
 Properties props = new Properties()
@@ -40,7 +42,7 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         release {
@@ -158,6 +160,7 @@ dependencies {
             force 'com.google.code.gson:gson:2.8.0'
         }
     }
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 // Needed for Firebase

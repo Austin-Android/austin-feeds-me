@@ -55,7 +55,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
             result = Html.fromHtml(event.getDescription());
         }
 
-        viewHolder.eventDate.setText(DateUtils.getLocalDateFromTimestamp(event.getTime()));
+        viewHolder.eventDate.setText(DateUtils.INSTANCE.getLocalDateFromTimestamp(event.getTime()));
         viewHolder.title.setText(event.getName());
         viewHolder.description.setText(result);
         viewHolder.eventUrl.setMovementMethod(LinkMovementMethod.getInstance());

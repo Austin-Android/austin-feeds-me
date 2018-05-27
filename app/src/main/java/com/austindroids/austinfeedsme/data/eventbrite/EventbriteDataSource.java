@@ -86,7 +86,7 @@ public class EventbriteDataSource implements EventsDataSource {
 
                 final List<Event> convertedEventbriteEvents = new ArrayList<Event>();
                 for (EventbriteEvent eventbriteEvent : eventbriteEvents.getEvents()) {
-                    convertedEventbriteEvents.add(TypeUtils.transformEventBrite(eventbriteEvent));
+                    convertedEventbriteEvents.add(TypeUtils.INSTANCE.transformEventBrite(eventbriteEvent));
                 }
 
                 cleanAndLoadEventbriteEvents(convertedEventbriteEvents, new CleanCallback() {

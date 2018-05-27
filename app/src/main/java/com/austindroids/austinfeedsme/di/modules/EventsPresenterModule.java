@@ -10,7 +10,6 @@ import dagger.Module;
  * Created by darrankelinske on 10/6/17.
  */
 
-@ActivityScoped
 @Module
 public abstract class EventsPresenterModule {
 

@@ -185,28 +185,28 @@ public class EventsMapActivity extends BaseActivity implements
             if (event.getFoodType().equals("beer")) {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
-                        .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                        .title(DateUtils.INSTANCE.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.beer_emoji))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
                         .setTag(events.indexOf(event));
             } else if (event.getFoodType().equals("pizza")) {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
-                        .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                        .title(DateUtils.INSTANCE.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.pizza_emoji_smaller))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
                         .setTag(events.indexOf(event));
             } else if (event.getFoodType().equals("tacos")) {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
-                        .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                        .title(DateUtils.INSTANCE.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.taco_emoji))
                         .snippet(event.getGroup().getName() + "\n" + event.getName()))
                         .setTag(events.indexOf(event));
             } else {
                 map.addMarker(new MarkerOptions()
                         .position(eventLocation)
-                        .title(DateUtils.getLocalDateFromTimestamp(event.getTime()))
+                        .title(DateUtils.INSTANCE.getLocalDateFromTimestamp(event.getTime()))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.apple_emoji)))
                         .setTag(events.indexOf(event));
             }
