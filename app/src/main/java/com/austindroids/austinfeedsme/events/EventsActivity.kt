@@ -37,20 +37,20 @@ import javax.inject.Inject
 
 class EventsActivity : BaseActivity(), EventsContract.View {
 
-    @Inject private lateinit var eventsPresenter: EventsPresenter
+    @Inject lateinit var eventsPresenter: EventsPresenter
 
-    private lateinit var mDrawerLayout: DrawerLayout
-    private lateinit var mNavigationView: NavigationView
-    private lateinit var mRecyclerView: RecyclerView
-    private lateinit var mNoEventsView: View
-    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var eventsRecyclerView: RecyclerView
+    private lateinit var noEventsView: View
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var progressOverlay: FrameLayout
 
     private var activityTitle: CharSequence? = null
-    private var mDrawerToggle: ActionBarDrawerToggle? = null
+    private var drawerToggle: ActionBarDrawerToggle? = null
     private var searchViewForMenu: SearchView? = null
     private var eventListAdapter: EventsAdapter? = null
-    private val navigationEventsFilter: MenuItem? = null
+    private lateinit var navigationEventsFilter: MenuItem
 
     private var authStateListener = getAuthStateListener()
 
@@ -60,11 +60,11 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
-        mDrawerLayout = findViewById(R.id.drawer_layout)
-        mNavigationView = findViewById(R.id.navigation_view)
-        mRecyclerView = findViewById(R.id.event_list_recycler_view)
-        mNoEventsView = findViewById(R.id.noEventsView)
-        mSwipeRefreshLayout = findViewById(R.id.swipe_layout)
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navigationView = findViewById(R.id.navigation_view)
+        eventsRecyclerView = findViewById(R.id.event_list_recycler_view)
+        noEventsView = findViewById(R.id.noEventsView)
+        swipeRefreshLayout = findViewById(R.id.swipe_layout)
         progressOverlay = findViewById(R.id.progress_overlay)
 
         setupActionBar()
@@ -72,9 +72,9 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         activityTitle = title
 
         // swipe refresh logic
-        mSwipeRefreshLayout!!.setOnRefreshListener { refreshEvents() }
+        swipeRefreshLayout.setOnRefreshListener { refreshEvents() }
 
-        setupNavigationDrawer(mNavigationView!!)
+        setupNavigationDrawer(navigationView)
 
         setupEventsList()
 
@@ -82,13 +82,13 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
         FirebaseAuth.getInstance().addAuthStateListener(authStateListener)
 
-        eventsPresenter!!.loadEvents()
-        eventsPresenter!!.loadYummyCounts()
+        eventsPresenter.loadEvents()
+        eventsPresenter.loadYummyCounts()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        mDrawerToggle!!.syncState()
+        drawerToggle!!.syncState()
     }
 
     override fun onDestroy() {
@@ -96,13 +96,9 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         FirebaseAuth.getInstance().removeAuthStateListener(authStateListener)
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        mDrawerToggle!!.onConfigurationChanged(newConfig)
+        drawerToggle!!.onConfigurationChanged(newConfig)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -162,13 +158,13 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (mDrawerToggle!!.onOptionsItemSelected(item)) {
+        if (drawerToggle!!.onOptionsItemSelected(item)) {
             return true
         }
 
         when (item.itemId) {
             android.R.id.home -> {
-                mDrawerLayout!!.openDrawer(GravityCompat.START)
+                drawerLayout.openDrawer(GravityCompat.START)
                 return true
             }
 
@@ -181,7 +177,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .setAvailableProviders(
-                                        Arrays.asList<IdpConfig>(AuthUI.IdpConfig.EmailBuilder().build()))
+                                        Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.EmailBuilder().build()))
                                 .build(),
                         RC_SIGN_IN)
                 return true
@@ -202,7 +198,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     private fun getAuthStateListener() =
-            FirebaseAuth.AuthStateListener { navigationEventsFilter.isVisible = FirebaseAuth.getInstance().currentUser != null }
+            FirebaseAuth.AuthStateListener { navigationEventsFilter?.isVisible = FirebaseAuth.getInstance().currentUser != null }
 
     private fun getEventItemListener(): EventItemListener {
         return object : EventItemListener {
@@ -221,41 +217,39 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             selectDrawerItem(menuItem)
-            mDrawerLayout!!.closeDrawers()
+            drawerLayout.closeDrawers()
             true
         }
 
         // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout!!.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
-        mDrawerToggle = object : ActionBarDrawerToggle(
+        drawerToggle = object : ActionBarDrawerToggle(
                 this, /* host Activity */
-                mDrawerLayout, /* DrawerLayout object */
+                drawerLayout, /* DrawerLayout object */
                 R.string.drawer_open, /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */) {
-            override fun onDrawerClosed(view: View?) {
-                supportActionBar!!.setTitle(activityTitle)
+            override fun onDrawerClosed(drawerView: View) {
+                supportActionBar?.title = activityTitle
                 invalidateOptionsMenu() // creates call to onPrepareOptionsMenu()
-
             }
 
-            override fun onDrawerOpened(drawerView: View?) {
-                supportActionBar!!.setTitle(activityTitle)
+            override fun onDrawerOpened(drawerView: View) {
+                supportActionBar?.title = activityTitle
                 invalidateOptionsMenu() // creates call to onPrepareOptionsMenu()
-
             }
         }
 
-        mDrawerToggle!!.isDrawerIndicatorEnabled = true
+        drawerToggle!!.isDrawerIndicatorEnabled = true
 
-        mDrawerLayout!!.post {
+        drawerLayout.post {
             // To display hamburger icon in toolbar
-            mDrawerToggle!!.syncState()
+            drawerToggle!!.syncState()
         }
 
-        mDrawerLayout!!.addDrawerListener(mDrawerToggle!!)
+        drawerLayout.addDrawerListener(drawerToggle!!)
     }
 
     override fun showFilteringPopUpMenu() {
@@ -304,7 +298,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     private fun setupMenu() {
         // get menu from navigationView
-        val menu = mNavigationView!!.menu
+        val menu = navigationView!!.menu
 
         // find MenuItem you want to change
         navigationEventsFilter = menu.findItem(R.id.events_filter)
@@ -316,8 +310,8 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun showEvents(events: List<Event>) {
         eventListAdapter!!.replaceData(events)
-        mRecyclerView!!.visibility = View.VISIBLE
-        mNoEventsView!!.visibility = View.GONE
+        eventsRecyclerView!!.visibility = View.VISIBLE
+        noEventsView!!.visibility = View.GONE
     }
 
     interface EventItemListener {
@@ -336,7 +330,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun setPizzaCount(count: Int) {
         // get menu from navigationView
-        val menu = mNavigationView!!.menu
+        val menu = navigationView!!.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_pizza)
         //Check if user logged in, change sign in/out button to correct text
@@ -345,7 +339,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun setTacoCount(count: Int) {
         // get menu from navigationView
-        val menu = mNavigationView!!.menu
+        val menu = navigationView!!.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_tacos)
         //Check if user logged in, change sign in/out button to correct text
@@ -354,7 +348,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun setBeerCount(count: Int) {// get menu from navigationView
-        val menu = mNavigationView!!.menu
+        val menu = navigationView!!.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_beer)
         //Check if user logged in, change sign in/out button to correct text
@@ -363,7 +357,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun setTotalCount(count: Int) {// get menu from navigationView
-        val menu = mNavigationView!!.menu
+        val menu = navigationView!!.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_list)
         //Check if user logged in, change sign in/out button to correct text
@@ -372,8 +366,8 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun showNoEventsView() {
-        mRecyclerView!!.visibility = View.GONE
-        mNoEventsView!!.visibility = View.VISIBLE
+        eventsRecyclerView!!.visibility = View.GONE
+        noEventsView!!.visibility = View.VISIBLE
     }
 
 
@@ -388,7 +382,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     private fun refreshEvents() {
         Handler().postDelayed({
             setupEventsList()
-            mSwipeRefreshLayout!!.isRefreshing = false
+            swipeRefreshLayout!!.isRefreshing = false
         }, 2000)
     }
 
@@ -396,9 +390,9 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         eventListAdapter = EventsAdapter(this@EventsActivity, ArrayList(0),
                 mEventItemListener)
 
-        mRecyclerView!!.adapter = eventListAdapter
-        mRecyclerView!!.setHasFixedSize(true)
-        mRecyclerView!!.layoutManager = LinearLayoutManager(this)
+        eventsRecyclerView!!.adapter = eventListAdapter
+        eventsRecyclerView!!.setHasFixedSize(true)
+        eventsRecyclerView!!.layoutManager = LinearLayoutManager(this)
     }
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {

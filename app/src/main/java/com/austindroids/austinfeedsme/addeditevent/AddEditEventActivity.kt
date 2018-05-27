@@ -22,7 +22,8 @@ import javax.inject.Inject
  * Created by darrankelinske on 4/13/16.
  */
 class AddEditEventActivity : AppCompatActivity(), View {
-    @Inject private lateinit var repository: EventsRepository
+
+    @Inject lateinit var repository: EventsRepository
 
     private lateinit var title: EditText
     private lateinit var description: EditText
