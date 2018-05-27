@@ -65,7 +65,7 @@ android {
 
     // Remove mockRelease as it's not needed.
     android.variantFilter { variant ->
-        if(variant.buildType.name.equals('release')
+        if(variant.buildType.name == 'release'
                 && variant.getFlavors().get(0).name.equals('mock')) {
             variant.setIgnore(true);
         }
@@ -85,10 +85,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    crashlytics {
-        manifestPath = "src/main/AndroidManifest.xml"
     }
 }
 
@@ -131,9 +127,9 @@ dependencies {
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
     // RX
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
 

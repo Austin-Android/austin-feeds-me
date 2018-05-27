@@ -42,11 +42,6 @@
             android:label="@string/app_label"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabricApiKey}"
-            tools:replace="android:value"/>
-
         <service
             android:name=".notifications.AFMFirebaseMessagingService">
             <intent-filter>
