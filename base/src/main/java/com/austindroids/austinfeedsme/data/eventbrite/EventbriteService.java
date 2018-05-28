@@ -25,5 +25,4 @@ public interface EventbriteService {
 
     @GET("/v3/organizers/{organizerId}/?token="+ Constants.EVENTBRITE_TOKEN)
     Observable<Group> getOrganizerById(@Path("organizerId") String organizerId);
-
 }
