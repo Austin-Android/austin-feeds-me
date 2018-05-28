@@ -53,7 +53,7 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
         viewHolder.description.text = result
         viewHolder.eventUrl.movementMethod = LinkMovementMethod.getInstance()
         viewHolder.eventUrl.setOnClickListener(View.OnClickListener {
-            val eventUrl = event.eventUrl ?: return@OnClickListener
+            val eventUrl = event.event_url ?: return@OnClickListener
             val webIntent = Intent(Intent.ACTION_VIEW)
             webIntent.data = Uri.parse(eventUrl)
             context.startActivity(webIntent)
