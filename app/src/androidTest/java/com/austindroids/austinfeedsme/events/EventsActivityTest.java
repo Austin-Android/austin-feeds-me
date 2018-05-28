@@ -39,12 +39,12 @@ public class EventsActivityTest {
     @Test
     public void openDrawerAndClickPizza() {
 
-        onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+        onView(withId(R.id.drawer_layout_events)).perform(DrawerActions.open());
         // Doesn't work with NavigationView yet
 //        onView(withId(R.id.events_map)).perform(scrollTo()).check(matches(isDisplayed()));
 //        onView(withId(R.id.events_map)).perform(click());
 
-        onView(withId(R.id.drawer_layout)).perform(DrawerActions.close());
+        onView(withId(R.id.drawer_layout_events)).perform(DrawerActions.close());
 
     }
 

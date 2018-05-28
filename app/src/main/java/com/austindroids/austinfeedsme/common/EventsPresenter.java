@@ -36,7 +36,6 @@ public class EventsPresenter implements EventsContract.Presenter {
     public EventsPresenter(EventsRepository repository, EventsContract.View view) {
         this.view = view;
         this.repository = repository;
-
     }
 
     @Override

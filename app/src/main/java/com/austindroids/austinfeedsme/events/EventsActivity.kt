@@ -40,47 +40,34 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     @Inject lateinit var eventsPresenter: EventsPresenter
 
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
-    private lateinit var eventsRecyclerView: RecyclerView
-    private lateinit var noEventsView: View
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var eventsRecyclerView: RecyclerView
+    private lateinit var noEventsLinearLayout: View
     private lateinit var progressOverlay: FrameLayout
+    private lateinit var navigationView: NavigationView
 
-    private var activityTitle: CharSequence? = null
     private var drawerToggle: ActionBarDrawerToggle? = null
     private var searchViewForMenu: SearchView? = null
     private var eventListAdapter: EventsAdapter? = null
+    private var eventItemListener: EventsAdapter.EventItemListener = getEventItemListener()
     private lateinit var navigationEventsFilter: MenuItem
-
-    private var authStateListener = getAuthStateListener()
-
-    private var mEventItemListener: EventItemListener = getEventItemListener()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navigationView = findViewById(R.id.navigation_view)
-        eventsRecyclerView = findViewById(R.id.event_list_recycler_view)
-        noEventsView = findViewById(R.id.noEventsView)
-        swipeRefreshLayout = findViewById(R.id.swipe_layout)
+        drawerLayout = findViewById(R.id.drawer_layout_events)
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout_events)
+        eventsRecyclerView = findViewById(R.id.recycler_view_events)
+        noEventsLinearLayout = findViewById(R.id.linear_layout_no_events)
         progressOverlay = findViewById(R.id.progress_overlay)
+        navigationView = findViewById(R.id.navigation_view_events)
 
         setupActionBar()
-
-        activityTitle = title
-
-        // swipe refresh logic
-        swipeRefreshLayout.setOnRefreshListener { refreshEvents() }
-
-        setupNavigationDrawer(navigationView)
-
-        setupEventsList()
-
         setupMenu()
-
-        FirebaseAuth.getInstance().addAuthStateListener(authStateListener)
+        setupSwipeToRefresh()
+        setupEventsList()
+        setupNavigationDrawer(navigationView)
 
         eventsPresenter.loadEvents()
         eventsPresenter.loadYummyCounts()
@@ -91,28 +78,19 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         drawerToggle!!.syncState()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        FirebaseAuth.getInstance().removeAuthStateListener(authStateListener)
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         drawerToggle!!.onConfigurationChanged(newConfig)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_events, menu)
-        // Get the SearchView and set the searchable configuration
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
         searchViewForMenu = menu.findItem(R.id.menu_search).actionView as SearchView
         val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
-        // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        searchView.setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
-        // Fix to have searchview expand to fill entire ActionBar on tablets
+        searchView.setIconifiedByDefault(false)
         searchView.maxWidth = Integer.MAX_VALUE
 
         val searchMenu = menu.findItem(R.id.menu_search)
@@ -197,127 +175,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         handleIntent(intent)
     }
 
-    private fun getAuthStateListener() =
-            FirebaseAuth.AuthStateListener { navigationEventsFilter?.isVisible = FirebaseAuth.getInstance().currentUser != null }
-
-    private fun getEventItemListener(): EventItemListener {
-        return object : EventItemListener {
-            override fun onEventClick(clickedEvent: Event) {}
-        }
-    }
-
-    private fun handleIntent(intent: Intent) {
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            eventsPresenter!!.searchEvents(query)
-        }
-    }
-
-    private fun setupNavigationDrawer(navigationView: NavigationView) {
-
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            selectDrawerItem(menuItem)
-            drawerLayout.closeDrawers()
-            true
-        }
-
-        // set a custom shadow that overlays the main content when the drawer opens
-        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
-        drawerToggle = object : ActionBarDrawerToggle(
-                this, /* host Activity */
-                drawerLayout, /* DrawerLayout object */
-                R.string.drawer_open, /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */) {
-            override fun onDrawerClosed(drawerView: View) {
-                supportActionBar?.title = activityTitle
-                invalidateOptionsMenu() // creates call to onPrepareOptionsMenu()
-            }
-
-            override fun onDrawerOpened(drawerView: View) {
-                supportActionBar?.title = activityTitle
-                invalidateOptionsMenu() // creates call to onPrepareOptionsMenu()
-            }
-        }
-
-        drawerToggle!!.isDrawerIndicatorEnabled = true
-
-        drawerLayout.post {
-            // To display hamburger icon in toolbar
-            drawerToggle!!.syncState()
-        }
-
-        drawerLayout.addDrawerListener(drawerToggle!!)
-    }
-
-    override fun showFilteringPopUpMenu() {
-        val popup = PopupMenu(this@EventsActivity, findViewById(R.id.map_filter))
-        popup.menuInflater.inflate(R.menu.filter_events, popup.menu)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.todays_events -> eventsPresenter!!.setFiltering(EventsFilterType.TODAYS_EVENTS)
-                R.id.this_weeks_events -> eventsPresenter!!.setFiltering(EventsFilterType.THIS_WEEKS_EVENTS)
-                else -> eventsPresenter!!.setFiltering(EventsFilterType.ALL_EVENTS)
-            }
-            eventsPresenter!!.loadEvents()
-            true
-        }
-
-        popup.show()
-    }
-
-    fun selectDrawerItem(menuItem: MenuItem) {
-
-        when (menuItem.itemId) {
-            R.id.events_list -> Handler().postDelayed({ searchViewForMenu!!.setQuery("reset", true) }, 300)
-            R.id.events_map -> Handler().postDelayed({ startActivity(Intent(this@EventsActivity, EventsMapActivity::class.java)) }, 300)
-            R.id.events_filter -> Handler().postDelayed({ startActivity(Intent(this@EventsActivity, EventFilterActivity::class.java)) }, 300)
-            R.id.events_pizza -> Handler().postDelayed({ searchViewForMenu!!.setQuery("pizza", true) }, 300)
-            R.id.events_tacos -> Handler().postDelayed({ searchViewForMenu!!.setQuery("taco", true) }, 300)
-            R.id.events_beer -> Handler().postDelayed({ searchViewForMenu!!.setQuery("beer", true) }, 300)
-            R.id.privacy_policy -> {
-                val privacyIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://whereisdarran.com/privacy_policy.html"))
-                startActivity(privacyIntent)
-            }
-            else -> startActivity(Intent(this@EventsActivity, EventsActivity::class.java))
-        }//startActivity(new Intent(EventsActivity.this, EventsMapActivity.class));
-    }
-
-    private fun setupActionBar() {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-
-        if (supportActionBar != null) {
-            supportActionBar!!.setHomeButtonEnabled(true)
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        }
-    }
-
-    private fun setupMenu() {
-        // get menu from navigationView
-        val menu = navigationView!!.menu
-
-        // find MenuItem you want to change
-        navigationEventsFilter = menu.findItem(R.id.events_filter)
-
-        //Check if user logged in, change sign in/out button to correct text
-
-        navigationEventsFilter.isVisible = FirebaseAuth.getInstance().currentUser != null
-    }
-
-    override fun showEvents(events: List<Event>) {
-        eventListAdapter!!.replaceData(events)
-        eventsRecyclerView!!.visibility = View.VISIBLE
-        noEventsView!!.visibility = View.GONE
-    }
-
-    interface EventItemListener {
-
-        fun onEventClick(clickedEvent: Event)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         if (requestCode == RC_SIGN_IN) {
@@ -367,42 +224,153 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun showNoEventsView() {
         eventsRecyclerView!!.visibility = View.GONE
-        noEventsView!!.visibility = View.VISIBLE
+        noEventsLinearLayout!!.visibility = View.VISIBLE
     }
 
 
     override fun showProgress() {
-        progressOverlay!!.visibility = View.VISIBLE
+        progressOverlay.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        progressOverlay!!.visibility = View.GONE
+        progressOverlay.visibility = View.GONE
+    }
+
+    private fun getEventItemListener(): EventsAdapter.EventItemListener {
+        return object : EventsAdapter.EventItemListener {
+            override fun onEventClick(clickedEvent: Event) {}
+        }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            eventsPresenter!!.searchEvents(query)
+        }
+    }
+
+    private fun setupNavigationDrawer(navigationView: NavigationView) {
+
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            selectDrawerItem(menuItem)
+            drawerLayout.closeDrawers()
+            true
+        }
+
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
+
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        drawerToggle = object : ActionBarDrawerToggle(
+                this, /* host Activity */
+                drawerLayout, /* DrawerLayout object */
+                R.string.drawer_open, /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */) {
+            override fun onDrawerClosed(drawerView: View) {
+                supportActionBar?.title = title
+                invalidateOptionsMenu() // creates call to onPrepareOptionsMenu()
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                supportActionBar?.title = title
+                invalidateOptionsMenu() // creates call to onPrepareOptionsMenu()
+            }
+        }
+
+        drawerToggle!!.isDrawerIndicatorEnabled = true
+
+        drawerLayout.post {
+            // To display hamburger icon in toolbar
+            drawerToggle!!.syncState()
+        }
+
+        drawerLayout.addDrawerListener(drawerToggle!!)
+    }
+
+    override fun showFilteringPopUpMenu() {
+        val popup = PopupMenu(this@EventsActivity, findViewById(R.id.map_filter))
+        popup.menuInflater.inflate(R.menu.filter_events, popup.menu)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.todays_events -> eventsPresenter!!.setFiltering(EventsFilterType.TODAYS_EVENTS)
+                R.id.this_weeks_events -> eventsPresenter!!.setFiltering(EventsFilterType.THIS_WEEKS_EVENTS)
+                else -> eventsPresenter!!.setFiltering(EventsFilterType.ALL_EVENTS)
+            }
+            eventsPresenter!!.loadEvents()
+            true
+        }
+
+        popup.show()
+    }
+
+    private fun selectDrawerItem(menuItem: MenuItem) {
+
+        when (menuItem.itemId) {
+            R.id.events_list -> Handler().postDelayed({ searchViewForMenu!!.setQuery("reset", true) }, 300)
+            R.id.events_map -> Handler().postDelayed({ startActivity(Intent(this@EventsActivity, EventsMapActivity::class.java)) }, 300)
+            R.id.events_filter -> Handler().postDelayed({ startActivity(Intent(this@EventsActivity, EventFilterActivity::class.java)) }, 300)
+            R.id.events_pizza -> Handler().postDelayed({ searchViewForMenu!!.setQuery("pizza", true) }, 300)
+            R.id.events_tacos -> Handler().postDelayed({ searchViewForMenu!!.setQuery("taco", true) }, 300)
+            R.id.events_beer -> Handler().postDelayed({ searchViewForMenu!!.setQuery("beer", true) }, 300)
+            R.id.privacy_policy -> {
+                val privacyIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://whereisdarran.com/privacy_policy.html"))
+                startActivity(privacyIntent)
+            }
+            else -> startActivity(Intent(this@EventsActivity, EventsActivity::class.java))
+        }
+    }
+
+    private fun setupActionBar() {
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.let {
+            it.setHomeButtonEnabled(true)
+            it.setDisplayHomeAsUpEnabled(true)
+        }
+    }
+
+    private fun setupMenu() {
+        // get menu from navigationView
+        val menu = navigationView.menu
+
+        // find MenuItem you want to change
+        navigationEventsFilter = menu.findItem(R.id.events_filter)
+
+        //Check if user logged in, change sign in/out button to correct text
+
+        navigationEventsFilter.isVisible = FirebaseAuth.getInstance().currentUser != null
+    }
+
+    override fun showEvents(events: List<Event>) {
+        eventListAdapter!!.replaceData(events)
+        eventsRecyclerView!!.visibility = View.VISIBLE
+        noEventsLinearLayout!!.visibility = View.GONE
+    }
+
+    private fun setupSwipeToRefresh() {
+        swipeRefreshLayout.setOnRefreshListener { refreshEvents() }
     }
 
     private fun refreshEvents() {
         Handler().postDelayed({
             setupEventsList()
-            swipeRefreshLayout!!.isRefreshing = false
+            swipeRefreshLayout.isRefreshing = false
         }, 2000)
     }
 
     private fun setupEventsList() {
         eventListAdapter = EventsAdapter(this@EventsActivity, ArrayList(0),
-                mEventItemListener)
+                eventItemListener)
 
-        eventsRecyclerView!!.adapter = eventListAdapter
-        eventsRecyclerView!!.setHasFixedSize(true)
-        eventsRecyclerView!!.layoutManager = LinearLayoutManager(this)
-    }
-
-    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        //        Parcelable listParcelable = Parcels.wrap(eventListAdapter.getEvents());
-        //        savedInstanceState.putParcelable(EVENTS_LIST, listParcelable);
-        super.onSaveInstanceState(savedInstanceState)
+        eventsRecyclerView.adapter = eventListAdapter
+        eventsRecyclerView.setHasFixedSize(true)
+        eventsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     companion object {
 
-        val RC_SIGN_IN = 7
+        const val RC_SIGN_IN = 7
     }
 }
