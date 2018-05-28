@@ -23,9 +23,9 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.austindroids.austinfeedsme.R
-import com.austindroids.austinfeedsme.common.BaseActivity
-import com.austindroids.austinfeedsme.common.EventsContract
-import com.austindroids.austinfeedsme.common.EventsPresenter
+import com.austindroids.austinfeedsme.common.base.BaseActivity
+import com.austindroids.austinfeedsme.common.events.EventsContract
+import com.austindroids.austinfeedsme.common.events.EventsPresenter
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity

@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
-import com.austindroids.austinfeedsme.utility.TypeUtils;
+import com.austindroids.austinfeedsme.common.utils.EventbriteUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -86,7 +86,7 @@ public class EventbriteDataSource implements EventsDataSource {
 
                 final List<Event> convertedEventbriteEvents = new ArrayList<Event>();
                 for (EventbriteEvent eventbriteEvent : eventbriteEvents.getEvents()) {
-                    convertedEventbriteEvents.add(TypeUtils.INSTANCE.transformEventBrite(eventbriteEvent));
+                    convertedEventbriteEvents.add(EventbriteUtils.INSTANCE.transformEventBrite(eventbriteEvent));
                 }
 
                 cleanAndLoadEventbriteEvents(convertedEventbriteEvents, new CleanCallback() {

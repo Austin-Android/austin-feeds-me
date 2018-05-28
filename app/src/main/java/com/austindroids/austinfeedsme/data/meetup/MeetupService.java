@@ -29,7 +29,7 @@ public interface MeetupService {
             "&photo-host=public" +
             "&zip=78701" +
             "&pizza+provided+beer+breakfast+lunch+dinner+taco" +
-            "&page=300" +
+            "&page=100" +
             "&status=upcoming" +
             "&radius=40")
     Observable<Results> getOpenEvents();

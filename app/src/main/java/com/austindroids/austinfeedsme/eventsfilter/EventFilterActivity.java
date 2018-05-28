@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.austindroids.austinfeedsme.R;
-import com.austindroids.austinfeedsme.common.BaseActivity;
+import com.austindroids.austinfeedsme.common.base.BaseActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
@@ -15,8 +15,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import static com.austindroids.austinfeedsme.utility.NetworkUtils.isNetworkAvailable;
 
 
 /**
@@ -51,9 +49,6 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isNetworkAvailable(this)) {
-            showSnackbar(getString(R.string.network_unavailable));
-        }
         eventFilterAdapter.replaceData(new ArrayList<>());
         eventFilterPresenter.loadEvents();
     }

@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.notifications;
+package com.austindroids.austinfeedsme.common.pushnotifications;
 
 import android.util.Log;
 
@@ -9,9 +9,9 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  * Created by darrankelinske on 9/9/16.
  */
 
-public class AFMFirebaseInstanceIDService extends FirebaseInstanceIdService {
+public class InstanceIDService extends FirebaseInstanceIdService {
 
-    private static final String TAG = "AFMFirebaseIIDService";
+    private static final String TAG = "AFMFirebaseInstanceIdService";
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of

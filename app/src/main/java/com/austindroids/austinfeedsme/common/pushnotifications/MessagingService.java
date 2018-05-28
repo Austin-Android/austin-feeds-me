@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.notifications;
+package com.austindroids.austinfeedsme.common.pushnotifications;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,7 +18,7 @@ import com.google.firebase.messaging.RemoteMessage;
  * Created by darrankelinske on 9/9/16.
  */
 
-public class AFMFirebaseMessagingService extends FirebaseMessagingService {
+public class MessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "AFMFirebaseMsgService";
 

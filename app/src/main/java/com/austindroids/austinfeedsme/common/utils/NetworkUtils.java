@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.utility;
+package com.austindroids.austinfeedsme.common.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.utility
+package com.austindroids.austinfeedsme.common.utils
 
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.Group
@@ -8,7 +8,7 @@ import com.austindroids.austinfeedsme.data.eventbrite.EventbriteEvent
  * Created by daz on 8/19/16.
  */
 
-object TypeUtils {
+object EventbriteUtils {
 
     fun transformEventBrite(event: EventbriteEvent): Event {
 

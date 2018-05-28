@@ -1,6 +1,5 @@
-package com.austindroids.austinfeedsme.utility
+package com.austindroids.austinfeedsme.common.utils
 
-import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar

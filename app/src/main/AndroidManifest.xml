@@ -42,14 +42,14 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <service
-            android:name=".notifications.AFMFirebaseMessagingService">
+            android:name=".common.pushnotifications.MessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".notifications.AFMFirebaseInstanceIDService">
+            android:name=".common.pushnotifications.InstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

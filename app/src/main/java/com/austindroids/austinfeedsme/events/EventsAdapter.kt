@@ -16,7 +16,7 @@ import android.widget.TextView
 
 import com.austindroids.austinfeedsme.R
 import com.austindroids.austinfeedsme.data.Event
-import com.austindroids.austinfeedsme.utility.DateUtils
+import com.austindroids.austinfeedsme.common.utils.DateUtils
 
 /**
  * Created by darrankelinske on 12/3/16.

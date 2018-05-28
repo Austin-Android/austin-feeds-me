@@ -11,13 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.austindroids.austinfeedsme.R;
-import com.austindroids.austinfeedsme.common.BaseActivity;
-import com.austindroids.austinfeedsme.common.EventsContract;
-import com.austindroids.austinfeedsme.common.EventsPresenter;
+import com.austindroids.austinfeedsme.common.base.BaseActivity;
+import com.austindroids.austinfeedsme.common.events.EventsContract;
+import com.austindroids.austinfeedsme.common.events.EventsPresenter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
-import com.austindroids.austinfeedsme.utility.DateUtils;
+import com.austindroids.austinfeedsme.common.utils.DateUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

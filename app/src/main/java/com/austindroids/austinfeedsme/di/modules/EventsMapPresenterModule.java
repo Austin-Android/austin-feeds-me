@@ -1,6 +1,6 @@
 package com.austindroids.austinfeedsme.di.modules;
 
-import com.austindroids.austinfeedsme.common.EventsContract;
+import com.austindroids.austinfeedsme.common.events.EventsContract;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;
 
 import dagger.Binds;

@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.common;
+package com.austindroids.austinfeedsme.common.events;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.events.EventsFilterType;

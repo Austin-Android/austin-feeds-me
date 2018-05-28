@@ -2,6 +2,7 @@ package com.austindroids.austinfeedsme.eventsmap;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.CardView;
 import android.text.method.ScrollingMovementMethod;
@@ -20,27 +21,15 @@ import java.util.List;
 /**
  * Created by pauljoiner on 9/11/16.
  */
-public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
-    private List<CardView> mViews;
+public class CardPagerAdapter extends PagerAdapter {
+
+    private static final int MAX_ELEVATION_FACTOR = 8;
+
     private List<Event> events;
     private float mBaseElevation;
 
     public CardPagerAdapter(List<Event> events) {
-
         this.events = events;
-        mViews = new ArrayList<>();
-
-        for (int i = 0; i < events.size(); i++) {
-//            events.add(new Event());
-            mViews.add(null);
-        }
-    }
-    public float getBaseElevation() {
-        return mBaseElevation;
-    }
-    @Override
-    public CardView getCardViewAt(int position) {
-        return mViews.get(position);
     }
 
     @Override
@@ -58,20 +47,17 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         View view = LayoutInflater.from(container.getContext())
                 .inflate(R.layout.adapter, container, false);
         container.addView(view);
-        CardView cardView = (CardView) view.findViewById(R.id.cardView);
-        TextView titleText = (TextView) view.findViewById(R.id.card_title_text);
-        TextView bodyText = (TextView) view.findViewById(R.id.card_body_text);
-        Button rsvpButton= (Button) view.findViewById(R.id.card_rsvp_button);
-        rsvpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String rsvpLink = events.get(position).getEventUrl();
-                if (rsvpLink != null)
-                {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(rsvpLink));
-                    view.getContext().startActivity(i);
-                }
+        CardView cardView = view.findViewById(R.id.cardView);
+        TextView titleText = view.findViewById(R.id.card_title_text);
+        TextView bodyText = view.findViewById(R.id.card_body_text);
+        Button rsvpButton= view.findViewById(R.id.card_rsvp_button);
+        rsvpButton.setOnClickListener(view1 -> {
+            String rsvpLink = events.get(position).getEvent_url();
+            if (rsvpLink != null)
+            {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(rsvpLink));
+                view1.getContext().startActivity(i);
             }
         });
 
@@ -84,18 +70,15 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         }
 
         cardView.setMaxCardElevation(mBaseElevation * MAX_ELEVATION_FACTOR);
-        mViews.set(position, cardView);
         return view;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
-        mViews.set(position, null);
     }
 
     public Event getEventAtPosition(int position) {
         return events.get(position);
     }
-
 }
