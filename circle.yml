@@ -14,7 +14,8 @@ jobs:
           name: Get properties
           command: |
                   wget http://whereisdarran.com/austinfeedsme.properties
-                  wget http://whereisdarran.com/google-services.json -P app/
+                  wget http://whereisdarran.com/google-services.json -P base/
+                  wget http://whereisdarran.com/google-services.json -P apk/
       - run:
           name: Download Dependencies
           command: |
