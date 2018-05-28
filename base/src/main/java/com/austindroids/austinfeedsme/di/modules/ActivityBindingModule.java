@@ -1,5 +1,6 @@
 package com.austindroids.austinfeedsme.di.modules;
 
+import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsActivity;
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity;
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity;

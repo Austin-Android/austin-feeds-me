@@ -1,4 +1,4 @@
-package com.austindroids.austinfeedsme.di.modules;
+package com.austindroids.austinfeedsme.di.scopes;
 
 
 import com.austindroids.austinfeedsme.di.components.AppComponent;

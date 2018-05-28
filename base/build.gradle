@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
@@ -26,17 +26,14 @@ props.load(new FileInputStream(file(project.property("austinfeedsme.properties")
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
+    baseFeature true
 
     defaultConfig {
-        applicationId "com.austindroids.austinfeedsme"
         minSdkVersion 16
         targetSdkVersion 27
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
-
-        versionCode 10
-        versionName "1.7"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -49,26 +46,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-
-    flavorDimensions "mode"
-
-    productFlavors {
-        mock {
-            dimension "mode"
-            applicationIdSuffix = ".mock"
-        }
-        prod {
-            dimension "mode"
-        }
-    }
-
-    // Remove mockRelease as it's not needed.
-    android.variantFilter { variant ->
-        if(variant.buildType.name == 'release'
-                && variant.getFlavors().get(0).name.equals('mock')) {
-            variant.setIgnore(true);
         }
     }
 
@@ -87,9 +64,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
+crashlytics { instantAppSupport true }
+
 dependencies {
+    application project(":apk")
 
     // Support Libs
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -98,7 +79,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
 
     // Crashlytics
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
         transitive = true
     }
 
