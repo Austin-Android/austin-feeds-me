@@ -1,0 +1,10 @@
+# Firebase
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepclassmembers class com.austindroids.austinfeedsme.data.** {
+  *;
+}
+
+-dontwarn com.google.errorprone.annotations.*
+
+-keep class android.support.v7.widget.SearchView { *; }
