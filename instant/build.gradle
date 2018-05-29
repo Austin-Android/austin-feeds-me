@@ -1,5 +1,28 @@
 apply plugin: 'com.android.instantapp'
 
+android {
+
+    flavorDimensions "mode"
+
+    productFlavors {
+        mock {
+            dimension "mode"
+            applicationIdSuffix = ".mock"
+        }
+        prod {
+            dimension "mode"
+        }
+    }
+
+    // Remove mockRelease as it's not needed.
+    android.variantFilter { variant ->
+        if(variant.buildType.name == 'release'
+                && variant.getFlavors().get(0).name.equals('mock')) {
+            variant.setIgnore(true)
+        }
+    }
+}
+
 dependencies {
     dependencies {
         implementation project(':base')

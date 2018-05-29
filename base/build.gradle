@@ -14,6 +14,10 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 27
+        defaultConfig {
+            versionCode 17
+            versionName "1.7"
+        }
 
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
@@ -27,7 +31,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -48,6 +52,24 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    flavorDimensions "mode"
+
+    productFlavors {
+        mock {
+            dimension "mode"
+        }
+        prod {
+            dimension "mode"
+        }
+    }
+
+    // Remove mockRelease as it's not needed.
+    android.variantFilter { variant ->
+        if(variant.buildType.name == 'release'
+                && variant.getFlavors().get(0).name.equals('mock')) {
+            variant.setIgnore(true)
+        }
+    }
 }
 
 crashlytics { instantAppSupport true }
