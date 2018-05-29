@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/events_list"
+        android:title="Events List" />
+    <item
+        android:id="@+id/events_map"
+        android:title="Events Map" />
+    <item
+        android:id="@+id/events_filter"
+        android:title="Events Filter"
+        android:visible="false"/>
+
+    <item android:title="Yummies" >
+        <menu>
+            <item
+                android:id="@+id/events_pizza"
+                android:title="Pizza" />
+            <item
+                android:id="@+id/events_tacos"
+                android:title="Tacos" />
+            <item
+                android:id="@+id/events_beer"
+                android:title="Beer" />
+        </menu>
+    </item>
+
+    <item android:title="boring stuff" >
+        <menu>
+            <item
+                android:id="@+id/privacy_policy"
+                android:title="Privacy Policy" />
+        </menu>
+    </item>
+
+</menu>

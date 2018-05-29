@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        applicationId "com.austindroids.austinfeedsme"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 18
+        versionName "1.7"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "mode"
+
+    productFlavors {
+        mock {
+            dimension "mode"
+            applicationIdSuffix = ".mock"
+        }
+        prod {
+            dimension "mode"
+        }
+    }
+
+    // Remove mockRelease as it's not needed.
+    android.variantFilter { variant ->
+        if(variant.buildType.name == 'release'
+                && variant.getFlavors().get(0).name.equals('mock')) {
+            variant.setIgnore(true)
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':base')
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
+        transitive = true
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'
