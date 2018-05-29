@@ -12,10 +12,10 @@ android {
     baseFeature true
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 27
         defaultConfig {
-            versionCode 19
+            versionCode 22
             versionName "1.7"
         }
 
