@@ -1,5 +1,6 @@
 package com.austindroids.austinfeedsme.common.events;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.austindroids.austinfeedsme.data.Event;
@@ -183,6 +184,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                     // or if the event name or description doesn't contain the search term
                     if (!nextEvent.isFood()
                             || (nextEvent.getTime() < new Date().getTime())
+                            || TextUtils.isEmpty(nextEvent.getDescription())
                             || !nextEvent.getDescription().toLowerCase().contains(lowerCaseSearch)) {
                         iter.remove();
                     }
