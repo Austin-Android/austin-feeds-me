@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -43,7 +42,7 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     private lateinit var map: GoogleMap
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var viewPager: ViewPager
-    private lateinit var adapter: CardPagerAdapter
+    private var cardPagerAdapter: CardPagerAdapter = CardPagerAdapter(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,10 +60,10 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         viewPager = findViewById(R.id.viewPager)
-        viewPager!!.adapter = adapter
+        viewPager!!.adapter = cardPagerAdapter
         viewPager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
-                val selectedEvent = adapter.getEventAtPosition(position)
+                val selectedEvent = cardPagerAdapter.getEventAtPosition(position)
                 val selectedLocation = LatLng(java.lang.Double.parseDouble(selectedEvent.venue.lat),
                         java.lang.Double.parseDouble(selectedEvent.venue.lon))
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 13f))
@@ -113,7 +112,6 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     override fun onMapReady(map: GoogleMap) {
         val austin = LatLng(30.27415, -97.73996)
         this.map = map
-        setMyLocationEnabled(true)
         this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 13f))
         this.map.setOnInfoWindowLongClickListener(this)
 
@@ -175,8 +173,8 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     override fun showEvents(events: List<Event>) {
         map.clear()
 
-        adapter = CardPagerAdapter(events)
-        viewPager!!.adapter = adapter
+        cardPagerAdapter = CardPagerAdapter(events)
+        viewPager!!.adapter = cardPagerAdapter
 
         for (event in events) {
             if (event.venue == null || event.foodType == null) {
