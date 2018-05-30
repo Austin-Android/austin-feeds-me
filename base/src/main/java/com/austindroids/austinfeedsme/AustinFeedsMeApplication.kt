@@ -20,7 +20,6 @@ class AustinFeedsMeApplication : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         Fabric.with(this, Crashlytics())
 
         if (BuildConfig.DEBUG) {
