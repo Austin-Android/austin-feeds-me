@@ -33,7 +33,9 @@ ext {
     // App dependencies
     firebaseVersion = '16.0.1'
     supportLibraryVersion = '27.1.1'
-    guavaVersion = '22.0-android'
+    daggerVersion = "2.15"
+    playServicesVersion = "15.0.1"
+    retrofitVersion = "2.3.0"
     junitVersion = '4.12'
     mockitoVersion = '2.8.47'
     hamcrestVersion = '1.3'
