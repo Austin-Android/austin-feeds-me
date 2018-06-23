@@ -28,3 +28,6 @@ dependencies {
         implementation project(':base')
     }
 }
+
+// Needed for Firebase
+apply plugin: 'com.google.gms.google-services'

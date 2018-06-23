@@ -14,8 +14,9 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+
         defaultConfig {
-            versionCode 18
+            versionCode 25
             versionName "1.7"
         }
 
