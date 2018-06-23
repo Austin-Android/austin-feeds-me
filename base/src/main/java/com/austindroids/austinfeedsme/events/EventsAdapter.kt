@@ -41,11 +41,13 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val event = getItem(position)
 
+        var eventDescription = event.description ?: ""
+
         val result: Spanned
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(event.description, Html.FROM_HTML_MODE_LEGACY)
+        result = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Html.fromHtml(eventDescription, Html.FROM_HTML_MODE_LEGACY)
         } else {
-            result = Html.fromHtml(event.description)
+            Html.fromHtml(eventDescription)
         }
 
         viewHolder.eventDate.text = DateUtils.getLocalDateFromTimestamp(event.time)
