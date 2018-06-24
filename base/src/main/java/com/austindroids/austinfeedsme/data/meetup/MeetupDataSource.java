@@ -32,6 +32,7 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 
 /**
@@ -63,7 +64,6 @@ public class MeetupDataSource implements EventsDataSource {
                 .build();
 
         MeetupService meetupService = retrofit.create(MeetupService.class);
-        Observable<Results> meetupObservable = meetupService.getOpenEvents();
 
         meetupService.getOpenEvents()
                 .subscribeOn(Schedulers.io()) // optional if you do not wish to override the default behavior
@@ -108,8 +108,7 @@ public class MeetupDataSource implements EventsDataSource {
                                     }
                                 }
 
-                                Log.d(TAG, "After cleaning we have this many events: " +
-                                        meetupEvents.size());
+                                Timber.d("After cleaning we have this many events: %s", meetupEvents.size());
                                 if (meetupEvents.size() != 0) {
                                     callback.onEventsLoaded(meetupEvents);
                                 }
@@ -134,41 +133,5 @@ public class MeetupDataSource implements EventsDataSource {
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
 
-    }
-
-    private static Cache provideCache (Context context)
-    {
-        Cache cache = null;
-        try
-        {
-            cache = new Cache( new File(context.getCacheDir(), "http-cache" ),
-                    10 * 1024 * 1024 ); // 10 MB
-        }
-        catch (Exception e)
-        {
-            Log.e( TAG, "Could not create Cache!" );
-        }
-        return cache;
-    }
-
-    public static Interceptor provideCacheInterceptor ()
-    {
-        return new Interceptor()
-        {
-            @Override
-            public Response intercept (Chain chain) throws IOException
-            {
-                Response response = chain.proceed( chain.request() );
-
-                // re-write response header to force use of cache
-                CacheControl cacheControl = new CacheControl.Builder()
-                        .maxAge( 7, TimeUnit.MINUTES )
-                        .build();
-
-                return response.newBuilder()
-                        .header(CACHE_CONTROL, cacheControl.toString() )
-                        .build();
-            }
-        };
     }
 }

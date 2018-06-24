@@ -40,6 +40,7 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventsRecyclerView.setAdapter(eventFilterAdapter);
 
+        // Move these dependencies into the dependency graph
         EventsRepository eventbriteRepository = new EventsRepository(eventbriteDataSource);
         EventsRepository meetupRepository = new EventsRepository(meetupDataSource);
 

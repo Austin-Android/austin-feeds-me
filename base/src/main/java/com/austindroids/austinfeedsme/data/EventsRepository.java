@@ -22,15 +22,15 @@ import javax.inject.Singleton;
 
 @Singleton
 public class EventsRepository implements EventsDataSource {
-    private final EventsDataSource mEventsRemoteDataSource;
+    private final EventsDataSource eventsRemoteDataSource;
 
     public EventsRepository(EventsDataSource eventsDataSource) {
-        this.mEventsRemoteDataSource = eventsDataSource;
+        this.eventsRemoteDataSource = eventsDataSource;
     }
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
-        mEventsRemoteDataSource.getEvents(new LoadEventsCallback() {
+        eventsRemoteDataSource.getEvents(new LoadEventsCallback() {
             @Override
             public void onEventsLoaded(List<Event> events) {
                 callback.onEventsLoaded(events);
@@ -52,7 +52,7 @@ public class EventsRepository implements EventsDataSource {
     @Override
     public void saveEvent(Event eventToSave, final SaveEventCallback callback) {
 
-        mEventsRemoteDataSource.saveEvent(eventToSave, new SaveEventCallback() {
+        eventsRemoteDataSource.saveEvent(eventToSave, new SaveEventCallback() {
             @Override
             public void onEventSaved(boolean success) {
                 callback.onEventSaved(success);
