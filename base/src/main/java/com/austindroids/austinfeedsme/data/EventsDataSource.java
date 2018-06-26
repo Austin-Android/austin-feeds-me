@@ -14,14 +14,6 @@ public interface EventsDataSource {
         void onError(String error);
     }
 
-    interface LoadEventCallback {
-
-        void onEventLoaded(Event event);
-
-        void onError(String error);
-
-    }
-
     interface SaveEventCallback {
 
         void onEventSaved(boolean success);
@@ -31,8 +23,6 @@ public interface EventsDataSource {
     }
 
     void getEvents(LoadEventsCallback callback);
-
-    void getEvent(String eventId, LoadEventCallback callback);
 
     void saveEvent(Event eventToSave, SaveEventCallback callback);
 }

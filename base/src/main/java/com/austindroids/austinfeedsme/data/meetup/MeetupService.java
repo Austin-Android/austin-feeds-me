@@ -7,6 +7,7 @@ import com.austindroids.austinfeedsme.data.Results;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -32,5 +33,5 @@ public interface MeetupService {
             "&page=100" +
             "&status=upcoming" +
             "&radius=40")
-    Observable<Results> getOpenEvents();
+    Single<Results> getOpenEvents();
 }
