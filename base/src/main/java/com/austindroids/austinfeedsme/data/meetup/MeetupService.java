@@ -18,11 +18,7 @@ import retrofit2.http.Path;
 public interface MeetupService {
 
     @GET("/{group_urlname}/events/")
-    Call<List<Event>> getEvents(@Path("group_urlname") String group_urlname);
-
-    @GET("/{group_urlname}/events/{event_id}")
-    Call<Event> getEvent(@Path("group_urlname") String group_urlname,
-                         @Path("event_id") String event_id);
+    Single<List<Event>> getEvents(@Path("group_urlname") String group_urlname);
 
     @GET("/2/open_events?key="+ Constants.MEETUP_KEY+"" +
             "&sign=true" +

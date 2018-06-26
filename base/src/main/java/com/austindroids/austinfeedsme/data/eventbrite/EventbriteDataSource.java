@@ -109,19 +109,14 @@ public class EventbriteDataSource implements EventsDataSource {
     }
 
     @Override
-    public void getEvent(String eventId, LoadEventCallback callback) {
-
-    }
-
-    @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
 
     }
 
     private void cleanAndLoadEventbriteEvents(final List<Event> events, final CleanCallback callback) {
         final Long callbackTimestamp = new Date().getTime();
-        Log.d(TAG, "onResponse: Event's from eventbrite " + callbackTimestamp + ":"
-                +events.size());
+        Timber.tag(TAG).d("onResponse: Event's from eventbrite " + callbackTimestamp + ":"
+                + events.size());
 
         myRef.orderByChild("time").startAt((new Date().getTime()));
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -141,8 +136,8 @@ public class EventbriteDataSource implements EventsDataSource {
                     }
                 }
 
-                Log.d(TAG, "onResponse: Event's from after cleaning " + callbackTimestamp + ":"
-                        +events.size());
+                Timber.tag(TAG).d("onResponse: Event's from after cleaning " + callbackTimestamp + ":"
+                        + events.size());
                 callback.loadCleanEvents(events);
 
             }
