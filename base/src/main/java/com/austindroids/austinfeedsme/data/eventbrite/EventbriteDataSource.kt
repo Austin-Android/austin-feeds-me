@@ -1,33 +1,23 @@
 package com.austindroids.austinfeedsme.data.eventbrite
 
-import android.util.Log
-
+import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
-import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
-import java.util.ArrayList
-import java.util.Date
-
 import io.reactivex.Observable
-import io.reactivex.ObservableSource
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.util.HashMap
+import java.util.*
 
 
 /**
@@ -35,8 +25,7 @@ import java.util.HashMap
  */
 class EventbriteDataSource : EventsDataSource {
 
-    internal var database = FirebaseDatabase.getInstance()
-    internal val myRef = database.getReference("events")
+    private  val eventsReference = FirebaseDatabase.getInstance().getReference("events")
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
@@ -110,7 +99,7 @@ class EventbriteDataSource : EventsDataSource {
             eventbriteEventMap[event.id] = event
         }
 
-        myRef.orderByChild("time").startAt(Date().time.toDouble()).addListenerForSingleValueEvent(object : ValueEventListener {
+        eventsReference.orderByChild("time").startAt(Date().time.toDouble()).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (postSnapshot in dataSnapshot.children) {
                     val event = postSnapshot.getValue(Event::class.java)

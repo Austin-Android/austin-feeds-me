@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.common.base.BaseActivity;
 import com.austindroids.austinfeedsme.data.Event;

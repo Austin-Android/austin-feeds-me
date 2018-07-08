@@ -1,7 +1,5 @@
 package com.austindroids.austinfeedsme.di.modules;
 
-import android.content.Context;
-
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.data.eventbrite.FakeEventbriteDataSource;

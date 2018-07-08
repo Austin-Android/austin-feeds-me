@@ -1,10 +1,6 @@
 package com.austindroids.austinfeedsme.common.base;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
