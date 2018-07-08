@@ -17,7 +17,7 @@ public interface EventbriteService {
 
 
     @GET("/v3/events/search/?location.within=40mi&location.latitude=30.27415&location.longitude=" +
-            "-97.73996&price=free&expand=organizer,venue&token="+ Constants.EVENTBRITE_TOKEN)
+            "-97.73996&price=free&expand=organizer,venue,logo&token="+ Constants.EVENTBRITE_TOKEN)
     Observable<EventbriteEvents> getEventsByKeyword(@Query("q") String keyword);
 
     @GET("/v3/venues/{venueId}/?token="+ Constants.EVENTBRITE_TOKEN)
