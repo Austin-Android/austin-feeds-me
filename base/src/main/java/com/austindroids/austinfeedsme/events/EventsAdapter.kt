@@ -105,8 +105,7 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
         }
 
         override fun onClick(v: View) {
-            val position = adapterPosition
-            val event = getItem(position)
+            val event = getItem(adapterPosition)
             val webIntent = Intent(Intent.ACTION_VIEW)
             webIntent.data = Uri.parse(event.event_url)
             context.startActivity(webIntent)
