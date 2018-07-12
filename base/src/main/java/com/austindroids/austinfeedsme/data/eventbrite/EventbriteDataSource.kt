@@ -29,7 +29,7 @@ import java.util.*
  */
 class EventbriteDataSource : EventsDataSource {
 
-    private  val eventsReference = FirebaseFirestore.getInstance().collection("events")
+    private  val collectionReference = FirebaseFirestore.getInstance().collection("events")
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 

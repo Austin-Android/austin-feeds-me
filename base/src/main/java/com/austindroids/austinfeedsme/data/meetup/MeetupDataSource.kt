@@ -3,11 +3,8 @@ package com.austindroids.austinfeedsme.data.meetup
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
 import com.austindroids.austinfeedsme.data.Results
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.gms.tasks.OnCompleteListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -17,6 +14,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.*
+import com.google.firebase.firestore.QuerySnapshot
 
 
 /**
@@ -25,7 +23,7 @@ import java.util.*
 
 class MeetupDataSource : EventsDataSource {
 
-    internal val eventsReference = FirebaseFirestore.getInstance().collection("events");
+    internal val eventsReference = FirebaseFirestore.getInstance().collection("events")
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
@@ -51,25 +49,24 @@ class MeetupDataSource : EventsDataSource {
                         for (event in results.events) {
                             meetupEventMap[event.id] = event
                         }
-                        eventsReference.orderByChild("time").startAt(Date().time.toDouble()).addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                for (postSnapshot in dataSnapshot.children) {
-                                    val firebaseEvent = postSnapshot.getValue(Event::class.java)
-                                    meetupEventMap.remove(firebaseEvent!!.id)
-                                }
 
-                                Timber.d("After cleaning we have this many events: %s", meetupEventMap.size)
-                                if (meetupEventMap.size != 0) {
-                                    callback.onEventsLoaded(ArrayList(meetupEventMap.values))
-                                }
+                        eventsReference
+                                .whereEqualTo("food", true)
+                                .whereGreaterThan("time", java.util.Date().getTime())
+                                .orderBy("time")
+                                .get().addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
+                                    if (task.isSuccessful()) {
+                                        for (snapshot in task.getResult()) {
+                                            val event = snapshot.toObject(Event::class.java!!)
+                                            meetupEventMap.remove(event?.id)
+                                        }
 
-                            }
+                                        callback.onEventsLoaded(ArrayList(meetupEventMap.values))
 
-                            override fun onCancelled(databaseError: DatabaseError) {
-                                Timber.e(databaseError.toException())
-                            }
-                        })
-
+                                    } else {
+                                        Timber.e(task.getException())
+                                    }
+                                })
                     }
 
                     override fun onError(e: Throwable) {
