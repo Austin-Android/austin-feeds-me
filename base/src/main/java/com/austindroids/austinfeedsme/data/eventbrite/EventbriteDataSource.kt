@@ -3,8 +3,11 @@ package com.austindroids.austinfeedsme.data.eventbrite
 import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -100,26 +103,23 @@ class EventbriteDataSource : EventsDataSource {
             eventbriteEventMap[event.id] = event
         }
 
-        eventsReference
+        collectionReference
+                .whereEqualTo("food", true)
+                .whereGreaterThan("time", Date().getTime())
                 .orderBy("time")
-                .whereGreaterThan("time", Date().time.toDouble())
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (postSnapshot in dataSnapshot.children) {
-                    val event = postSnapshot.getValue(Event::class.java)
+                .get().addOnCompleteListener(com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot> { task ->
+                    if (task.isSuccessful()) {
+                        for (snapshot in task.getResult()) {
+                            val event = snapshot.toObject(Event::class.java!!)
+                            eventbriteEventMap.remove(event?.id)
+                        }
 
-                    eventbriteEventMap.remove(event?.id)
-                }
+                        callback.loadCleanEvents(ArrayList(eventbriteEventMap.values))
 
-                callback.loadCleanEvents(ArrayList(eventbriteEventMap.values))
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-
-            }
-        })
-
+                    } else {
+                        Timber.e(task.getException())
+                    }
+                })
     }
 
     internal interface CleanCallback {
