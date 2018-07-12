@@ -1,60 +1,55 @@
 package com.austindroids.austinfeedsme.data.firebase;
 
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class FirebaseEventsDataSource implements EventsDataSource {
-    private final DatabaseReference fireBase;
+    private final CollectionReference collectionReference;
 
     @Inject
-    public FirebaseEventsDataSource(DatabaseReference fireBase) {
-        this.fireBase = fireBase;
+    public FirebaseEventsDataSource(CollectionReference fireBase) {
+        this.collectionReference = fireBase;
     }
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
         final List<Event> events = new ArrayList<Event>();
-        fireBase.keepSynced(true);
-        fireBase.orderByChild("time").startAt((new Date().getTime()));
-        fireBase.addListenerForSingleValueEvent(new ValueEventListener() {
+        collectionReference
+                .whereEqualTo("food", true)
+                .whereGreaterThan("time", new Date().getTime())
+                .orderBy("time")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Event event = snapshot.getValue(Event.class);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot snapshot : task.getResults()) {
+                    Event event = snapshot.toObject(Event.class);
                     events.add(event);
                 }
-                callback.onEventsLoaded(events);
             }
+                else {
 
-            @Override
-            public void onCancelled(DatabaseError firebaseError) {
-
+                }
             }
         });
-
     }
+
 
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
-        DatabaseReference newEventRef = fireBase.push();
 
-        newEventRef.setValue(eventToSave);
-
-        Log.d("Woo", "The new event ID is: " + newEventRef.getKey());
+        collectionReference.add(eventToSave);
 
         callback.onEventSaved(true);
      }

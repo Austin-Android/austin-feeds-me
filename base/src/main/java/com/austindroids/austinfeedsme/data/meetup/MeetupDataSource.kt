@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -24,8 +25,7 @@ import java.util.*
 
 class MeetupDataSource : EventsDataSource {
 
-    internal var database = FirebaseDatabase.getInstance()
-    internal val eventsReference = database.getReference("events")
+    internal val eventsReference = FirebaseFirestore.getInstance().collection("events");
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 

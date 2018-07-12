@@ -3,10 +3,8 @@ package com.austindroids.austinfeedsme.data.eventbrite
 import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+
+import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,8 +16,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+
 
 
 
@@ -29,7 +26,7 @@ import okhttp3.logging.HttpLoggingInterceptor
  */
 class EventbriteDataSource : EventsDataSource {
 
-    private  val eventsReference = FirebaseDatabase.getInstance().getReference("events")
+    private  val eventsReference = FirebaseFirestore.getInstance().collection("events")
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
@@ -103,7 +100,10 @@ class EventbriteDataSource : EventsDataSource {
             eventbriteEventMap[event.id] = event
         }
 
-        eventsReference.orderByChild("time").startAt(Date().time.toDouble()).addListenerForSingleValueEvent(object : ValueEventListener {
+        eventsReference
+                .orderByChild("time")
+                .startAt(Date().time.toDouble())
+                .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (postSnapshot in dataSnapshot.children) {
                     val event = postSnapshot.getValue(Event::class.java)

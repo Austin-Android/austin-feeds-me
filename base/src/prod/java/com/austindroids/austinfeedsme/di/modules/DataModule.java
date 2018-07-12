@@ -7,6 +7,8 @@ import com.austindroids.austinfeedsme.data.firebase.FirebaseEventsDataSource;
 import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -19,8 +21,8 @@ public class DataModule {
     private static final String FIREBASE_URL = "https://austin-feeds-me.firebaseio.com/events";
 
     @Provides @Singleton
-    DatabaseReference firebase() {
-        return FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_URL);
+    CollectionReference firebase() {
+        return FirebaseFirestore.getInstance().collection("events");
     }
 
     @Provides @Singleton
