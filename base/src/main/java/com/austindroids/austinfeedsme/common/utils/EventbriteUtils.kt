@@ -2,6 +2,7 @@ package com.austindroids.austinfeedsme.common.utils
 
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.Group
+import com.austindroids.austinfeedsme.data.GroupPhoto
 import com.austindroids.austinfeedsme.data.eventbrite.EventbriteEvent
 
 /**
@@ -10,14 +11,17 @@ import com.austindroids.austinfeedsme.data.eventbrite.EventbriteEvent
 
 object EventbriteUtils {
 
-    fun transformEventBrite(event: EventbriteEvent): Event {
+    fun transformEventBrite(eventbriteEvent: EventbriteEvent): Event {
 
-        val returnEvent = Event(event.id, event.name.text,
-                event.description.text, DateUtils.getUnixTimeFromISO8601(event.start.utc),
-                event.url, event.food_type)
+        val returnEvent = Event(eventbriteEvent.id, eventbriteEvent.name.text,
+                eventbriteEvent.description.text, DateUtils.getUnixTimeFromISO8601(eventbriteEvent.start.utc),
+                eventbriteEvent.url, eventbriteEvent.food_type)
 
-        returnEvent.venue = event.venue
-        returnEvent.group = Group(event.organizer.name)
+        returnEvent.venue = eventbriteEvent.venue
+        returnEvent.group = Group(eventbriteEvent.organizer.name)
+        eventbriteEvent.logo?.originalLogo?.logoUrl?.run {
+            returnEvent.group.groupPhoto = GroupPhoto(this)
+        }
 
         return returnEvent
     }

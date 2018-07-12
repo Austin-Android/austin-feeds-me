@@ -18,6 +18,7 @@ package com.austindroids.austinfeedsme.data.eventbrite;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
 import static com.austindroids.austinfeedsme.data.Event.Type.TACO;

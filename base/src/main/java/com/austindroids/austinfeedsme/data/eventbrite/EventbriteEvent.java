@@ -28,7 +28,7 @@ public class EventbriteEvent {
     @SerializedName("organizer_id")
     private String organizer_id;
     @SerializedName("logo")
-    Logo logo;
+    private Logo logo;
     @SerializedName("food_type")
     private String food_type;
     private Venue venue;
@@ -116,10 +116,6 @@ public class EventbriteEvent {
     }
 
     class End extends Start {
-    }
-
-    class Logo {
-        String url;
     }
 
     public class Organizer {

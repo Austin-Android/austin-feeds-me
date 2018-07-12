@@ -5,8 +5,7 @@ import com.austindroids.austinfeedsme.common.logging.CrashlyticsTree
 import com.austindroids.austinfeedsme.di.components.DaggerAppComponent
 import com.austindroids.austinfeedsme.di.modules.DataModule
 import com.crashlytics.android.Crashlytics
-import com.google.firebase.FirebaseApp
-import com.google.firebase.database.FirebaseDatabase
+import com.facebook.stetho.Stetho
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import io.fabric.sdk.android.Fabric
@@ -36,6 +35,7 @@ class AustinFeedsMeApplication : DaggerApplication() {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+            Stetho.initializeWithDefaults(this)
         }
         Timber.plant(CrashlyticsTree())
     }

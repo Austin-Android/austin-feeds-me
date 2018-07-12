@@ -36,6 +36,7 @@ ext {
     daggerVersion = "2.15"
     playServicesVersion = "15.0.1"
     retrofitVersion = "2.3.0"
+    glideVersion = '4.7.1'
     testSupportVersion = '1.0.2'
     espressoVersion = '3.0.1'
 }
