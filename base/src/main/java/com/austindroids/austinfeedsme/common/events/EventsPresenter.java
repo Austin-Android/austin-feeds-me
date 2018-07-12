@@ -46,6 +46,12 @@ public class EventsPresenter implements EventsContract.Presenter {
             @Override
             public void onEventsLoaded(List<Event> events) {
 
+                if (events.isEmpty()) {
+                    view.showNoEventsView();
+                    view.hideProgress();
+                    return;
+                }
+
                 Calendar currentDay = Calendar.getInstance();
                 currentDay.set(Calendar.HOUR_OF_DAY, 23);
                 currentDay.set(Calendar.MINUTE, 59);
@@ -92,14 +98,10 @@ public class EventsPresenter implements EventsContract.Presenter {
                     }
                 });
 
-                if (currentEvents.size() > 0 ) {
                     view.showEvents(currentEvents);
                     view.setTotalCount(currentEvents.size());
-                } else {
-                    view.showNoEventsView();
-                }
 
-                view.hideProgress();
+                    view.hideProgress();
             }
 
             @Override

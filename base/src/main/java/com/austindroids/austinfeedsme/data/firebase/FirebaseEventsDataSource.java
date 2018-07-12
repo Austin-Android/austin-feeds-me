@@ -44,6 +44,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
                         events.add(event);
                     }
                 } else {
+                    callback.onError(task.getException().toString());
                     Timber.e(task.getException());
                 }
             }
