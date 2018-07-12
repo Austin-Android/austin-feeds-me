@@ -101,8 +101,8 @@ class EventbriteDataSource : EventsDataSource {
         }
 
         eventsReference
-                .orderByChild("time")
-                .startAt(Date().time.toDouble())
+                .orderBy("time")
+                .whereGreaterThan("time", Date().time.toDouble())
                 .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (postSnapshot in dataSnapshot.children) {
@@ -111,7 +111,6 @@ class EventbriteDataSource : EventsDataSource {
                     eventbriteEventMap.remove(event?.id)
                 }
 
-                Timber.d("onResponse: Event's from after cleaning $callbackTimestamp:${eventbriteEventMap.size}")
                 callback.loadCleanEvents(ArrayList(eventbriteEventMap.values))
 
             }

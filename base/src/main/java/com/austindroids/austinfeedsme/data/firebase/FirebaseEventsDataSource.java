@@ -10,8 +10,14 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import timber.log.Timber;
 
 @Singleton
 public class FirebaseEventsDataSource implements EventsDataSource {
@@ -33,25 +39,20 @@ public class FirebaseEventsDataSource implements EventsDataSource {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot snapshot : task.getResults()) {
-                    Event event = snapshot.toObject(Event.class);
-                    events.add(event);
-                }
-            }
-                else {
-
+                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                        Event event = snapshot.toObject(Event.class);
+                        events.add(event);
+                    }
+                } else {
+                    Timber.e(task.getException());
                 }
             }
         });
     }
 
-
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
-
         collectionReference.add(eventToSave);
-
         callback.onEventSaved(true);
-     }
-
+    }
 }
