@@ -42,6 +42,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
                     for (QueryDocumentSnapshot snapshot : task.getResult()) {
                         Event event = snapshot.toObject(Event.class);
                         events.add(event);
+                        callback.onEventsLoaded(events);
                     }
                 } else {
                     callback.onError(task.getException().toString());
