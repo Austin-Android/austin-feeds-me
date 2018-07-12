@@ -30,7 +30,7 @@ public class FirebaseEventsDataSource implements EventsDataSource {
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
-        final List<Event> events = new ArrayList<Event>();
+        final List<Event> events = new ArrayList<>();
         collectionReference
                 .whereEqualTo("food", true)
                 .whereGreaterThan("time", new Date().getTime())
