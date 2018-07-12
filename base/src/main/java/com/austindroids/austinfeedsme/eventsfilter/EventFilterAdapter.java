@@ -11,8 +11,7 @@ import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -93,7 +92,6 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
         private Button addEvent;
         private Button removeEvent;
 
-
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -120,10 +118,8 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                         event.setFoodType(NONE.name());
                     }
 
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference eventsReference = database.getReference("events");
+                    FirebaseFirestore.getInstance().collection("events").add(event);
 
-                    eventsReference.push().setValue(event);
                     removeAt(getAdapterPosition());
                 }
             });
@@ -134,14 +130,12 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                     Event event = getItem(getAdapterPosition());
                     event.setFood(false);
 
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("events");
-                    myRef.push().setValue(event);
+
+                    FirebaseFirestore.getInstance().collection("events").add(event);
 
                     removeAt(getAdapterPosition());
                 }
             });
-
         }
 
         public void removeAt(int position) {

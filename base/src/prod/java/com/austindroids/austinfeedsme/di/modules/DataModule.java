@@ -5,8 +5,7 @@ import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.data.eventbrite.EventbriteDataSource;
 import com.austindroids.austinfeedsme.data.firebase.FirebaseEventsDataSource;
 import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -18,7 +17,6 @@ import dagger.Provides;
 
 @Module
 public class DataModule {
-    private static final String FIREBASE_URL = "https://austin-feeds-me.firebaseio.com/events";
 
     @Provides @Singleton
     CollectionReference firebase() {
