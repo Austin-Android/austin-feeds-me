@@ -30,15 +30,13 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
-        val rxAdapter = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
-
         val okHttpClient = OkHttpClient.Builder().build()
 
         val eventbriteRetrofit = Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://www.eventbriteapi.com")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(rxAdapter)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
 
         val eventbriteService = eventbriteRetrofit.create(EventbriteService::class.java)

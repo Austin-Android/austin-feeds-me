@@ -24,15 +24,10 @@ class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSourc
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
-        val rxAdapter = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
-
-        val okHttpClient = OkHttpClient.Builder().build()
-
         val retrofit = Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
-                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(rxAdapter)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
 
         val meetupService = retrofit.create(MeetupService::class.java)
