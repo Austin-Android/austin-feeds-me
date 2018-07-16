@@ -90,7 +90,9 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
 
         val eventbriteEventMap = HashMap<String, Event>()
         for (event in events) {
-            eventbriteEventMap[event.id] = event
+            if (event.time > callbackTimestamp) {
+                eventbriteEventMap[event.id] = event
+            }
         }
 
         eventsRepository.getEvents(object: EventsDataSource.LoadEventsCallback {

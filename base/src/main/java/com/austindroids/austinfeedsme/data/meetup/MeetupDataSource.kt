@@ -39,7 +39,9 @@ class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSourc
                     override fun onSuccess(results: Results) {
                         val meetupEventMap = HashMap<String, Event>()
                         for (event in results.events) {
-                            meetupEventMap[event.id] = event
+                            if (event.time > Date().time) {
+                                meetupEventMap[event.id] = event
+                            }
                         }
 
                         eventsRepository.getEvents(object: EventsDataSource.LoadEventsCallback {
