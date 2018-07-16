@@ -25,16 +25,19 @@
             <TextView
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:text="Card title"
                 android:id="@+id/card_title_text"/>
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:maxLines="3"
+                android:ellipsize="end"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam eget ligula eu lectus lobortis condimentum."
                 android:id="@+id/card_body_text"/>
 

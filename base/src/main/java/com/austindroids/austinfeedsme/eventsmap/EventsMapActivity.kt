@@ -1,6 +1,7 @@
 package com.austindroids.austinfeedsme.eventsmap
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -66,7 +67,7 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
                 val selectedEvent = cardPagerAdapter.getEventAtPosition(position)
                 val selectedLocation = LatLng(java.lang.Double.parseDouble(selectedEvent.venue.lat),
                         java.lang.Double.parseDouble(selectedEvent.venue.lon))
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 13f))
+                map?.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 13f))
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -132,8 +133,11 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun setMyLocationEnabled(locationPermissionGranted: Boolean) {
-            this.map.isMyLocationEnabled = locationPermissionGranted
+        if (::map.isInitialized) {
+            map.isMyLocationEnabled = locationPermissionGranted
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -234,7 +238,7 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     }
 
     override fun showNoEventsView() {
-        map.clear()
+        map?.clear()
         viewPager!!.adapter = null
     }
 
@@ -247,7 +251,6 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     }
 
     companion object {
-
         const val RC_LOCATION_PERMISSION = 7
     }
 }

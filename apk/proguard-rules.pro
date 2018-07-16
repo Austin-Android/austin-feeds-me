@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepclassmembers class com.austindroids.austinfeedsme.data.** {
+  *;
+}
+
+-dontwarn com.google.errorprone.annotations.*
+
+-keep class android.support.v7.widget.SearchView { *; }

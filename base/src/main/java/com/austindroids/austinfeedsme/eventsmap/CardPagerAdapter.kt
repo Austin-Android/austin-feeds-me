@@ -66,6 +66,6 @@ class CardPagerAdapter(private val events: List<Event>) : PagerAdapter() {
 
     companion object {
 
-        private val MAX_ELEVATION_FACTOR = 8
+        private const val MAX_ELEVATION_FACTOR = 8
     }
 }
