@@ -3,9 +3,6 @@ package com.austindroids.austinfeedsme.data.eventbrite
 import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import io.reactivex.Observable
@@ -13,6 +10,8 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -35,7 +34,10 @@ class EventbriteDataSource : EventsDataSource {
 
         val rxAdapter = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
 
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)).build()
+
         val eventbriteRetrofit = Retrofit.Builder()
+                .client(okHttpClient)
                 .baseUrl("https://www.eventbriteapi.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(rxAdapter)

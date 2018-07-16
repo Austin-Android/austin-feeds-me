@@ -78,20 +78,7 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
             }
         })
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                        RC_LOCATION_PERMISSION)
-
-            }
-        } else {
-            setMyLocationEnabled(true)
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -124,10 +111,29 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
             true
         }
         presenter!!.loadEvents()
+
+        promptForLocationPermission()
+    }
+
+    private fun promptForLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                        RC_LOCATION_PERMISSION)
+
+            }
+        } else {
+            setMyLocationEnabled(true)
+        }
     }
 
     private fun setMyLocationEnabled(locationPermissionGranted: Boolean) {
-        this.map.isMyLocationEnabled = locationPermissionGranted
+            this.map.isMyLocationEnabled = locationPermissionGranted
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

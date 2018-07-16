@@ -128,10 +128,12 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                 @Override
                 public void onClick(View v) {
                     Event event = getItem(getAdapterPosition());
-                    event.setFood(false);
 
+                    Event eventToSave = new Event();
+                    eventToSave.setId(event.getId());
+                    eventToSave.setFood(false);
 
-                    FirebaseFirestore.getInstance().collection("events").add(event);
+                    FirebaseFirestore.getInstance().collection("events").add(eventToSave);
 
                     removeAt(getAdapterPosition());
                 }

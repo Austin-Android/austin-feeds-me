@@ -65,8 +65,8 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
 
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
-        Glide.with(context).clear(holder.groupPhotoImageView)
-        Glide.with(context).load(R.drawable.ic_local_pizza_blue_24dp).into(holder.groupPhotoImageView)
+        Glide.with(holder.itemView.context).clear(holder.groupPhotoImageView)
+        Glide.with(holder.itemView.context).load(R.drawable.ic_local_pizza_blue_24dp).into(holder.groupPhotoImageView)
     }
 
     fun replaceData(Events: List<Event>) {

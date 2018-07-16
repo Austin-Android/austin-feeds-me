@@ -64,6 +64,10 @@ public final class Event {
         this.name = name;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTags() {
         return tags;
     }
