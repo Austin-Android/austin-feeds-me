@@ -3,6 +3,7 @@ package com.austindroids.austinfeedsme.data.eventbrite
 import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
+import com.austindroids.austinfeedsme.data.EventsRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import io.reactivex.Observable
@@ -18,23 +19,20 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.*
-
-
-
+import kotlin.collections.ArrayList
 
 
 /**
  * Created by darrankelinske on 8/26/16.
  */
-class EventbriteDataSource : EventsDataSource {
+class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
-    private  val collectionReference = FirebaseFirestore.getInstance().collection("events")
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
         val rxAdapter = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
 
-        val okHttpClient = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)).build()
+        val okHttpClient = OkHttpClient.Builder().build()
 
         val eventbriteRetrofit = Retrofit.Builder()
                 .client(okHttpClient)
@@ -105,23 +103,22 @@ class EventbriteDataSource : EventsDataSource {
             eventbriteEventMap[event.id] = event
         }
 
-        collectionReference
-                .whereEqualTo("food", true)
-                .whereGreaterThan("time", Date().getTime())
-                .orderBy("time")
-                .get().addOnCompleteListener(com.google.android.gms.tasks.OnCompleteListener<QuerySnapshot> { task ->
-                    if (task.isSuccessful()) {
-                        for (snapshot in task.getResult()) {
-                            val event = snapshot.toObject(Event::class.java!!)
-                            eventbriteEventMap.remove(event?.id)
-                        }
+        eventsRepository.getEvents(object: EventsDataSource.LoadEventsCallback {
 
-                        callback.loadCleanEvents(ArrayList(eventbriteEventMap.values))
+            override fun onEventsLoaded(events: MutableList<Event>?) {
+                events?.forEach {
+                    eventbriteEventMap.remove(it.id)
+                }
 
-                    } else {
-                        Timber.e(task.getException())
-                    }
-                })
+                callback.loadCleanEvents(ArrayList(eventbriteEventMap.values))
+            }
+
+            override fun onError(error: String?) {
+                Timber.e(error)
+                callback.loadCleanEvents(ArrayList())
+            }
+        }
+        )
     }
 
     internal interface CleanCallback {

@@ -29,12 +29,12 @@ public class DataModule {
     }
 
     @Provides @Named("meetup") @Singleton
-    EventsDataSource meetupDataSource() {
-        return new MeetupDataSource();
+    EventsDataSource meetupDataSource(EventsRepository eventsRepository) {
+        return new MeetupDataSource(eventsRepository);
     }
 
     @Provides @Named("eventbrite") @Singleton
-    EventsDataSource eventbriteDataSource() {
-        return new EventbriteDataSource();
+    EventsDataSource eventbriteDataSource(EventsRepository eventsRepository) {
+        return new EventbriteDataSource(eventsRepository);
     }
 }

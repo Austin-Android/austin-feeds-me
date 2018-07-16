@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
+import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -23,9 +24,11 @@ import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
 public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.ViewHolder> {
 
+    private final EventsRepository eventsRepository;
     private List<Event> events;
 
-    public EventFilterAdapter(List<Event> events) {
+    public EventFilterAdapter(List<Event> events, EventsRepository eventsRepository) {
+        this.eventsRepository = eventsRepository;
         setList(events);
     }
 
@@ -118,7 +121,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                         event.setFoodType(NONE.name());
                     }
 
-                    FirebaseFirestore.getInstance().collection("events").add(event);
+                    eventsRepository.saveEvent(event, null);
 
                     removeAt(getAdapterPosition());
                 }
@@ -133,7 +136,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                     eventToSave.setId(event.getId());
                     eventToSave.setFood(false);
 
-                    FirebaseFirestore.getInstance().collection("events").add(eventToSave);
+                    eventsRepository.saveEvent(eventToSave, null);
 
                     removeAt(getAdapterPosition());
                 }

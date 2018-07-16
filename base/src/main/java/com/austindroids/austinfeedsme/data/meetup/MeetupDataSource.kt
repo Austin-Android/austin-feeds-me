@@ -2,9 +2,8 @@ package com.austindroids.austinfeedsme.data.meetup
 
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
+import com.austindroids.austinfeedsme.data.EventsRepository
 import com.austindroids.austinfeedsme.data.Results
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.android.gms.tasks.OnCompleteListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -14,16 +13,14 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.*
-import com.google.firebase.firestore.QuerySnapshot
 
 
 /**
  * Created by daz on 8/26/16.
  */
 
-class MeetupDataSource : EventsDataSource {
+class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
-    internal val eventsReference = FirebaseFirestore.getInstance().collection("events")
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
@@ -50,33 +47,33 @@ class MeetupDataSource : EventsDataSource {
                             meetupEventMap[event.id] = event
                         }
 
-                        eventsReference
-                                .whereEqualTo("food", true)
-                                .whereGreaterThan("time", java.util.Date().getTime())
-                                .orderBy("time")
-                                .get().addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
-                                    if (task.isSuccessful()) {
-                                        for (snapshot in task.getResult()) {
-                                            val event = snapshot.toObject(Event::class.java!!)
-                                            meetupEventMap.remove(event?.id)
-                                        }
+                        eventsRepository.getEvents(object: EventsDataSource.LoadEventsCallback {
 
-                                        callback.onEventsLoaded(ArrayList(meetupEventMap.values))
+                            override fun onEventsLoaded(events: MutableList<Event>?) {
+                                events?.forEach {
+                                    meetupEventMap.remove(it.id)
+                                }
 
-                                    } else {
-                                        Timber.e(task.getException())
-                                    }
-                                })
+                                callback.onEventsLoaded(ArrayList(meetupEventMap.values))
+
+                            }
+
+                            override fun onError(error: String?) {
+                                Timber.e(error)
+                                callback.onEventsLoaded(ArrayList())
+                            }
+                        })
+
                     }
 
                     override fun onError(e: Throwable) {
                         Timber.e(e)
+                        callback.onError(e.message)
                     }
                 })
-
     }
 
-    override fun saveEvent(eventToSave: Event, callback: EventsDataSource.SaveEventCallback) {
+    override fun saveEvent(eventToSave: Event?, callback: EventsDataSource.SaveEventCallback?) {
 
     }
 }
