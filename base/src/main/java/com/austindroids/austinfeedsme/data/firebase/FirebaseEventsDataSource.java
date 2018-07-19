@@ -29,13 +29,16 @@ public class FirebaseEventsDataSource implements EventsDataSource {
     }
 
     @Override
-    public void getEvents(final LoadEventsCallback callback) {
+    public void getEvents(final LoadEventsCallback callback, boolean onlyFood) {
         final List<Event> events = new ArrayList<>();
         collectionReference
-                .whereEqualTo("food", true)
                 .whereGreaterThan("time", new Date().getTime())
-                .orderBy("time")
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .orderBy("time");
+        if (onlyFood) {
+            collectionReference.whereEqualTo("food", true);
+        }
+
+        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {

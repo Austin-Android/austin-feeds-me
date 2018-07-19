@@ -4,12 +4,11 @@ import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
 import com.austindroids.austinfeedsme.data.EventsRepository
-import io.reactivex.FlowableSubscriber
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
-import org.reactivestreams.Subscription
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,7 +23,7 @@ import kotlin.collections.ArrayList
 class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
 
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
+    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
 
         val okHttpClient = OkHttpClient.Builder().build()
 
@@ -45,39 +44,23 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
             observableList.add(eventbriteService.getEventsByKeyword(searchTerm))
         }
 
-        val eventbriteEventsSubscriber = object : FlowableSubscriber<EventbriteEvents> {
-
-            override fun onSubscribe(s: Subscription) {
-
+        val eventbriteEventsSubscriber = Consumer<EventbriteEvents> { eventbriteEvents ->
+            val convertedEventbriteEvents = ArrayList<Event>()
+            for (eventbriteEvent in eventbriteEvents.getEvents()) {
+                convertedEventbriteEvents.add(EventbriteUtils.transformEventBrite(eventbriteEvent))
             }
 
-            override fun onNext(eventbriteEvents: EventbriteEvents) {
-                val convertedEventbriteEvents = ArrayList<Event>()
-                for (eventbriteEvent in eventbriteEvents.getEvents()) {
-                    convertedEventbriteEvents.add(EventbriteUtils.transformEventBrite(eventbriteEvent))
+            cleanAndLoadEventbriteEvents(convertedEventbriteEvents, object : CleanCallback {
+                override fun loadCleanEvents(events: List<Event>) {
+                    callback.onEventsLoaded(events)
                 }
-
-                cleanAndLoadEventbriteEvents(convertedEventbriteEvents, object : CleanCallback {
-                    override fun loadCleanEvents(events: List<Event>) {
-                        callback.onEventsLoaded(events)
-                    }
-                })
-            }
-
-            override fun onError(e: Throwable) {
-                Timber.e(e)
-            }
-
-
-            override fun onComplete() {
-
-            }
+            })
         }
 
-        Single.merge(observableList)
+        Single.concat(observableList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(eventbriteEventsSubscriber)
+                .subscribe(eventbriteEventsSubscriber, Consumer<Throwable> { t -> Timber.e(t) })
     }
 
     override fun saveEvent(eventToSave: Event, callback: EventsDataSource.SaveEventCallback) {
@@ -109,8 +92,7 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
                 Timber.e(error)
                 callback.loadCleanEvents(ArrayList())
             }
-        }
-        )
+        }, false)
     }
 
     internal interface CleanCallback {

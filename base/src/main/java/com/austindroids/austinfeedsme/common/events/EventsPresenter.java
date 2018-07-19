@@ -109,7 +109,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                 Log.e("OOPS", "We have an errorrrrr");
                 view.hideProgress();
             }
-        });
+        }, true);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                 Log.e("OOPS", "We have an errorrrrr");
 
             }
-        });
+        }, true);
 
     }
 
@@ -199,7 +199,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                 Log.e("OOPS", "We have an errorrrrr");
 
             }
-        });
+        }, true);
 
     }
 

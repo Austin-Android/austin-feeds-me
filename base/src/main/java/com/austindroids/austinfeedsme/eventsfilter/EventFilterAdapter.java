@@ -14,6 +14,8 @@ import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
@@ -69,6 +71,17 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
 
     public void addEvents(List<Event> events) {
         this.events.addAll(events);
+
+        Collections.sort(this.events, new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                if (o1.getTime() < o2.getTime()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
         notifyDataSetChanged();
     }
 
@@ -111,12 +124,16 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                     Event event = getItem(getAdapterPosition());
                     event.setFood(true);
 
-                    if (event.getDescription().toUpperCase().contains(PIZZA.name())) {
-                        event.setFoodType(PIZZA.name());
-                    } else if (event.getDescription().toUpperCase().contains(BEER.name())) {
-                        event.setFoodType(BEER.name());
-                    } else if (event.getDescription().toUpperCase().contains(TACO.name())) {
-                        event.setFoodType(TACO.name());
+                    if (event.getDescription() != null) {
+                        if (event.getDescription().toUpperCase().contains(PIZZA.name())) {
+                            event.setFoodType(PIZZA.name());
+                        } else if (event.getDescription().toUpperCase().contains(BEER.name())) {
+                            event.setFoodType(BEER.name());
+                        } else if (event.getDescription().toUpperCase().contains(TACO.name())) {
+                            event.setFoodType(TACO.name());
+                        } else {
+                            event.setFoodType(NONE.name());
+                        }
                     } else {
                         event.setFoodType(NONE.name());
                     }

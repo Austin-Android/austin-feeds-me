@@ -35,7 +35,7 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
             public void onError(String error) {
 
             }
-        });
+        }, false);
 
         meetupRepository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
@@ -47,6 +47,6 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
             public void onError(String error) {
 
             }
-        });
+        }, false);
     }
 }

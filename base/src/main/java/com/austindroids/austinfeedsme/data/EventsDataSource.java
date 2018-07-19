@@ -22,7 +22,7 @@ public interface EventsDataSource {
 
     }
 
-    void getEvents(LoadEventsCallback callback);
+    void getEvents(LoadEventsCallback callback, boolean onlyFood);
 
     void saveEvent(Event eventToSave, SaveEventCallback callback);
 }

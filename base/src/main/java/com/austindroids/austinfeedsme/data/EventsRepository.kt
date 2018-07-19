@@ -21,7 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : EventsDataSource {
 
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback?) {
+    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
         eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
             override fun onEventsLoaded(events: List<Event>) {
                 callback?.onEventsLoaded(events)
@@ -30,7 +30,7 @@ class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : E
             override fun onError(error: String) {
                 callback?.onError(error)
             }
-        })
+        }, onlyFood)
 
     }
 

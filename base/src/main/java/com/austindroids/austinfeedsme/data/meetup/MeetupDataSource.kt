@@ -7,7 +7,6 @@ import com.austindroids.austinfeedsme.data.Results
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,7 +21,7 @@ import java.util.*
 class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
 
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
+    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
 
         val retrofit = Retrofit.Builder()
                 .baseUrl("https://api.meetup.com/")
@@ -59,7 +58,7 @@ class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSourc
                                 Timber.e(error)
                                 callback.onEventsLoaded(ArrayList())
                             }
-                        })
+                        }, false)
 
                     }
 
