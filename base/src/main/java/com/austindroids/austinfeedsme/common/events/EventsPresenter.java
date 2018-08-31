@@ -1,7 +1,6 @@
 package com.austindroids.austinfeedsme.common.events;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.austindroids.austinfeedsme.common.utils.DateUtils;
 import com.austindroids.austinfeedsme.data.Event;
@@ -10,9 +9,10 @@ import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
+
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,7 +20,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
@@ -29,6 +31,7 @@ import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 @ActivityScoped
 public class EventsPresenter implements EventsContract.Presenter {
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private EventsRepository repository;
     private EventsContract.View view;
 
@@ -42,13 +45,20 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     @Override
     public void loadEvents() {
-        view.showProgress();
-
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-
+       Disposable eventDisposable = repository.getEventsRX(true).doOnSubscribe(new Consumer<Disposable>() {
             @Override
-            public void onEventsLoaded(List<Event> events) {
-
+            public void accept(Disposable disposable) throws Exception {
+                view.showProgress();
+            }
+        }).doOnError(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                view.hideProgress();
+                Timber.e(new Exception(error));
+            }
+        }).subscribe(new Consumer<List<Event>>() {
+            @Override
+            public void accept(List<Event> events) throws Exception {
                 if (events.isEmpty()) {
                     view.showNoEventsView();
                     view.hideProgress();
@@ -82,21 +92,12 @@ public class EventsPresenter implements EventsContract.Presenter {
                     }
                 }
 
-                Collections.sort(eventsToShow, (event1, event2) -> {
-                    return event1.getTime().compareTo(event2.getTime()); // Ascending
-                });
-
                 view.showEvents(eventsToShow);
                 view.setTotalCount(eventsToShow.size());
                 view.hideProgress();
             }
-
-            @Override
-            public void onError(String error) {
-                view.hideProgress();
-                Timber.e(new Exception(error));
-            }
-        }, true);
+        });
+       compositeDisposable.add(eventDisposable);
     }
 
     @Override
