@@ -33,4 +33,17 @@ object DateUtils {
         return dateInMilli
     }
 
+    fun aMinuteFromMinuteToday() : Long {
+        val currentDay = Calendar.getInstance()
+        currentDay.set(Calendar.HOUR_OF_DAY, 23)
+        currentDay.set(Calendar.MINUTE, 59)
+        return currentDay.timeInMillis
+    }
+
+    fun sevenDaysFromNow() : Long {
+        val sevenDaysFromNowCalendar = Calendar.getInstance()
+        sevenDaysFromNowCalendar.add(Calendar.DATE, +7)
+        return sevenDaysFromNowCalendar.timeInMillis
+    }
+
 }

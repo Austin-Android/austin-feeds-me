@@ -3,6 +3,7 @@ package com.austindroids.austinfeedsme.common.events;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.austindroids.austinfeedsme.common.utils.DateUtils;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
@@ -19,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
@@ -41,6 +44,7 @@ public class EventsPresenter implements EventsContract.Presenter {
     @Override
     public void loadEvents() {
         view.showProgress();
+
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
 
             @Override
@@ -52,16 +56,8 @@ public class EventsPresenter implements EventsContract.Presenter {
                     return;
                 }
 
-                Calendar currentDay = Calendar.getInstance();
-                currentDay.set(Calendar.HOUR_OF_DAY, 23);
-                currentDay.set(Calendar.MINUTE, 59);
-
-                long currDateLong = currentDay.getTimeInMillis();
-
-                Calendar sevenDaysFromNowCalendar = Calendar.getInstance();
-                sevenDaysFromNowCalendar.add(Calendar.DATE, +7);
-
-                long sevenDaysFromNow = sevenDaysFromNowCalendar.getTimeInMillis();
+                long aMinuteFromMidnight = DateUtils.INSTANCE.aMinuteFromMinuteToday();
+                long sevenDaysFromNow = DateUtils.INSTANCE.sevenDaysFromNow();
 
                 ArrayList<Event> currentEvents = new ArrayList<>();
 
@@ -74,7 +70,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                                 currentEvents.add(nextEvent);
                                 break;
                             case TODAYS_EVENTS:
-                                if (nextEvent.getTime() < currDateLong) {
+                                if (nextEvent.getTime() < aMinuteFromMidnight) {
                                     currentEvents.add(nextEvent);
                                 }
                                 break;
@@ -98,16 +94,16 @@ public class EventsPresenter implements EventsContract.Presenter {
                     }
                 });
 
-                    view.showEvents(currentEvents);
-                    view.setTotalCount(currentEvents.size());
+                view.showEvents(currentEvents);
+                view.setTotalCount(currentEvents.size());
 
-                    view.hideProgress();
+                view.hideProgress();
             }
 
             @Override
             public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
                 view.hideProgress();
+                Timber.e(new Exception(error));
             }
         }, true);
     }
@@ -153,8 +149,7 @@ public class EventsPresenter implements EventsContract.Presenter {
 
             @Override
             public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
-
+                Timber.e(new Exception(error));
             }
         }, true);
 
@@ -162,14 +157,11 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     @Override
     public void searchEvents(final String searchTerm) {
-
         if (searchTerm.equalsIgnoreCase("reset")) {
             loadEvents();
             return;
         }
 
-        // Probably better to use Regex
-        // http://stackoverflow.com/questions/14018478/string-contains-ignore-case
         final String lowerCaseSearch = searchTerm.toLowerCase();
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
@@ -196,15 +188,14 @@ public class EventsPresenter implements EventsContract.Presenter {
 
             @Override
             public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
-
+                Timber.e(new Exception(error));
             }
         }, true);
 
     }
 
     @Override
-    public void setFiltering(EventsFilterType requestType) {
-        currentFiltering = requestType;
+    public void setFiltering(EventsFilterType eventsFilterType) {
+        currentFiltering = eventsFilterType;
     }
 }
