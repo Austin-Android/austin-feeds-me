@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import timber.log.Timber;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
@@ -54,7 +55,7 @@ public class EventsPresenter implements EventsContract.Presenter {
             @Override
             public void accept(Throwable throwable) throws Exception {
                 view.hideProgress();
-                Timber.e(new Exception(error));
+                Timber.e(throwable);
             }
         }).subscribe(new Consumer<List<Event>>() {
             @Override
