@@ -11,7 +11,6 @@ import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -59,44 +58,36 @@ public class EventsPresenter implements EventsContract.Presenter {
                 long aMinuteFromMidnight = DateUtils.INSTANCE.aMinuteFromMinuteToday();
                 long sevenDaysFromNow = DateUtils.INSTANCE.sevenDaysFromNow();
 
-                ArrayList<Event> currentEvents = new ArrayList<>();
+                ArrayList<Event> eventsToShow = new ArrayList<>();
 
-                for (Event nextEvent : events) {
-                    if (nextEvent.isFood() &&
-                            (nextEvent.getTime() > new Date().getTime())) {
+                for (Event event : events) {
 
-                        switch (currentFiltering) {
-                            case ALL_EVENTS:
-                                currentEvents.add(nextEvent);
-                                break;
-                            case TODAYS_EVENTS:
-                                if (nextEvent.getTime() < aMinuteFromMidnight) {
-                                    currentEvents.add(nextEvent);
-                                }
-                                break;
-                            case THIS_WEEKS_EVENTS:
-                                if (nextEvent.getTime() < sevenDaysFromNow) {
-                                    currentEvents.add(nextEvent);
-                                }
-                                break;
-                            default:
-                                currentEvents.add(nextEvent);
-                                break;
-                        }
-
+                    switch (currentFiltering) {
+                        case ALL_EVENTS:
+                            eventsToShow.add(event);
+                            break;
+                        case TODAYS_EVENTS:
+                            if (event.getTime() < aMinuteFromMidnight) {
+                                eventsToShow.add(event);
+                            }
+                            break;
+                        case THIS_WEEKS_EVENTS:
+                            if (event.getTime() < sevenDaysFromNow) {
+                                eventsToShow.add(event);
+                            }
+                            break;
+                        default:
+                            eventsToShow.add(event);
+                            break;
                     }
                 }
 
-                Collections.sort(currentEvents, new Comparator<Event>() {
-                    @Override
-                    public int compare(Event event1, Event event2) {
-                        return event1.getTime().compareTo(event2.getTime()); // Ascending
-                    }
+                Collections.sort(eventsToShow, (event1, event2) -> {
+                    return event1.getTime().compareTo(event2.getTime()); // Ascending
                 });
 
-                view.showEvents(currentEvents);
-                view.setTotalCount(currentEvents.size());
-
+                view.showEvents(eventsToShow);
+                view.setTotalCount(eventsToShow.size());
                 view.hideProgress();
             }
 

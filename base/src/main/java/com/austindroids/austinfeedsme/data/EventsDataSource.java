@@ -8,21 +8,15 @@ import java.util.List;
 public interface EventsDataSource {
 
     interface LoadEventsCallback {
-
         void onEventsLoaded(List<Event> events);
-
         void onError(String error);
     }
 
     interface SaveEventCallback {
-
         void onEventSaved(boolean success);
-
         void onError(String error);
-
     }
 
     void getEvents(LoadEventsCallback callback, boolean onlyFood);
-
     void saveEvent(Event eventToSave, SaveEventCallback callback);
 }
