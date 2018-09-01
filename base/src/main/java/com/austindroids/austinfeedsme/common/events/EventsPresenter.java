@@ -13,6 +13,7 @@ import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,7 +47,7 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     @Override
     public void loadEvents() {
-       Disposable eventDisposable = repository.getEventsRX(true).doOnSubscribe(new Consumer<Disposable>() {
+        Disposable eventDisposable = repository.getEventsRX(true).doOnSubscribe(new Consumer<Disposable>() {
             @Override
             public void accept(Disposable disposable) throws Exception {
                 view.showProgress();
@@ -70,9 +71,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                 long sevenDaysFromNow = DateUtils.INSTANCE.sevenDaysFromNow();
 
                 ArrayList<Event> eventsToShow = new ArrayList<>();
-
                 for (Event event : events) {
-
                     switch (currentFiltering) {
                         case ALL_EVENTS:
                             eventsToShow.add(event);
@@ -98,7 +97,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                 view.hideProgress();
             }
         });
-       compositeDisposable.add(eventDisposable);
+        compositeDisposable.add(eventDisposable);
     }
 
     @Override

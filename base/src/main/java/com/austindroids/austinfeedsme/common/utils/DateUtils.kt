@@ -17,7 +17,12 @@ object DateUtils {
         val sdf = SimpleDateFormat("EEEE, MMMM d h:mm a", Locale.US)
         sdf.timeZone = tz
 
-        return sdf.format(Date(timestamp!!))
+
+        return if (timestamp != null) {
+            sdf.format(Date(timestamp))
+        } else {
+            sdf.format(Date().time)
+        }
     }
 
     fun getUnixTimeFromISO8601(iso8601Date: String): Long? {

@@ -7,6 +7,7 @@ import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -31,14 +32,14 @@ public class FirebaseEventsDataSource implements EventsDataSource {
     @Override
     public void getEvents(final LoadEventsCallback callback, boolean onlyFood) {
         final List<Event> events = new ArrayList<>();
-        collectionReference
+        Query eventsQuery = collectionReference
                 .whereGreaterThan("time", new Date().getTime())
                 .orderBy("time");
         if (onlyFood) {
-            collectionReference.whereEqualTo("food", true);
+            eventsQuery.whereEqualTo("food", true);
         }
 
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        eventsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
