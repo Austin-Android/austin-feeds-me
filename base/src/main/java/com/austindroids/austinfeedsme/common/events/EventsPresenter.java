@@ -9,11 +9,7 @@ import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
-
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,6 +23,7 @@ import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
+import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
 import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
@@ -95,56 +92,10 @@ public class EventsPresenter implements EventsContract.Presenter {
                 view.showEvents(eventsToShow);
                 view.setTotalCount(eventsToShow.size());
                 view.hideProgress();
+                loadYummyCounts(eventsToShow);
             }
         });
         compositeDisposable.add(eventDisposable);
-    }
-
-    @Override
-    public void loadYummyCounts() {
-
-        final HashMap<String, Integer> yummyCounts = new HashMap<>();
-
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @Override
-            public void onEventsLoaded(List<Event> events) {
-
-                Iterator<Event> iterator = events.iterator();
-
-                while (iterator.hasNext()) {
-                    Event event = iterator.next();
-
-                    // Remove event if it doesn't have free food or is in the past
-                    // or if the event name or description doesn't contain the search term
-                    if (event.isFood() && event.getFoodType() != null
-                            && (event.getTime() > new Date().getTime()))
-                    {
-                        if (event.getFoodType().equals(PIZZA.name())) {
-                            Integer previousValue = yummyCounts.get(PIZZA.name());
-                            yummyCounts.put(PIZZA.name(), previousValue == null ? 1 : previousValue + 1);
-                        }
-                        if (event.getFoodType().equals(BEER.name())) {
-                            Integer previousValue = yummyCounts.get(BEER.name());
-                            yummyCounts.put(BEER.name(), previousValue == null ? 1 : previousValue + 1);
-                        }
-                        if (event.getFoodType().equals(TACO.name())) {
-                            Integer previousValue = yummyCounts.get(TACO.name());
-                            yummyCounts.put(TACO.name(), previousValue == null ? 1 : previousValue + 1);
-                        }
-                    }
-                }
-
-                view.setPizzaCount(yummyCounts.get(PIZZA.name()) == null ? 0 : yummyCounts.get(PIZZA.name()));
-                view.setTacoCount(yummyCounts.get(TACO.name()) == null ? 0 : yummyCounts.get(TACO.name()));
-                view.setBeerCount(yummyCounts.get(BEER.name()) == null ? 0 : yummyCounts.get(BEER.name()));
-            }
-
-            @Override
-            public void onError(String error) {
-                Timber.e(new Exception(error));
-            }
-        }, true);
-
     }
 
     @Override
@@ -189,5 +140,35 @@ public class EventsPresenter implements EventsContract.Presenter {
     @Override
     public void setFiltering(EventsFilterType eventsFilterType) {
         currentFiltering = eventsFilterType;
+    }
+
+    private void loadYummyCounts(ArrayList<Event> eventsToShow) {
+
+        final HashMap<String, Integer> yummyCounts = new HashMap<>();
+
+        for (Event event : eventsToShow) {
+
+            if (event.getFoodType() == null || event.getFoodType().equals(NONE.toString())) {
+                continue;
+            }
+
+            if (event.getFoodType().equals(PIZZA.name())) {
+                Integer previousValue = yummyCounts.get(PIZZA.name());
+                yummyCounts.put(PIZZA.name(), previousValue == null ? 1 : previousValue + 1);
+            }
+            if (event.getFoodType().equals(BEER.name())) {
+                Integer previousValue = yummyCounts.get(BEER.name());
+                yummyCounts.put(BEER.name(), previousValue == null ? 1 : previousValue + 1);
+            }
+            if (event.getFoodType().equals(TACO.name())) {
+                Integer previousValue = yummyCounts.get(TACO.name());
+                yummyCounts.put(TACO.name(), previousValue == null ? 1 : previousValue + 1);
+            }
+
+        }
+
+        view.setPizzaCount(yummyCounts.get(PIZZA.name()) == null ? 0 : yummyCounts.get(PIZZA.name()));
+        view.setTacoCount(yummyCounts.get(TACO.name()) == null ? 0 : yummyCounts.get(TACO.name()));
+        view.setBeerCount(yummyCounts.get(BEER.name()) == null ? 0 : yummyCounts.get(BEER.name()));
     }
 }

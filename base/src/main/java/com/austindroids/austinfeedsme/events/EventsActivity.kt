@@ -70,7 +70,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         setupNavigationDrawer(navigationView)
 
         eventsPresenter.loadEvents()
-        eventsPresenter.loadYummyCounts()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

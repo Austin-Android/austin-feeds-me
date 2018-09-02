@@ -24,7 +24,6 @@ public interface EventsContract {
 
     interface Presenter {
         void loadEvents();
-        void loadYummyCounts();
         void searchEvents(String searchTerm);
         void setFiltering(EventsFilterType requestType);
     }
