@@ -1,5 +1,6 @@
 package com.austindroids.austinfeedsme.common.events;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.austindroids.austinfeedsme.common.utils.DateUtils;
@@ -64,37 +65,14 @@ public class EventsPresenter implements EventsContract.Presenter {
                     return;
                 }
 
-                long aMinuteFromMidnight = DateUtils.INSTANCE.aMinuteFromMinuteToday();
-                long sevenDaysFromNow = DateUtils.INSTANCE.sevenDaysFromNow();
+                ArrayList<Event> eventsToShow = filterEventsOnTimeSelection(events);
 
-                ArrayList<Event> eventsToShow = new ArrayList<>();
-                for (Event event : events) {
-                    switch (currentFiltering) {
-                        case ALL_EVENTS:
-                            eventsToShow.add(event);
-                            break;
-                        case TODAYS_EVENTS:
-                            if (event.getTime() < aMinuteFromMidnight) {
-                                eventsToShow.add(event);
-                            }
-                            break;
-                        case THIS_WEEKS_EVENTS:
-                            if (event.getTime() < sevenDaysFromNow) {
-                                eventsToShow.add(event);
-                            }
-                            break;
-                        default:
-                            eventsToShow.add(event);
-                            break;
-                    }
-                }
-
-                view.showEvents(eventsToShow);
-                view.setTotalCount(eventsToShow.size());
                 view.hideProgress();
-                loadYummyCounts(eventsToShow);
+                view.showEvents(eventsToShow);
+                setEventCounts(eventsToShow);
             }
         });
+
         compositeDisposable.add(eventDisposable);
     }
 
@@ -111,10 +89,10 @@ public class EventsPresenter implements EventsContract.Presenter {
             @Override
             public void onEventsLoaded(List<Event> events) {
 
-                Iterator<Event> iter = events.iterator();
+                Iterator<Event> iterator = events.iterator();
 
-                while (iter.hasNext()) {
-                    Event nextEvent = iter.next();
+                while (iterator.hasNext()) {
+                    Event nextEvent = iterator.next();
 
                     // Remove event if it doesn't have free food or is in the past
                     // or if the event name or description doesn't contain the search term
@@ -122,7 +100,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                             || (nextEvent.getTime() < new Date().getTime())
                             || TextUtils.isEmpty(nextEvent.getDescription())
                             || !nextEvent.getDescription().toLowerCase().contains(lowerCaseSearch)) {
-                        iter.remove();
+                        iterator.remove();
                     }
                 }
 
@@ -142,10 +120,39 @@ public class EventsPresenter implements EventsContract.Presenter {
         currentFiltering = eventsFilterType;
     }
 
-    private void loadYummyCounts(ArrayList<Event> eventsToShow) {
+    @NonNull
+    private ArrayList<Event> filterEventsOnTimeSelection(List<Event> events) {
+        long aMinuteFromMidnight = DateUtils.INSTANCE.aMinuteFromMinuteToday();
+        long sevenDaysFromNow = DateUtils.INSTANCE.sevenDaysFromNow();
+
+        ArrayList<Event> eventsToShow = new ArrayList<>();
+        for (Event event : events) {
+            switch (currentFiltering) {
+                case ALL_EVENTS:
+                    eventsToShow.add(event);
+                    break;
+                case TODAYS_EVENTS:
+                    if (event.getTime() < aMinuteFromMidnight) {
+                        eventsToShow.add(event);
+                    }
+                    break;
+                case THIS_WEEKS_EVENTS:
+                    if (event.getTime() < sevenDaysFromNow) {
+                        eventsToShow.add(event);
+                    }
+                    break;
+                default:
+                    eventsToShow.add(event);
+                    break;
+            }
+        }
+        return eventsToShow;
+    }
+
+    private void setEventCounts(ArrayList<Event> eventsToShow) {
+        view.setTotalCount(eventsToShow.size());
 
         final HashMap<String, Integer> yummyCounts = new HashMap<>();
-
         for (Event event : eventsToShow) {
 
             if (event.getFoodType() == null || event.getFoodType().equals(NONE.toString())) {
