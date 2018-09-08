@@ -12,11 +12,14 @@ import android.widget.TextView;
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
@@ -27,11 +30,11 @@ import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.ViewHolder> {
 
     private final EventsRepository eventsRepository;
-    private List<Event> events;
+    private List<Event> events = new ArrayList<>();
+    private Set<String> eventIds = new HashSet<>();
 
-    public EventFilterAdapter(List<Event> events, EventsRepository eventsRepository) {
+    public EventFilterAdapter(EventsRepository eventsRepository) {
         this.eventsRepository = eventsRepository;
-        setList(events);
     }
 
     @Override
@@ -62,14 +65,23 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
 
             viewHolder.quote.setText(Html.fromHtml(description));
         }
+
         viewHolder.link.setText(event.getEvent_url());
     }
 
-    private void setList(List<Event> events) {
-        this.events = events;
-    }
-
     public void addEvents(List<Event> events) {
+
+        Iterator<Event> eventIterator = events.iterator();
+
+        while (eventIterator.hasNext()) {
+            Event currentEvent = eventIterator.next();
+            if (!eventIds.contains(currentEvent.getId())) {
+                eventIds.add(currentEvent.getId());
+            } else {
+                eventIterator.remove();
+            }
+        }
+
         this.events.addAll(events);
 
         Collections.sort(this.events, new Comparator<Event>() {
@@ -82,11 +94,6 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                 }
             }
         });
-        notifyDataSetChanged();
-    }
-
-    public void replaceData(List<Event> quotes){
-        setList(quotes);
         notifyDataSetChanged();
     }
 
