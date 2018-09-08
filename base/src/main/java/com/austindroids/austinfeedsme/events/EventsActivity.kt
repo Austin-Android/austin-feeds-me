@@ -174,16 +174,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         handleIntent(intent)
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == Activity.RESULT_OK) {
-                Log.d("EventsActivity", "This is the current email: " + FirebaseAuth.getInstance().currentUser!!.email!!)
-                Log.d("EventsActivity", "This is the current uid: " + FirebaseAuth.getInstance().currentUser!!.uid)
-            }
-        }
-    }
-
     override fun setPizzaCount(count: Int) {
         // get menu from navigationView
         val menu = navigationView!!.menu
@@ -225,7 +215,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         eventsRecyclerView!!.visibility = View.GONE
         noEventsLinearLayout!!.visibility = View.VISIBLE
     }
-
 
     override fun showProgress() {
         progressOverlay.visibility = View.VISIBLE
@@ -369,7 +358,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     companion object {
-
         const val RC_SIGN_IN = 7
     }
 }
