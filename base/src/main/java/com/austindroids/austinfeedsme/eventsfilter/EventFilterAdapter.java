@@ -41,7 +41,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
     public EventFilterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View quoteView = inflater.inflate(R.layout.choose_meetup_item, parent, false);
+        View quoteView = inflater.inflate(R.layout.list_item_event_filter, parent, false);
 
         return new EventFilterAdapter.ViewHolder(quoteView);
     }

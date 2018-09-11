@@ -31,7 +31,7 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-        val eventView = inflater.inflate(R.layout.item_event, parent, false)
+        val eventView = inflater.inflate(R.layout.list_item_event, parent, false)
 
         return ViewHolder(eventView, eventClickListener)
     }
