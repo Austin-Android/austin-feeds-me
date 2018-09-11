@@ -50,8 +50,8 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
     public void onBindViewHolder(EventFilterAdapter.ViewHolder viewHolder, int position) {
         Event event = events.get(position);
 
-        viewHolder.author.setText(event.getName());
-        viewHolder.group.setText(event.getGroup().getName());
+        viewHolder.titleTextView.setText(event.getName());
+        viewHolder.groupTextView.setText(event.getGroup().getName());
 
         if (null != event.getDescription()) {
 
@@ -63,14 +63,22 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
             description = description.replaceAll("beer", "<font color='red'>" + "beer" + "</font>");
             description = description.replaceAll("drinks", "<font color='red'>" + "drinks" + "</font>");
 
-            viewHolder.quote.setText(Html.fromHtml(description));
+            viewHolder.eventDescriptionTextView.setText(Html.fromHtml(description));
         }
 
-        viewHolder.link.setText(event.getEvent_url());
+        viewHolder.eventLinkTextView.setText(event.getEvent_url());
     }
 
     public void addEvents(List<Event> events) {
+        removeDuplicateEvents(events);
 
+        this.events.addAll(events);
+
+        sortEvents();
+        notifyDataSetChanged();
+    }
+
+    private void removeDuplicateEvents(List<Event> events) {
         Iterator<Event> eventIterator = events.iterator();
 
         while (eventIterator.hasNext()) {
@@ -81,9 +89,9 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                 eventIterator.remove();
             }
         }
+    }
 
-        this.events.addAll(events);
-
+    private void sortEvents() {
         Collections.sort(this.events, new Comparator<Event>() {
             @Override
             public int compare(Event o1, Event o2) {
@@ -94,7 +102,6 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                 }
             }
         });
-        notifyDataSetChanged();
     }
 
     @Override
@@ -108,24 +115,24 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView author;
-        private TextView group;
-        private TextView quote;
-        private TextView link;
-        private Button addEvent;
-        private Button removeEvent;
+        private TextView titleTextView;
+        private TextView groupTextView;
+        private TextView eventDescriptionTextView;
+        private TextView eventLinkTextView;
+        private Button addEventButton;
+        private Button removeEventButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            author = itemView.findViewById(R.id.event_title);
-            group = itemView.findViewById(R.id.event_group_name);
-            quote = itemView.findViewById(R.id.event_text);
-            link = itemView.findViewById(R.id.event_link);
-            addEvent = itemView.findViewById(R.id.add_event);
-            removeEvent = itemView.findViewById(R.id.remove_event);
+            titleTextView = itemView.findViewById(R.id.event_title);
+            groupTextView = itemView.findViewById(R.id.event_group_name);
+            eventDescriptionTextView = itemView.findViewById(R.id.event_text);
+            eventLinkTextView = itemView.findViewById(R.id.event_link);
+            addEventButton = itemView.findViewById(R.id.button_add_event);
+            removeEventButton = itemView.findViewById(R.id.button_remove_event);
 
-            addEvent.setOnClickListener(new View.OnClickListener() {
+            addEventButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Event event = getItem(getAdapterPosition());
@@ -151,7 +158,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                 }
             });
 
-            removeEvent.setOnClickListener(new View.OnClickListener() {
+            removeEventButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Event event = getItem(getAdapterPosition());
