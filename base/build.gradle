@@ -8,7 +8,7 @@ props.load(new FileInputStream(file(project.property("austinfeedsme.properties")
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion '28.0.3'
     baseFeature true
 
     defaultConfig {
