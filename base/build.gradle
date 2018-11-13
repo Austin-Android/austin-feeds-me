@@ -8,7 +8,7 @@ props.load(new FileInputStream(file(project.property("austinfeedsme.properties")
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion '28.0.3'
     baseFeature true
 
     defaultConfig {
@@ -23,7 +23,7 @@ android {
         manifestPlaceholders = [google_maps_key: props['google_maps_key'],
                                 fabricApiKey: props['fabric']]
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -82,10 +82,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // Support Libs
-    implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
-    implementation "com.android.support:recyclerview-v7:$rootProject.ext.supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
-    implementation "com.android.support:design:$rootProject.ext.supportLibraryVersion"
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha01'
 
     // Dagger 2
     implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
@@ -98,8 +98,8 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore:$rootProject.ext.firestoreVersion"
     implementation "com.google.firebase:firebase-auth:$rootProject.ext.firebaseVersion"
     implementation "com.google.firebase:firebase-core:$rootProject.ext.firebaseVersion"
-    implementation 'com.google.firebase:firebase-messaging:17.0.0'
-    implementation 'com.firebaseui:firebase-ui-auth:4.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.firebaseui:firebase-ui-auth:4.2.1'
 
     // Needed for Authentication
     implementation "com.google.android.gms:play-services-auth:$rootProject.ext.playServicesVersion"
@@ -140,10 +140,10 @@ dependencies {
     testImplementation 'com.squareup.okhttp3:mockwebserver:3.8.1'
 
     // Espresso Dependencies
-    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.testSupportVersion"
-    androidTestImplementation "com.android.support.test:rules:$rootProject.ext.testSupportVersion"
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation('com.android.support.test.espresso:espresso-contrib:2.2.2', {
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation('androidx.test.espresso:espresso-contrib:3.1.0', {
         exclude module: 'support-annotations'
         exclude module: 'support-v4'
         exclude module: 'recyclerview-v7'

@@ -1,6 +1,7 @@
 package com.austindroids.austinfeedsme.data.firebase;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;

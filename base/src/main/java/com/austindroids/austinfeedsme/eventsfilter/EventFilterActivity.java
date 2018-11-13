@@ -1,8 +1,8 @@
 package com.austindroids.austinfeedsme.eventsfilter;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.common.base.BaseActivity;
@@ -10,7 +10,6 @@ import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
