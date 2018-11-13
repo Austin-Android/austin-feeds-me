@@ -1,8 +1,8 @@
 package com.austindroids.austinfeedsme.events;
 
-import android.support.test.espresso.contrib.DrawerActions;
-import android.support.test.rule.ActivityTestRule;
-import android.support.v7.widget.SearchView;
+import androidx.test.espresso.contrib.DrawerActions;
+import androidx.test.rule.ActivityTestRule;
+import androidx.appcompat.widget.SearchView;
 import android.view.KeyEvent;
 
 import com.austindroids.austinfeedsme.R;
@@ -10,14 +10,14 @@ import com.austindroids.austinfeedsme.R;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.pressKey;
-import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.pressKey;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 /**
  * Created by darrankelinske on 5/4/16.
