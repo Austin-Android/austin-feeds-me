@@ -1,6 +1,5 @@
 package com.austindroids.austinfeedsme.events
 
-import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -8,26 +7,26 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import com.google.android.material.navigation.NavigationView
-import androidx.core.view.GravityCompat
-import androidx.core.view.MenuItemCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.widget.*
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.GravityCompat
+import androidx.core.view.MenuItemCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.austindroids.austinfeedsme.R
 import com.austindroids.austinfeedsme.common.base.BaseActivity
 import com.austindroids.austinfeedsme.common.events.EventsContract
@@ -36,6 +35,7 @@ import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity
 import com.firebase.ui.auth.AuthUI
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
@@ -103,7 +103,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         MenuItemCompat.setOnActionExpandListener(searchMenu,
                 object : MenuItemCompat.OnActionExpandListener {
                     override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                        eventsPresenter!!.loadEvents()
+                        eventsPresenter.loadEvents()
                         return true  // Return true to collapse action view
                     }
 
@@ -182,7 +182,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun setPizzaCount(count: Int) {
         // get menu from navigationView
-        val menu = navigationView!!.menu
+        val menu = navigationView.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_pizza)
         //Check if user logged in, change sign in/out button to correct text
@@ -191,7 +191,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun setTacoCount(count: Int) {
         // get menu from navigationView
-        val menu = navigationView!!.menu
+        val menu = navigationView.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_tacos)
         //Check if user logged in, change sign in/out button to correct text
@@ -200,7 +200,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun setBeerCount(count: Int) {// get menu from navigationView
-        val menu = navigationView!!.menu
+        val menu = navigationView.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_beer)
         //Check if user logged in, change sign in/out button to correct text
@@ -209,7 +209,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun setTotalCount(count: Int) {// get menu from navigationView
-        val menu = navigationView!!.menu
+        val menu = navigationView.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_list)
         //Check if user logged in, change sign in/out button to correct text
@@ -218,8 +218,8 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     override fun showNoEventsView() {
-        eventsRecyclerView!!.visibility = View.GONE
-        noEventsLinearLayout!!.visibility = View.VISIBLE
+        eventsRecyclerView.visibility = View.GONE
+        noEventsLinearLayout.visibility = View.VISIBLE
     }
 
     override fun showProgress() {
@@ -239,7 +239,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     private fun handleIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-            eventsPresenter!!.searchEvents(query)
+            eventsPresenter.searchEvents(query)
         }
     }
 
@@ -287,11 +287,11 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.todays_events -> eventsPresenter!!.setFiltering(EventsFilterType.TODAYS_EVENTS)
-                R.id.this_weeks_events -> eventsPresenter!!.setFiltering(EventsFilterType.THIS_WEEKS_EVENTS)
-                else -> eventsPresenter!!.setFiltering(EventsFilterType.ALL_EVENTS)
+                R.id.todays_events -> eventsPresenter.setFiltering(EventsFilterType.TODAYS_EVENTS)
+                R.id.this_weeks_events -> eventsPresenter.setFiltering(EventsFilterType.THIS_WEEKS_EVENTS)
+                else -> eventsPresenter.setFiltering(EventsFilterType.ALL_EVENTS)
             }
-            eventsPresenter!!.loadEvents()
+            eventsPresenter.loadEvents()
             true
         }
 
@@ -339,8 +339,8 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun showEvents(events: List<Event>) {
         eventListAdapter!!.replaceData(events)
-        eventsRecyclerView!!.visibility = View.VISIBLE
-        noEventsLinearLayout!!.visibility = View.GONE
+        eventsRecyclerView.visibility = View.VISIBLE
+        noEventsLinearLayout.visibility = View.GONE
     }
 
     private fun setupSwipeToRefresh() {
