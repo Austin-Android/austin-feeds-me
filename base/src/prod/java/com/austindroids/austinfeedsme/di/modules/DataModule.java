@@ -5,8 +5,9 @@ import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.data.eventbrite.EventbriteDataSource;
 import com.austindroids.austinfeedsme.data.firebase.FirebaseEventsDataSource;
 import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -16,11 +17,10 @@ import dagger.Provides;
 
 @Module
 public class DataModule {
-    private static final String FIREBASE_URL = "https://austin-feeds-me.firebaseio.com/events";
 
     @Provides @Singleton
-    DatabaseReference firebase() {
-        return FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_URL);
+    CollectionReference firebase() {
+        return FirebaseFirestore.getInstance().collection("events");
     }
 
     @Provides @Singleton
@@ -29,12 +29,12 @@ public class DataModule {
     }
 
     @Provides @Named("meetup") @Singleton
-    EventsDataSource meetupDataSource() {
-        return new MeetupDataSource();
+    EventsDataSource meetupDataSource(EventsRepository eventsRepository) {
+        return new MeetupDataSource(eventsRepository);
     }
 
     @Provides @Named("eventbrite") @Singleton
-    EventsDataSource eventbriteDataSource() {
-        return new EventbriteDataSource();
+    EventsDataSource eventbriteDataSource(EventsRepository eventsRepository) {
+        return new EventbriteDataSource(eventsRepository);
     }
 }

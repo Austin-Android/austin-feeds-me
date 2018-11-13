@@ -64,7 +64,7 @@ public class EventsPresenterTest {
         eventsPresenter.loadEvents();
 
         // Callback is captured and invoked with stubbed events
-        verify(eventsRepository).getEvents(loadEventsCallbackCaptor.capture());
+        verify(eventsRepository).getEvents(loadEventsCallbackCaptor.capture(), );
         loadEventsCallbackCaptor.getValue().onEventsLoaded(EVENTS);
 
         //Verify that view is given a list of one event from the presenter

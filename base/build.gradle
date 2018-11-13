@@ -28,7 +28,7 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         release {
@@ -95,7 +95,7 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$rootProject.ext.daggerVersion"
 
     // Firebase dependencies
-    implementation "com.google.firebase:firebase-database:$rootProject.ext.firebaseVersion"
+    implementation "com.google.firebase:firebase-firestore:$rootProject.ext.firestoreVersion"
     implementation "com.google.firebase:firebase-auth:$rootProject.ext.firebaseVersion"
     implementation "com.google.firebase:firebase-core:$rootProject.ext.firebaseVersion"
     implementation 'com.google.firebase:firebase-messaging:17.0.0'

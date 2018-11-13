@@ -19,7 +19,7 @@ object EventbriteUtils {
 
         returnEvent.venue = eventbriteEvent.venue
         returnEvent.group = Group(eventbriteEvent.organizer.name)
-        eventbriteEvent.logo?.originalLogo?.logoUrl?.run {
+        eventbriteEvent.logo?.url?.run {
             returnEvent.group.groupPhoto = GroupPhoto(this)
         }
 

@@ -17,7 +17,12 @@ object DateUtils {
         val sdf = SimpleDateFormat("EEEE, MMMM d h:mm a", Locale.US)
         sdf.timeZone = tz
 
-        return sdf.format(Date(timestamp!!))
+
+        return if (timestamp != null) {
+            sdf.format(Date(timestamp))
+        } else {
+            sdf.format(Date().time)
+        }
     }
 
     fun getUnixTimeFromISO8601(iso8601Date: String): Long? {
@@ -31,6 +36,19 @@ object DateUtils {
         }
 
         return dateInMilli
+    }
+
+    fun aMinuteFromMinuteToday() : Long {
+        val currentDay = Calendar.getInstance()
+        currentDay.set(Calendar.HOUR_OF_DAY, 23)
+        currentDay.set(Calendar.MINUTE, 59)
+        return currentDay.timeInMillis
+    }
+
+    fun sevenDaysFromNow() : Long {
+        val sevenDaysFromNowCalendar = Calendar.getInstance()
+        sevenDaysFromNowCalendar.add(Calendar.DATE, +7)
+        return sevenDaysFromNowCalendar.timeInMillis
     }
 
 }

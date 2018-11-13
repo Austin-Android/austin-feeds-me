@@ -3,91 +3,64 @@ package com.austindroids.austinfeedsme.data.eventbrite
 import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import io.reactivex.Observable
-import io.reactivex.Observer
+import com.austindroids.austinfeedsme.data.EventsRepository
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import retrofit2.HttpException
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-
-
+import kotlin.collections.ArrayList
 
 
 /**
  * Created by darrankelinske on 8/26/16.
  */
-class EventbriteDataSource : EventsDataSource {
+class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
-    private  val eventsReference = FirebaseDatabase.getInstance().getReference("events")
 
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
+    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
 
-        val rxAdapter = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
+        val okHttpClient = OkHttpClient.Builder().build()
 
         val eventbriteRetrofit = Retrofit.Builder()
+                .client(okHttpClient)
                 .baseUrl("https://www.eventbriteapi.com")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(rxAdapter)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
 
         val eventbriteService = eventbriteRetrofit.create(EventbriteService::class.java)
 
         val searchList = arrayOf("taco", "pizza", "beer", "breakfast", "lunch", "dinner", "drinks", "spaghetti", "hamburger")
 
-        val observableList = ArrayList<Observable<EventbriteEvents>>()
+        val observableList = ArrayList<Single<EventbriteEvents>>()
 
         for (searchTerm in searchList) {
             observableList.add(eventbriteService.getEventsByKeyword(searchTerm))
         }
 
-        val eventbriteEventsSubscriber = object : Observer<EventbriteEvents> {
-
-            override fun onSubscribe(d: Disposable) {
-
+        val eventbriteEventsSubscriber = Consumer<EventbriteEvents> { eventbriteEvents ->
+            val convertedEventbriteEvents = ArrayList<Event>()
+            for (eventbriteEvent in eventbriteEvents.getEvents()) {
+                convertedEventbriteEvents.add(EventbriteUtils.transformEventBrite(eventbriteEvent))
             }
 
-            override fun onComplete() {
-
-            }
-
-            override fun onError(e: Throwable) {
-                // cast to retrofit.HttpException to get the response code
-                if (e is HttpException) {
-                    val code = e.code()
+            cleanAndLoadEventbriteEvents(convertedEventbriteEvents, object : CleanCallback {
+                override fun loadCleanEvents(events: List<Event>) {
+                    callback.onEventsLoaded(events)
                 }
-
-            }
-
-            override fun onNext(eventbriteEvents: EventbriteEvents) {
-
-                val convertedEventbriteEvents = ArrayList<Event>()
-                for (eventbriteEvent in eventbriteEvents.getEvents()) {
-                    convertedEventbriteEvents.add(EventbriteUtils.transformEventBrite(eventbriteEvent))
-                }
-
-                cleanAndLoadEventbriteEvents(convertedEventbriteEvents, object : CleanCallback {
-                    override fun loadCleanEvents(events: List<Event>) {
-                        callback.onEventsLoaded(events)
-                    }
-                })
-            }
+            })
         }
 
-        Observable.merge(observableList)
+        Single.concat(observableList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(eventbriteEventsSubscriber)
+                .subscribe(eventbriteEventsSubscriber, Consumer<Throwable> { t -> Timber.e(t) })
     }
 
     override fun saveEvent(eventToSave: Event, callback: EventsDataSource.SaveEventCallback) {
@@ -100,27 +73,26 @@ class EventbriteDataSource : EventsDataSource {
 
         val eventbriteEventMap = HashMap<String, Event>()
         for (event in events) {
-            eventbriteEventMap[event.id] = event
+            if (event.time > callbackTimestamp) {
+                eventbriteEventMap[event.id] = event
+            }
         }
 
-        eventsReference.orderByChild("time").startAt(Date().time.toDouble()).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (postSnapshot in dataSnapshot.children) {
-                    val event = postSnapshot.getValue(Event::class.java)
+        eventsRepository.getEvents(object: EventsDataSource.LoadEventsCallback {
 
-                    eventbriteEventMap.remove(event?.id)
+            override fun onEventsLoaded(events: MutableList<Event>?) {
+                events?.forEach {
+                    eventbriteEventMap.remove(it.id)
                 }
 
-                Timber.d("onResponse: Event's from after cleaning $callbackTimestamp:${eventbriteEventMap.size}")
                 callback.loadCleanEvents(ArrayList(eventbriteEventMap.values))
-
             }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-
+            override fun onError(error: String?) {
+                Timber.e(error)
+                callback.loadCleanEvents(ArrayList())
             }
-        })
-
+        }, false)
     }
 
     internal interface CleanCallback {

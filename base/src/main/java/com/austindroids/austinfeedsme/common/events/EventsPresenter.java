@@ -1,8 +1,9 @@
 package com.austindroids.austinfeedsme.common.events;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
+import com.austindroids.austinfeedsme.common.utils.DateUtils;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
@@ -10,9 +11,6 @@ import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,13 +18,20 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import timber.log.Timber;
+
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
+import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
 import static com.austindroids.austinfeedsme.data.Event.Type.PIZZA;
 import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
 @ActivityScoped
 public class EventsPresenter implements EventsContract.Presenter {
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private EventsRepository repository;
     private EventsContract.View view;
 
@@ -40,80 +45,45 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     @Override
     public void loadEvents() {
-        view.showProgress();
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-
+        Disposable eventDisposable = repository.getEventsRX(true).doOnSubscribe(new Consumer<Disposable>() {
             @Override
-            public void onEventsLoaded(List<Event> events) {
-
-                Calendar currentDay = Calendar.getInstance();
-                currentDay.set(Calendar.HOUR_OF_DAY, 23);
-                currentDay.set(Calendar.MINUTE, 59);
-
-                long currDateLong = currentDay.getTimeInMillis();
-
-                Calendar sevenDaysFromNowCalendar = Calendar.getInstance();
-                sevenDaysFromNowCalendar.add(Calendar.DATE, +7);
-
-                long sevenDaysFromNow = sevenDaysFromNowCalendar.getTimeInMillis();
-
-                ArrayList<Event> currentEvents = new ArrayList<>();
-
-                for (Event nextEvent : events) {
-                    if (nextEvent.isFood() &&
-                            (nextEvent.getTime() > new Date().getTime())) {
-
-                        switch (currentFiltering) {
-                            case ALL_EVENTS:
-                                currentEvents.add(nextEvent);
-                                break;
-                            case TODAYS_EVENTS:
-                                if (nextEvent.getTime() < currDateLong) {
-                                    currentEvents.add(nextEvent);
-                                }
-                                break;
-                            case THIS_WEEKS_EVENTS:
-                                if (nextEvent.getTime() < sevenDaysFromNow) {
-                                    currentEvents.add(nextEvent);
-                                }
-                                break;
-                            default:
-                                currentEvents.add(nextEvent);
-                                break;
-                        }
-
-                    }
-                }
-
-                Collections.sort(currentEvents, new Comparator<Event>() {
-                    @Override
-                    public int compare(Event event1, Event event2) {
-                        return event1.getTime().compareTo(event2.getTime()); // Ascending
-                    }
-                });
-
-                if (currentEvents.size() > 0 ) {
-                    view.showEvents(currentEvents);
-                    view.setTotalCount(currentEvents.size());
-                } else {
-                    view.showNoEventsView();
-                }
-
-                view.hideProgress();
+            public void accept(Disposable disposable) throws Exception {
+                view.showProgress();
             }
-
+        }).doOnError(new Consumer<Throwable>() {
             @Override
-            public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
+            public void accept(Throwable throwable) throws Exception {
                 view.hideProgress();
+                Timber.e(throwable);
+            }
+        }).subscribe(new Consumer<List<Event>>() {
+            @Override
+            public void accept(List<Event> events) throws Exception {
+                if (events.isEmpty()) {
+                    view.showNoEventsView();
+                    view.hideProgress();
+                    return;
+                }
+
+                ArrayList<Event> eventsToShow = filterEventsOnTimeSelection(events);
+
+                view.hideProgress();
+                view.showEvents(eventsToShow);
+                setEventCounts(eventsToShow);
             }
         });
+
+        compositeDisposable.add(eventDisposable);
     }
 
     @Override
-    public void loadYummyCounts() {
+    public void searchEvents(final String searchTerm) {
+        if (searchTerm.equalsIgnoreCase("reset")) {
+            loadEvents();
+            return;
+        }
 
-        final HashMap<String, Integer> yummyCounts = new HashMap<>();
+        final String lowerCaseSearch = searchTerm.toLowerCase();
 
         repository.getEvents(new EventsDataSource.LoadEventsCallback() {
             @Override
@@ -122,62 +92,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                 Iterator<Event> iterator = events.iterator();
 
                 while (iterator.hasNext()) {
-                    Event event = iterator.next();
-
-                    // Remove event if it doesn't have free food or is in the past
-                    // or if the event name or description doesn't contain the search term
-                    if (event.isFood() && event.getFoodType() != null
-                            && (event.getTime() > new Date().getTime()))
-                    {
-                        if (event.getFoodType().equals(PIZZA.name())) {
-                            Integer previousValue = yummyCounts.get(PIZZA.name());
-                            yummyCounts.put(PIZZA.name(), previousValue == null ? 1 : previousValue + 1);
-                        }
-                        if (event.getFoodType().equals(BEER.name())) {
-                            Integer previousValue = yummyCounts.get(BEER.name());
-                            yummyCounts.put(BEER.name(), previousValue == null ? 1 : previousValue + 1);
-                        }
-                        if (event.getFoodType().equals(TACO.name())) {
-                            Integer previousValue = yummyCounts.get(TACO.name());
-                            yummyCounts.put(TACO.name(), previousValue == null ? 1 : previousValue + 1);
-                        }
-                    }
-                }
-
-                view.setPizzaCount(yummyCounts.get(PIZZA.name()) == null ? 0 : yummyCounts.get(PIZZA.name()));
-                view.setTacoCount(yummyCounts.get(TACO.name()) == null ? 0 : yummyCounts.get(TACO.name()));
-                view.setBeerCount(yummyCounts.get(BEER.name()) == null ? 0 : yummyCounts.get(BEER.name()));
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
-
-            }
-        });
-
-    }
-
-    @Override
-    public void searchEvents(final String searchTerm) {
-
-        if (searchTerm.equalsIgnoreCase("reset")) {
-            loadEvents();
-            return;
-        }
-
-        // Probably better to use Regex
-        // http://stackoverflow.com/questions/14018478/string-contains-ignore-case
-        final String lowerCaseSearch = searchTerm.toLowerCase();
-
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @Override
-            public void onEventsLoaded(List<Event> events) {
-
-                Iterator<Event> iter = events.iterator();
-
-                while (iter.hasNext()) {
-                    Event nextEvent = iter.next();
+                    Event nextEvent = iterator.next();
 
                     // Remove event if it doesn't have free food or is in the past
                     // or if the event name or description doesn't contain the search term
@@ -185,7 +100,7 @@ public class EventsPresenter implements EventsContract.Presenter {
                             || (nextEvent.getTime() < new Date().getTime())
                             || TextUtils.isEmpty(nextEvent.getDescription())
                             || !nextEvent.getDescription().toLowerCase().contains(lowerCaseSearch)) {
-                        iter.remove();
+                        iterator.remove();
                     }
                 }
 
@@ -194,15 +109,73 @@ public class EventsPresenter implements EventsContract.Presenter {
 
             @Override
             public void onError(String error) {
-                Log.e("OOPS", "We have an errorrrrr");
-
+                Timber.e(new Exception(error));
             }
-        });
+        }, true);
 
     }
 
     @Override
-    public void setFiltering(EventsFilterType requestType) {
-        currentFiltering = requestType;
+    public void setFiltering(EventsFilterType eventsFilterType) {
+        currentFiltering = eventsFilterType;
+    }
+
+    @NonNull
+    private ArrayList<Event> filterEventsOnTimeSelection(List<Event> events) {
+        long aMinuteFromMidnight = DateUtils.INSTANCE.aMinuteFromMinuteToday();
+        long sevenDaysFromNow = DateUtils.INSTANCE.sevenDaysFromNow();
+
+        ArrayList<Event> eventsToShow = new ArrayList<>();
+        for (Event event : events) {
+            switch (currentFiltering) {
+                case ALL_EVENTS:
+                    eventsToShow.add(event);
+                    break;
+                case TODAYS_EVENTS:
+                    if (event.getTime() < aMinuteFromMidnight) {
+                        eventsToShow.add(event);
+                    }
+                    break;
+                case THIS_WEEKS_EVENTS:
+                    if (event.getTime() < sevenDaysFromNow) {
+                        eventsToShow.add(event);
+                    }
+                    break;
+                default:
+                    eventsToShow.add(event);
+                    break;
+            }
+        }
+        return eventsToShow;
+    }
+
+    private void setEventCounts(ArrayList<Event> eventsToShow) {
+        view.setTotalCount(eventsToShow.size());
+
+        final HashMap<String, Integer> yummyCounts = new HashMap<>();
+        for (Event event : eventsToShow) {
+
+            if (event.getFoodType() == null || event.getFoodType().equals(NONE.toString())) {
+                continue;
+            }
+
+            if (event.getFoodType().equals(PIZZA.name())) {
+                Integer previousValue = yummyCounts.get(PIZZA.name());
+                yummyCounts.put(PIZZA.name(), previousValue == null ? 1 : previousValue + 1);
+            }
+            if (event.getFoodType().equals(BEER.name())) {
+                Integer previousValue = yummyCounts.get(BEER.name());
+                yummyCounts.put(BEER.name(), previousValue == null ? 1 : previousValue + 1);
+            }
+            if (event.getFoodType().equals(TACO.name())) {
+                Integer previousValue = yummyCounts.get(TACO.name());
+                yummyCounts.put(TACO.name(), previousValue == null ? 1 : previousValue + 1);
+            }
+
+        }
+
+        view.setPizzaCount(yummyCounts.get(PIZZA.name()) == null ? 0 : yummyCounts.get(PIZZA.name()));
+        view.setTacoCount(yummyCounts.get(TACO.name()) == null ? 0 : yummyCounts.get(TACO.name()));
+        view.setBeerCount(yummyCounts.get(BEER.name()) == null ? 0 : yummyCounts.get(BEER.name()));
     }
 }

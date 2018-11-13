@@ -31,7 +31,7 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-        val eventView = inflater.inflate(R.layout.item_event, parent, false)
+        val eventView = inflater.inflate(R.layout.list_item_event, parent, false)
 
         return ViewHolder(eventView, eventClickListener)
     }
@@ -65,8 +65,8 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
 
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
-        Glide.with(context).clear(holder.groupPhotoImageView)
-        Glide.with(context).load(R.drawable.ic_local_pizza_blue_24dp).into(holder.groupPhotoImageView)
+        Glide.with(holder.itemView.context).clear(holder.groupPhotoImageView)
+        Glide.with(holder.itemView.context).load(R.drawable.ic_local_pizza_blue_24dp).into(holder.groupPhotoImageView)
     }
 
     fun replaceData(Events: List<Event>) {

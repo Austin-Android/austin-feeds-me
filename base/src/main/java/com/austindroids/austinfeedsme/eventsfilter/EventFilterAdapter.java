@@ -11,10 +11,15 @@ import android.widget.TextView;
 
 import com.austindroids.austinfeedsme.R;
 import com.austindroids.austinfeedsme.data.Event;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.austindroids.austinfeedsme.data.EventsRepository;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
@@ -24,17 +29,19 @@ import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 
 public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.ViewHolder> {
 
-    private List<Event> events;
+    private final EventsRepository eventsRepository;
+    private List<Event> events = new ArrayList<>();
+    private Set<String> eventIds = new HashSet<>();
 
-    public EventFilterAdapter(List<Event> events) {
-        setList(events);
+    public EventFilterAdapter(EventsRepository eventsRepository) {
+        this.eventsRepository = eventsRepository;
     }
 
     @Override
     public EventFilterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View quoteView = inflater.inflate(R.layout.choose_meetup_item, parent, false);
+        View quoteView = inflater.inflate(R.layout.list_item_event_filter, parent, false);
 
         return new EventFilterAdapter.ViewHolder(quoteView);
     }
@@ -43,8 +50,8 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
     public void onBindViewHolder(EventFilterAdapter.ViewHolder viewHolder, int position) {
         Event event = events.get(position);
 
-        viewHolder.author.setText(event.getName());
-        viewHolder.group.setText(event.getGroup().getName());
+        viewHolder.titleTextView.setText(event.getName());
+        viewHolder.groupTextView.setText(event.getGroup().getName());
 
         if (null != event.getDescription()) {
 
@@ -56,23 +63,45 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
             description = description.replaceAll("beer", "<font color='red'>" + "beer" + "</font>");
             description = description.replaceAll("drinks", "<font color='red'>" + "drinks" + "</font>");
 
-            viewHolder.quote.setText(Html.fromHtml(description));
+            viewHolder.eventDescriptionTextView.setText(Html.fromHtml(description));
         }
-        viewHolder.link.setText(event.getEvent_url());
-    }
 
-    private void setList(List<Event> events) {
-        this.events = events;
+        viewHolder.eventLinkTextView.setText(event.getEvent_url());
     }
 
     public void addEvents(List<Event> events) {
+        removeDuplicateEvents(events);
+
         this.events.addAll(events);
+
+        sortEvents();
         notifyDataSetChanged();
     }
 
-    public void replaceData(List<Event> quotes){
-        setList(quotes);
-        notifyDataSetChanged();
+    private void removeDuplicateEvents(List<Event> events) {
+        Iterator<Event> eventIterator = events.iterator();
+
+        while (eventIterator.hasNext()) {
+            Event currentEvent = eventIterator.next();
+            if (!eventIds.contains(currentEvent.getId())) {
+                eventIds.add(currentEvent.getId());
+            } else {
+                eventIterator.remove();
+            }
+        }
+    }
+
+    private void sortEvents() {
+        Collections.sort(this.events, new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                if (o1.getTime() < o2.getTime()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
     }
 
     @Override
@@ -86,62 +115,63 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView author;
-        private TextView group;
-        private TextView quote;
-        private TextView link;
-        private Button addEvent;
-        private Button removeEvent;
-
+        private TextView titleTextView;
+        private TextView groupTextView;
+        private TextView eventDescriptionTextView;
+        private TextView eventLinkTextView;
+        private Button addEventButton;
+        private Button removeEventButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            author = itemView.findViewById(R.id.event_title);
-            group = itemView.findViewById(R.id.event_group_name);
-            quote = itemView.findViewById(R.id.event_text);
-            link = itemView.findViewById(R.id.event_link);
-            addEvent = itemView.findViewById(R.id.add_event);
-            removeEvent = itemView.findViewById(R.id.remove_event);
+            titleTextView = itemView.findViewById(R.id.event_title);
+            groupTextView = itemView.findViewById(R.id.event_group_name);
+            eventDescriptionTextView = itemView.findViewById(R.id.event_text);
+            eventLinkTextView = itemView.findViewById(R.id.event_link);
+            addEventButton = itemView.findViewById(R.id.button_add_event);
+            removeEventButton = itemView.findViewById(R.id.button_remove_event);
 
-            addEvent.setOnClickListener(new View.OnClickListener() {
+            addEventButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Event event = getItem(getAdapterPosition());
                     event.setFood(true);
 
-                    if (event.getDescription().toUpperCase().contains(PIZZA.name())) {
-                        event.setFoodType(PIZZA.name());
-                    } else if (event.getDescription().toUpperCase().contains(BEER.name())) {
-                        event.setFoodType(BEER.name());
-                    } else if (event.getDescription().toUpperCase().contains(TACO.name())) {
-                        event.setFoodType(TACO.name());
+                    if (event.getDescription() != null) {
+                        if (event.getDescription().toUpperCase().contains(PIZZA.name())) {
+                            event.setFoodType(PIZZA.name());
+                        } else if (event.getDescription().toUpperCase().contains(BEER.name())) {
+                            event.setFoodType(BEER.name());
+                        } else if (event.getDescription().toUpperCase().contains(TACO.name())) {
+                            event.setFoodType(TACO.name());
+                        } else {
+                            event.setFoodType(NONE.name());
+                        }
                     } else {
                         event.setFoodType(NONE.name());
                     }
 
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference eventsReference = database.getReference("events");
+                    eventsRepository.saveEvent(event, null);
 
-                    eventsReference.push().setValue(event);
                     removeAt(getAdapterPosition());
                 }
             });
 
-            removeEvent.setOnClickListener(new View.OnClickListener() {
+            removeEventButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Event event = getItem(getAdapterPosition());
-                    event.setFood(false);
 
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("events");
-                    myRef.push().setValue(event);
+                    Event eventToSave = new Event();
+                    eventToSave.setId(event.getId());
+                    eventToSave.setFood(false);
+
+                    eventsRepository.saveEvent(eventToSave, null);
 
                     removeAt(getAdapterPosition());
                 }
             });
-
         }
 
         public void removeAt(int position) {

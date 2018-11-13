@@ -23,12 +23,11 @@ import javax.inject.Named;
  */
 public class EventFilterActivity extends BaseActivity implements EventFilterContract.View {
 
-    EventFilterPresenter eventFilterPresenter;
-
-    final EventFilterAdapter eventFilterAdapter = new EventFilterAdapter(new ArrayList<>());
-
     @Inject @Named("eventbrite") EventsDataSource eventbriteDataSource;
     @Inject @Named("meetup") EventsDataSource meetupDataSource;
+    @Inject EventsRepository eventsRepository;
+
+    private EventFilterAdapter eventFilterAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,22 +36,20 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
 
         RecyclerView eventsRecyclerView = findViewById(R.id.event_recycler_view);
         eventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        eventFilterAdapter = new EventFilterAdapter(eventsRepository);
         eventsRecyclerView.setAdapter(eventFilterAdapter);
 
         // Move these dependencies into the dependency graph
         EventsRepository eventbriteRepository = new EventsRepository(eventbriteDataSource);
         EventsRepository meetupRepository = new EventsRepository(meetupDataSource);
 
-        eventFilterPresenter =
-                new EventFilterPresenter(eventbriteRepository, meetupRepository, this);
-
+        EventFilterPresenter eventFilterPresenter = new EventFilterPresenter(eventbriteRepository, meetupRepository, this);
+        eventFilterPresenter.loadEvents();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        eventFilterAdapter.replaceData(new ArrayList<>());
-        eventFilterPresenter.loadEvents();
     }
 
     @Override
