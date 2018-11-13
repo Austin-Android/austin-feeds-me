@@ -6,14 +6,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.PopupMenu
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import com.austindroids.austinfeedsme.R
 import com.austindroids.austinfeedsme.common.base.BaseActivity
 import com.austindroids.austinfeedsme.common.events.EventsContract
@@ -61,7 +61,6 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         viewPager = findViewById(R.id.viewPager)
-        viewPager?.setPageTransformer(false, ZoomOutSlideTransformer())
         viewPager!!.adapter = cardPagerAdapter
         viewPager!!.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
@@ -249,39 +248,4 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     companion object {
         const val RC_LOCATION_PERMISSION = 7
     }
-
-    internal inner class ZoomOutSlideTransformer : BaseTransformer() {
-
-
-        protected override fun onTransform(view: View, position: Float) {
-
-            val MIN_SCALE = 0.85f
-            val MIN_ALPHA = 0.5f
-
-            if (position >= -1 || position <= 1) {
-                // Modify the default slide transition to shrink the page as well
-                val height = view.height.toFloat()
-                val scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position))
-                val vertMargin = height * (1 - scaleFactor) / 2
-                val horzMargin = view.width * (1 - scaleFactor) / 2
-
-                // Center vertically
-                view.pivotY = 0.5f * height
-
-                if (position < 0) {
-                    view.translationX = horzMargin - vertMargin / 2
-                } else {
-                    view.translationX = -horzMargin + vertMargin / 2
-                }
-
-                // Scale the page down (between MIN_SCALE and 1)
-                view.scaleX = scaleFactor
-                view.scaleY = scaleFactor
-
-                // Fade the page relative to its size.
-                view.alpha = MIN_ALPHA + (scaleFactor - MIN_SCALE) / (1 - MIN_SCALE) * (1 - MIN_ALPHA)
-            }
-        }
-    }
-
 }
