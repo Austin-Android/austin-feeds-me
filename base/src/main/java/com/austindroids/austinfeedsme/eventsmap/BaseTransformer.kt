@@ -1,6 +1,6 @@
 package com.austindroids.austinfeedsme.eventsmap
 
-import android.support.v4.view.ViewPager.PageTransformer
+import androidx.viewpager.widget.ViewPager.PageTransformer
 import android.view.View
 
 
