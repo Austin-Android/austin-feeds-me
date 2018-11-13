@@ -79,21 +79,6 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
 
             }
         })
-
-
-        var events = ArrayList<Event>()
-
-        events.add(Event())
-        events.add(Event())
-        events.add(Event())
-        events.add(Event())
-        events.add(Event())
-        events.add(Event())
-
-        cardPagerAdapter = CardPagerAdapter(events)
-        viewPager!!.adapter = cardPagerAdapter
-
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
