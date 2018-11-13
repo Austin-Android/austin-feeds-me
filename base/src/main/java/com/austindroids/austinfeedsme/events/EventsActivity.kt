@@ -17,10 +17,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat.invalidateOptionsMenu
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -56,7 +52,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     private var searchViewForMenu: SearchView? = null
     private var eventListAdapter: EventsAdapter? = null
     private var eventItemListener: EventsAdapter.EventItemListener = getEventItemListener()
-    private lateinit var navigationEventsFilter: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +65,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         navigationView = findViewById(R.id.navigation_view_events)
 
         setupActionBar()
-        setupMenu()
         setupSwipeToRefresh()
         setupEventsList()
         setupNavigationDrawer(navigationView)
@@ -323,18 +317,6 @@ class EventsActivity : BaseActivity(), EventsContract.View {
             it.setHomeButtonEnabled(true)
             it.setDisplayHomeAsUpEnabled(true)
         }
-    }
-
-    private fun setupMenu() {
-        // get menu from navigationView
-        val menu = navigationView.menu
-
-        // find MenuItem you want to change
-        navigationEventsFilter = menu.findItem(R.id.events_filter)
-
-        //Check if user logged in, change sign in/out button to correct text
-
-        navigationEventsFilter.isVisible = FirebaseAuth.getInstance().currentUser != null
     }
 
     override fun showEvents(events: List<Event>) {
