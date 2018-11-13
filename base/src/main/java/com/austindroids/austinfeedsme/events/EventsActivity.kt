@@ -8,7 +8,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuItemCompat
@@ -23,6 +22,10 @@ import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.app.ActivityCompat.invalidateOptionsMenu
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.austindroids.austinfeedsme.R
