@@ -33,7 +33,6 @@
         android:layout_height="270dp"
         android:layout_alignParentBottom="true"
         android:gravity="bottom"
-        android:clickable="true"
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingBottom="5dp"
