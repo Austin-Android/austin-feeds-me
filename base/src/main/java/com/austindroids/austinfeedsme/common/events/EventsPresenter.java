@@ -1,6 +1,5 @@
 package com.austindroids.austinfeedsme.common.events;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.austindroids.austinfeedsme.common.utils.DateUtils;
@@ -18,6 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -45,35 +45,47 @@ public class EventsPresenter implements EventsContract.Presenter {
 
     @Override
     public void loadEvents() {
-        Disposable eventDisposable = repository.getEventsRX(true).doOnSubscribe(new Consumer<Disposable>() {
-            @Override
-            public void accept(Disposable disposable) throws Exception {
-                view.showProgress();
-            }
-        }).doOnError(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                view.hideProgress();
-                Timber.e(throwable);
-            }
-        }).subscribe(new Consumer<List<Event>>() {
-            @Override
-            public void accept(List<Event> events) throws Exception {
-                if (events.isEmpty()) {
-                    view.showNoEventsView();
-                    view.hideProgress();
-                    return;
-                }
+        loadEvents(true);
+    }
 
-                ArrayList<Event> eventsToShow = filterEventsOnTimeSelection(events);
 
-                view.hideProgress();
-                view.showEvents(eventsToShow);
-                setEventCounts(eventsToShow);
-            }
-        });
+    private void loadEvents(boolean showProgress) {
+        Disposable eventDisposable = repository.getEventsRX(true)
+                .doOnSubscribe(disposable -> {
+                    if (showProgress) {
+                        view.showProgress();
+                    }
+                }).doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        view.hideProgress();
+                        Timber.e(throwable);
+                    }
+                }).subscribe(new Consumer<List<Event>>() {
+                    @Override
+                    public void accept(List<Event> events) throws Exception {
+                        if (events.isEmpty()) {
+                            view.showNoEventsView();
+                            view.hideProgress();
+                            return;
+                        }
+
+                        ArrayList<Event> eventsToShow = filterEventsOnTimeSelection(events);
+
+                        view.hideProgress();
+                        view.showEvents(eventsToShow);
+                        setEventCounts(eventsToShow);
+                    }
+                });
 
         compositeDisposable.add(eventDisposable);
+    }
+
+
+
+    @Override
+    public void refreshEvents() {
+        loadEvents(false);
     }
 
     @Override

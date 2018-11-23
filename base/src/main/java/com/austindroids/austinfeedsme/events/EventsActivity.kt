@@ -52,6 +52,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     private var searchViewForMenu: SearchView? = null
     private var eventListAdapter: EventsAdapter? = null
     private var eventItemListener: EventsAdapter.EventItemListener = getEventItemListener()
+    private lateinit var navigationEventsFilter: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         setupSwipeToRefresh()
         setupEventsList()
         setupNavigationDrawer(navigationView)
+        setupMenu()
 
         eventsPresenter.loadEvents()
     }
@@ -222,6 +224,9 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     override fun hideProgress() {
         progressOverlay.visibility = View.GONE
+        if (swipeRefreshLayout.isRefreshing) {
+            swipeRefreshLayout.isRefreshing = false;
+        }
     }
 
     private fun getEventItemListener(): EventsAdapter.EventItemListener {
@@ -319,6 +324,18 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         }
     }
 
+    private fun setupMenu() {
+        // get menu from navigationView
+        val menu = navigationView.menu
+
+        // find MenuItem you want to change
+        navigationEventsFilter = menu.findItem(R.id.events_filter)
+
+        //Check if user logged in, change sign in/out button to correct text
+
+        navigationEventsFilter.isVisible = FirebaseAuth.getInstance().currentUser != null
+    }
+
     override fun showEvents(events: List<Event>) {
         eventListAdapter!!.replaceData(events)
         eventsRecyclerView.visibility = View.VISIBLE
@@ -326,14 +343,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     }
 
     private fun setupSwipeToRefresh() {
-        swipeRefreshLayout.setOnRefreshListener { refreshEvents() }
-    }
-
-    private fun refreshEvents() {
-        Handler().postDelayed({
-            setupEventsList()
-            swipeRefreshLayout.isRefreshing = false
-        }, 2000)
+        swipeRefreshLayout.setOnRefreshListener { eventsPresenter.refreshEvents() }
     }
 
     private fun setupEventsList() {
