@@ -9,6 +9,4 @@
         android:title="@string/menu_filter"
         android:icon="@drawable/ic_filter_list"
         app:showAsAction="always" />
-
-
 </menu>

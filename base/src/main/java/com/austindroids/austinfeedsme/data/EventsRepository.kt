@@ -18,7 +18,6 @@ package com.austindroids.austinfeedsme.data
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.SingleEmitter
 import io.reactivex.SingleOnSubscribe
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Singleton
@@ -53,16 +52,17 @@ class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : E
     }
 
     override fun getEventsRX(onlyFood: Boolean): Observable<List<Event>> {
-        eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
-            override fun onEventsLoaded(events: List<Event>) {
-                eventsSubject.onNext(events)
-            }
+        return Observable.create {
+            eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
+                override fun onEventsLoaded(events: List<Event>) {
+                    it.onNext(events)
+                }
 
-            override fun onError(error: String) {
-                eventsSubject.onError(Throwable(error))
-            }
-        }, onlyFood)
-        return eventsSubject
+                override fun onError(error: String) {
+                    it.onError(Throwable(error))
+                }
+            }, onlyFood)
+        }
     }
 
     override fun saveEventRX(eventToSave: Event?): Single<Boolean> {

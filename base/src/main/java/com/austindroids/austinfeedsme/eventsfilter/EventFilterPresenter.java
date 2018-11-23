@@ -10,8 +10,6 @@ import java.util.List;
  */
 public class EventFilterPresenter implements EventFilterContract.Presenter {
 
-    private static final String TAG ="EventFilterPresenter";
-
     private EventsDataSource eventbriteRepository;
     private EventsDataSource meetupRepository;
     private EventFilterContract.View view;

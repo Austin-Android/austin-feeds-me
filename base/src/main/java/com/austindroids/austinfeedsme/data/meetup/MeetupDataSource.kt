@@ -20,7 +20,6 @@ import java.util.*
 
 class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
-
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
 
         val retrofit = Retrofit.Builder()
