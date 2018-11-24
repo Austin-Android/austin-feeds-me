@@ -1,8 +1,6 @@
 package com.austindroids.austinfeedsme.data.firebase;
 
 
-import androidx.annotation.NonNull;
-
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +17,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 @Singleton

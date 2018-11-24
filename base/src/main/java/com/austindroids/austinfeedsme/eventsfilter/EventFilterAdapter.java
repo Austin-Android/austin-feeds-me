@@ -1,7 +1,6 @@
 package com.austindroids.austinfeedsme.eventsfilter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +13,9 @@ import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
 import static com.austindroids.austinfeedsme.data.Event.Type.NONE;
@@ -31,7 +27,6 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
 
     private final EventsRepository eventsRepository;
     private List<Event> events = new ArrayList<>();
-    private Set<String> eventIds = new HashSet<>();
 
     public EventFilterAdapter(EventsRepository eventsRepository) {
         this.eventsRepository = eventsRepository;
@@ -70,38 +65,9 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
     }
 
     public void addEvents(List<Event> events) {
-        removeDuplicateEvents(events);
-
+        this.events.clear();
         this.events.addAll(events);
-
-        sortEvents();
         notifyDataSetChanged();
-    }
-
-    private void removeDuplicateEvents(List<Event> events) {
-        Iterator<Event> eventIterator = events.iterator();
-
-        while (eventIterator.hasNext()) {
-            Event currentEvent = eventIterator.next();
-            if (!eventIds.contains(currentEvent.getId())) {
-                eventIds.add(currentEvent.getId());
-            } else {
-                eventIterator.remove();
-            }
-        }
-    }
-
-    private void sortEvents() {
-        Collections.sort(this.events, new Comparator<Event>() {
-            @Override
-            public int compare(Event o1, Event o2) {
-                if (o1.getTime() < o2.getTime()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-        });
     }
 
     @Override

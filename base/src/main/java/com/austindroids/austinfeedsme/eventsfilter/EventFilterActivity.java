@@ -44,7 +44,7 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
         EventsRepository meetupRepository = new EventsRepository(meetupDataSource);
 
         EventFilterPresenter eventFilterPresenter =
-                new EventFilterPresenter(eventbriteRepository, meetupRepository, this);
+                new EventFilterPresenter(eventsRepository, eventbriteRepository, meetupRepository, this);
         eventFilterPresenter.loadEvents();
     }
 
