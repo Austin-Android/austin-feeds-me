@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.austindroids.austinfeedsme.common.utils.DateUtils;
 import com.austindroids.austinfeedsme.data.Event;
-import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
@@ -18,9 +17,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static com.austindroids.austinfeedsme.data.Event.Type.BEER;
@@ -97,34 +98,37 @@ public class EventsPresenter implements EventsContract.Presenter {
 
         final String lowerCaseSearch = searchTerm.toLowerCase();
 
-        repository.getEvents(new EventsDataSource.LoadEventsCallback() {
-            @Override
-            public void onEventsLoaded(List<Event> events) {
+        repository.getEventsRX(true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Event>>() {
+                    @Override
+                    public void accept(List<Event> events) throws Exception {
+                        Iterator<Event> iterator = events.iterator();
 
-                Iterator<Event> iterator = events.iterator();
+                        while (iterator.hasNext()) {
+                            Event nextEvent = iterator.next();
 
-                while (iterator.hasNext()) {
-                    Event nextEvent = iterator.next();
+                            // Remove event if it doesn't have free food or is in the past
+                            // or if the event name or description doesn't contain the search term
+                            if (!nextEvent.isFood()
+                                    || (nextEvent.getTime() < new Date().getTime())
+                                    || TextUtils.isEmpty(nextEvent.getDescription())
+                                    || !nextEvent.getDescription().toLowerCase().contains(lowerCaseSearch)) {
+                                iterator.remove();
+                            }
+                        }
 
-                    // Remove event if it doesn't have free food or is in the past
-                    // or if the event name or description doesn't contain the search term
-                    if (!nextEvent.isFood()
-                            || (nextEvent.getTime() < new Date().getTime())
-                            || TextUtils.isEmpty(nextEvent.getDescription())
-                            || !nextEvent.getDescription().toLowerCase().contains(lowerCaseSearch)) {
-                        iterator.remove();
+                        view.showEvents(events);
+
                     }
-                }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Timber.e(new Exception(throwable));
 
-                view.showEvents(events);
-            }
-
-            @Override
-            public void onError(String error) {
-                Timber.e(new Exception(error));
-            }
-        }, true);
-
+                    }
+                });
     }
 
     @Override

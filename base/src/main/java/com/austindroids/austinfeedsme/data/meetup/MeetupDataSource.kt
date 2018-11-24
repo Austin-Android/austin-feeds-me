@@ -11,7 +11,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.util.*
 
 
 /**
@@ -20,45 +19,22 @@ import java.util.*
 
 class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
+    private val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.meetup.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()!!
+
+    private val meetupService = retrofit.create(MeetupService::class.java)!!
+
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
-
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.meetup.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
-
-        val meetupService = retrofit.create(MeetupService::class.java)
 
         meetupService.openEvents
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : DisposableSingleObserver<Results>() {
                     override fun onSuccess(results: Results) {
-                        val meetupEventMap = HashMap<String, Event>()
-                        for (event in results.events) {
-                            if (event.time > Date().time) {
-                                meetupEventMap[event.id] = event
-                            }
-                        }
-
-                        eventsRepository.getEvents(object: EventsDataSource.LoadEventsCallback {
-
-                            override fun onEventsLoaded(events: MutableList<Event>?) {
-                                events?.forEach {
-                                    meetupEventMap.remove(it.id)
-                                }
-
-                                callback.onEventsLoaded(ArrayList(meetupEventMap.values))
-
-                            }
-
-                            override fun onError(error: String?) {
-                                Timber.e(error)
-                                callback.onEventsLoaded(ArrayList())
-                            }
-                        }, false)
-
+                        callback.onEventsLoaded(results.events)
                     }
 
                     override fun onError(e: Throwable) {

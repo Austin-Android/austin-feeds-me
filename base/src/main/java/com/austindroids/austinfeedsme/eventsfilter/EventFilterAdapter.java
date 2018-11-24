@@ -118,7 +118,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                         event.setFoodType(NONE.name());
                     }
 
-                    eventsRepository.saveEvent(event, null);
+                    eventsRepository.saveEventRX(event);
 
                     removeAt(getAdapterPosition());
                 }
@@ -133,7 +133,7 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
                     eventToSave.setId(event.getId());
                     eventToSave.setFood(false);
 
-                    eventsRepository.saveEvent(eventToSave, null);
+                    eventsRepository.saveEventRX(eventToSave);
 
                     removeAt(getAdapterPosition());
                 }
