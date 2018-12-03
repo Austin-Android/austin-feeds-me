@@ -2,6 +2,7 @@ package com.austindroids.austinfeedsme.eventsfilter;
 
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,14 +20,14 @@ import io.reactivex.functions.Consumer;
  */
 public class EventFilterPresenter implements EventFilterContract.Presenter {
 
-    private EventsRepository eventsRepository;
+    private FilterableEventsRepository filterableEventsRepository;
     private EventsRepository eventbriteRepository;
     private EventsRepository meetupRepository;
     private EventFilterContract.View view;
 
-    public EventFilterPresenter(EventsRepository eventsRepository, EventsRepository eventbriteRepository,
+    public EventFilterPresenter(FilterableEventsRepository filterableEventsRepository, EventsRepository eventbriteRepository,
                                 EventsRepository meetupRepository, EventFilterContract.View view) {
-        this.eventsRepository = eventsRepository;
+        this.filterableEventsRepository = filterableEventsRepository;
         this.eventbriteRepository = eventbriteRepository;
         this.meetupRepository = meetupRepository;
         this.view = view;
@@ -35,10 +36,10 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
     @Override
     public void loadEvents() {
 
-        Observable<List<Event>> mergedIncomingEvents = Observable.merge(eventbriteRepository.getEventsRX(false),
-                meetupRepository.getEventsRX(false));
+        Observable<List<Event>> mergedIncomingEvents = Observable.merge(eventbriteRepository.getEventsRX(),
+                meetupRepository.getEventsRX());
 
-        Observable.combineLatest(eventsRepository.getEventsRX(false), mergedIncomingEvents,
+        Observable.combineLatest(filterableEventsRepository.getEventsRX(true, false), mergedIncomingEvents,
                 (BiFunction<List<Event>, List<Event>, List<Event>>) (persistedEvents, newEvents) -> {
                     Set<String> persistedIds = new HashSet<>();
 
@@ -63,20 +64,6 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
             }
         });
     }
-
-//    private void removeDuplicateEvents(List<Event> events) {
-//        Set<String> eventIds = new HashSet<>();
-//        Iterator<Event> eventIterator = events.iterator();
-//
-//        while (eventIterator.hasNext()) {
-//            Event currentEvent = eventIterator.next();
-//            if (!eventIds.contains(currentEvent.getId())) {
-//                eventIds.add(currentEvent.getId());
-//            } else {
-//                eventIterator.remove();
-//            }
-//        }
-//    }
 
     private void sortEvents(List<Event> events) {
         Collections.sort(events, new Comparator<Event>() {

@@ -27,7 +27,7 @@ class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSourc
 
     private val meetupService = retrofit.create(MeetupService::class.java)!!
 
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
+    override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
         meetupService.openEvents
                 .subscribeOn(Schedulers.io())

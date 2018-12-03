@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.austindroids.austinfeedsme.AustinFeedsMeApplication;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
 import com.austindroids.austinfeedsme.di.modules.ActivityBindingModule;
 import com.austindroids.austinfeedsme.di.modules.ApplicationModule;
 import com.austindroids.austinfeedsme.di.modules.DataModule;
@@ -26,10 +27,11 @@ public interface AppComponent extends AndroidInjector<AustinFeedsMeApplication> 
         @BindsInstance
         public abstract Builder application(Application application);
 
-        public abstract Builder dataModule(DataModule dataModule);
+        public abstract Builder dataModule(DataModule datassModule);
 
         public abstract AppComponent build();
     }
 
     EventsRepository getEventsRepository();
+    FilterableEventsRepository getFilterableEventsRepository();
 }

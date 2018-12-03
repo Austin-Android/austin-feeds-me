@@ -42,7 +42,7 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
         }
     }
 
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
+    override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
         val eventIds: Set<String> = HashSet()
 

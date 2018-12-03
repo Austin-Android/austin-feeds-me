@@ -18,13 +18,12 @@ package com.austindroids.austinfeedsme.data
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.SingleOnSubscribe
 import javax.inject.Singleton
 
 @Singleton
-class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : RxEventsDataSource {
+open class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : RxEventsDataSource {
 
-    override fun getEventsRX(onlyFood: Boolean): Observable<List<Event>> {
+    override fun getEventsRX(): Observable<List<Event>>? {
         return Observable.create {
             eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
                 override fun onEventsLoaded(events: List<Event>) {
@@ -34,12 +33,12 @@ class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : R
                 override fun onError(error: String) {
                     it.onError(Throwable(error))
                 }
-            }, onlyFood)
+            })
         }
     }
 
     override fun saveEventRX(eventToSave: Event?): Single<Boolean> {
-        return Single.create(SingleOnSubscribe {
+        return Single.create {
             eventsRemoteDataSource.saveEvent(eventToSave, object : EventsDataSource.SaveEventCallback {
                 override fun onEventSaved(success: Boolean) {
                     it.onSuccess(true)
@@ -49,7 +48,6 @@ class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : R
                     it.onError(Throwable(error))
                 }
             })
-        })
-
+        }
     }
 }

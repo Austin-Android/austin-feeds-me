@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import com.austindroids.austinfeedsme.common.utils.DateUtils;
 import com.austindroids.austinfeedsme.data.Event;
-import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
 import com.austindroids.austinfeedsme.di.scopes.ActivityScoped;
 import com.austindroids.austinfeedsme.events.EventsFilterType;
 
@@ -33,13 +33,13 @@ import static com.austindroids.austinfeedsme.data.Event.Type.TACO;
 public class EventsPresenter implements EventsContract.Presenter {
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private EventsRepository repository;
+    private FilterableEventsRepository repository;
     private EventsContract.View view;
 
     private EventsFilterType currentFiltering = EventsFilterType.ALL_EVENTS;
 
     @Inject
-    public EventsPresenter(EventsRepository repository, EventsContract.View view) {
+    public EventsPresenter(FilterableEventsRepository repository, EventsContract.View view) {
         this.view = view;
         this.repository = repository;
     }
@@ -49,9 +49,8 @@ public class EventsPresenter implements EventsContract.Presenter {
         loadEvents(true);
     }
 
-
     private void loadEvents(boolean showProgress) {
-        Disposable eventDisposable = repository.getEventsRX(true)
+        Disposable eventDisposable = repository.getEventsRX(true, true)
                 .doOnSubscribe(disposable -> {
                     if (showProgress) {
                         view.showProgress();
@@ -98,7 +97,7 @@ public class EventsPresenter implements EventsContract.Presenter {
 
         final String lowerCaseSearch = searchTerm.toLowerCase();
 
-        repository.getEventsRX(true)
+        repository.getEventsRX()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Event>>() {

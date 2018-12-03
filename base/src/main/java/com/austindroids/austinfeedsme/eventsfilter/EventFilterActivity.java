@@ -7,6 +7,7 @@ import com.austindroids.austinfeedsme.common.base.BaseActivity;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class EventFilterActivity extends BaseActivity implements EventFilterCont
 
     @Inject @Named("eventbrite") EventsDataSource eventbriteDataSource;
     @Inject @Named("meetup") EventsDataSource meetupDataSource;
-    @Inject EventsRepository eventsRepository;
+    @Inject FilterableEventsRepository eventsRepository;
 
     private EventFilterAdapter eventFilterAdapter;
 
