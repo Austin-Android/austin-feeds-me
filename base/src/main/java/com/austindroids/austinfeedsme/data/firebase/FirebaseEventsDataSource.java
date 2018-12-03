@@ -69,13 +69,10 @@ public class FirebaseEventsDataSource implements FilterableEventDataSource {
                     .whereGreaterThan("time", new Date().getTime())
                     .whereEqualTo("food", true)
                     .orderBy("time");
-        }
-
-        if (futureEvents) {
+        } else if (futureEvents) {
             eventsQuery = collectionReference.whereGreaterThan("time", new Date().getTime())
                     .orderBy("time");
-        }
-        if (foodOnly) {
+        } else if (foodOnly) {
             eventsQuery = collectionReference.whereEqualTo("food", true)
                     .orderBy("time");
         }
