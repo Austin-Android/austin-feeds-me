@@ -54,11 +54,11 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
             callback.onEventsLoaded(convertedEventbriteEvents)
         }
 
-        val listMerger = Function<Array<Any>, List<EventbriteEvent>> {
+        val listMerger = Function<Array<Any>, List<EventbriteEvent>> { eventBriteEvents ->
 
             val mergedEvents: ArrayList<EventbriteEvent> = ArrayList()
 
-            (it as Array<EventbriteEvents>).forEach {
+            eventBriteEvents.map { it as EventbriteEvents }.forEach {
                 it.events.forEach {
                     if (!eventIds.contains(it.id)) {
                         eventIds.plus(it.id)
@@ -67,7 +67,7 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
                 }
             }
 
-            return@Function mergedEvents;
+            return@Function mergedEvents
 
         }
 

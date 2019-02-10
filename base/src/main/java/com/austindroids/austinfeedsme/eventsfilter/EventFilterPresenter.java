@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 
@@ -36,8 +37,7 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
     @Override
     public void loadEvents() {
 
-        Observable<List<Event>> mergedIncomingEvents = Observable.merge(eventbriteRepository.getEventsRX(),
-                meetupRepository.getEventsRX());
+        Observable<List<Event>> mergedIncomingEvents = eventbriteRepository.getEventsRX();
 
         Observable.combineLatest(filterableEventsRepository.getEventsRX(true, false), mergedIncomingEvents,
                 (BiFunction<List<Event>, List<Event>, List<Event>>) (persistedEvents, newEvents) -> {
@@ -56,7 +56,9 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
                         }
                     }
                     return newEvents;
-                }).subscribe(new Consumer<List<Event>>() {
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Event>>() {
             @Override
             public void accept(List<Event> events) throws Exception {
                 sortEvents(events);
