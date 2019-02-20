@@ -19,13 +19,11 @@ import com.bumptech.glide.Glide
 /**
  * Created by darrankelinske on 12/3/16.
  */
-internal class EventsAdapter(private val context: Context, Events: List<Event>,
+internal class EventsAdapter(private var context: Context, var events: List<Event>,
                              private val eventClickListener: EventItemListener) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
-    var events: List<Event>? = null
-        private set
 
     init {
-        setList(Events)
+        setList(events)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -60,7 +58,7 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
     }
 
     override fun getItemCount(): Int {
-        return events!!.size
+        return events.size
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
@@ -79,7 +77,7 @@ internal class EventsAdapter(private val context: Context, Events: List<Event>,
     }
 
     private fun getItem(position: Int): Event {
-        return events!![position]
+        return events[position]
     }
 
     inner class ViewHolder(itemView: View, private val mItemListener: EventItemListener) :
