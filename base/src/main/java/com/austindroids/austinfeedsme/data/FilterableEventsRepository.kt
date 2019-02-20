@@ -4,7 +4,7 @@ import io.reactivex.Observable
 import javax.inject.Singleton
 
 @Singleton
-class FilterableEventsRepository(private val eventsRemoteDataSource: FilterableEventDataSource)
+open class FilterableEventsRepository(private val eventsRemoteDataSource: FilterableEventDataSource)
     : EventsRepository(eventsRemoteDataSource), FilterableRxEventsDataSource {
 
     override fun getEventsRX(onlyFuture: Boolean, onlyFood: Boolean): Observable<List<Event>> {
