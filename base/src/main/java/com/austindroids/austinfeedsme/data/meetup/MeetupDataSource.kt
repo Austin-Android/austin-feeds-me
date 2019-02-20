@@ -19,13 +19,13 @@ import timber.log.Timber
 
 class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSource {
 
-    private val retrofit = Retrofit.Builder()
+    private val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl("https://api.meetup.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()!!
+            .build()
 
-    private val meetupService = retrofit.create(MeetupService::class.java)!!
+    private val meetupService: MeetupService = retrofit.create(MeetupService::class.java)
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
@@ -45,6 +45,6 @@ class MeetupDataSource(val eventsRepository: EventsRepository) : EventsDataSourc
     }
 
     override fun saveEvent(eventToSave: Event?, callback: EventsDataSource.SaveEventCallback?) {
-
+        // No-op because we don't write to Meetup
     }
 }

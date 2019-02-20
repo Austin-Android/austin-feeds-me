@@ -11,7 +11,7 @@ import dagger.Module
  */
 
 @Module
-abstract class EventsMapPresenterModule {
+abstract class EventsMapModule {
 
     @Binds
     abstract fun view(mainActivity: EventsMapActivity): EventsContract.View

@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class EventFilterPresenterModule {
+abstract class EventFilterModule {
 
     @Binds
     abstract fun view(mainActivity: EventFilterActivity): EventFilterContract.View

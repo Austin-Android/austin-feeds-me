@@ -18,15 +18,15 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ActivityBindingModule {
     @ActivityScoped
-    @ContributesAndroidInjector(modules = [EventsPresenterModule::class])
+    @ContributesAndroidInjector(modules = [EventsModule::class])
     internal abstract fun eventsActivity(): EventsActivity
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = [EventsMapPresenterModule::class])
+    @ContributesAndroidInjector(modules = [EventsMapModule::class])
     internal abstract fun eventsMapActivity(): EventsMapActivity
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = [EventFilterPresenterModule::class])
+    @ContributesAndroidInjector(modules = [EventFilterModule::class])
     internal abstract fun eventFilterActivity(): EventFilterActivity
 
 }

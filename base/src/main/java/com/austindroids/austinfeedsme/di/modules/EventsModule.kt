@@ -11,7 +11,7 @@ import dagger.Module
  */
 
 @Module
-abstract class EventsPresenterModule {
+abstract class EventsModule {
 
     @Binds
     abstract fun view(eventsActivity: EventsActivity): EventsContract.View

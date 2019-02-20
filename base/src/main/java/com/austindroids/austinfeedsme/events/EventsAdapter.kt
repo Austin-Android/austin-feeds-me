@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide
 /**
  * Created by darrankelinske on 12/3/16.
  */
-internal class EventsAdapter(private var context: Context, var events: List<Event>,
+internal class EventsAdapter(private val context: Context, var events: List<Event>,
                              private val eventClickListener: EventItemListener) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
     init {
