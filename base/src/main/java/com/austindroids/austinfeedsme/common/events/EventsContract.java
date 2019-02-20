@@ -24,6 +24,7 @@ public interface EventsContract {
 
     interface Presenter {
         void loadEvents();
+        void refreshEvents();
         void searchEvents(String searchTerm);
         void setFiltering(EventsFilterType requestType);
     }

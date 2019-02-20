@@ -18,65 +18,34 @@ package com.austindroids.austinfeedsme.data
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.SingleEmitter
-import io.reactivex.SingleOnSubscribe
-import io.reactivex.subjects.PublishSubject
-import javax.inject.Singleton
 
-@Singleton
-class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : EventsDataSource, RxEventsDataSource {
+open class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : RxEventsDataSource {
 
-    val eventsSubject : PublishSubject<List<Event>> = PublishSubject.create()
-
-    override fun getEvents(callback: EventsDataSource.LoadEventsCallback, onlyFood: Boolean) {
-        eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
-            override fun onEventsLoaded(events: List<Event>) {
-                callback.onEventsLoaded(events)
-            }
-
-            override fun onError(error: String) {
-                callback.onError(error)
-            }
-        }, onlyFood)
-    }
-
-    override fun saveEvent(eventToSave: Event, callback: EventsDataSource.SaveEventCallback?) {
-        eventsRemoteDataSource.saveEvent(eventToSave, object : EventsDataSource.SaveEventCallback {
-            override fun onEventSaved(success: Boolean) {
-                callback?.onEventSaved(success)
-            }
-
-            override fun onError(error: String) {
-                callback?.onError(error)
-            }
-        })
-    }
-
-    override fun getEventsRX(onlyFood: Boolean): Observable<List<Event>> {
-        eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
-            override fun onEventsLoaded(events: List<Event>) {
-                eventsSubject.onNext(events)
-            }
-
-            override fun onError(error: String) {
-                eventsSubject.onError(Throwable(error))
-            }
-        }, onlyFood)
-        return eventsSubject
-    }
-
-    override fun saveEventRX(eventToSave: Event?): Single<Boolean> {
-        return Single.create(SingleOnSubscribe {
-            eventsRemoteDataSource.saveEvent(eventToSave, object : EventsDataSource.SaveEventCallback {
-                override fun onEventSaved(success: Boolean) {
-                    it.onSuccess(true)
+    override fun getEventsRX(): Observable<List<Event>>? {
+        return Observable.create { emitter ->
+            eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
+                override fun onEventsLoaded(events: List<Event>) {
+                    emitter.onNext(events)
                 }
 
                 override fun onError(error: String) {
-                    it.onError(Throwable(error))
+                    emitter.onError(Throwable(error))
                 }
             })
-        })
+        }
+    }
 
+    override fun saveEventRX(eventToSave: Event?): Single<Boolean> {
+        return Single.create { emitter ->
+            eventsRemoteDataSource.saveEvent(eventToSave, object : EventsDataSource.SaveEventCallback {
+                override fun onEventSaved(success: Boolean) {
+                    emitter.onSuccess(true)
+                }
+
+                override fun onError(error: String) {
+                    emitter.onError(Throwable(error))
+                }
+            })
+        }
     }
 }

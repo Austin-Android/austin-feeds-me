@@ -3,7 +3,6 @@ package com.austindroids.austinfeedsme
 import android.os.StrictMode
 import com.austindroids.austinfeedsme.common.logging.CrashlyticsTree
 import com.austindroids.austinfeedsme.di.components.DaggerAppComponent
-import com.austindroids.austinfeedsme.di.modules.DataModule
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import dagger.android.AndroidInjector
@@ -43,7 +42,6 @@ class AustinFeedsMeApplication : DaggerApplication() {
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return DaggerAppComponent.builder()
                 .application(this)
-                .dataModule(DataModule())
                 .create(this)
     }
 }

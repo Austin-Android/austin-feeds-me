@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by darrankelinske on 8/4/16.
  */
-public class EventFilterContract {
+public interface EventFilterContract {
 
     interface View {
         void showEvents(List<Event> events);

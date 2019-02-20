@@ -174,7 +174,9 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        showFilteringPopUpMenu()
+        when (item.itemId) {
+            R.id.map_filter -> showFilteringPopUpMenu()
+        }
         return super.onOptionsItemSelected(item)
     }
 

@@ -17,6 +17,6 @@ public interface EventsDataSource {
         void onError(String error);
     }
 
-    void getEvents(LoadEventsCallback callback, boolean onlyFood);
+    void getEvents(LoadEventsCallback callback);
     void saveEvent(Event eventToSave, SaveEventCallback callback);
 }

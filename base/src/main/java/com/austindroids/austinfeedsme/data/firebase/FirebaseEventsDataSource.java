@@ -1,13 +1,12 @@
 package com.austindroids.austinfeedsme.data.firebase;
 
 
-import androidx.annotation.NonNull;
-
 import com.austindroids.austinfeedsme.data.Event;
-import com.austindroids.austinfeedsme.data.EventsDataSource;
+import com.austindroids.austinfeedsme.data.FilterableEventDataSource;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -19,10 +18,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 @Singleton
-public class FirebaseEventsDataSource implements EventsDataSource {
+public class FirebaseEventsDataSource implements FilterableEventDataSource {
     private final CollectionReference collectionReference;
 
     @Inject
@@ -31,19 +31,28 @@ public class FirebaseEventsDataSource implements EventsDataSource {
     }
 
     @Override
-    public void getEvents(final LoadEventsCallback callback, boolean onlyFood) {
-        final List<Event> events = new ArrayList<>();
-        Query eventsQuery = collectionReference
-                .whereGreaterThan("time", new Date().getTime())
-                .orderBy("time");
-        if (onlyFood) {
-            eventsQuery.whereEqualTo("food", true);
-        }
+    public void getEvents(final LoadEventsCallback callback) {
+        getAllEvents(callback);
+    }
 
+    @Override
+    public void saveEvent(Event eventToSave, SaveEventCallback callback) {
+        collectionReference.add(eventToSave).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                callback.onEventSaved(task.isSuccessful());
+            }
+        });
+    }
+
+    @Override
+    public void getEvents(LoadEventsCallback callback, boolean futureEvents, boolean foodOnly) {
+        Query eventsQuery = getEventsQuery(futureEvents, foodOnly);
         eventsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    List<Event> events = new ArrayList<>(task.getResult().size());
                     for (QueryDocumentSnapshot snapshot : task.getResult()) {
                         Event event = snapshot.toObject(Event.class);
                         events.add(event);
@@ -58,8 +67,25 @@ public class FirebaseEventsDataSource implements EventsDataSource {
     }
 
     @Override
-    public void saveEvent(Event eventToSave, SaveEventCallback callback) {
-        collectionReference.add(eventToSave);
-        callback.onEventSaved(true);
+    public void getAllEvents(LoadEventsCallback callback) {
+         getEvents(callback, true, true);
+    }
+
+    private Query getEventsQuery(boolean futureEvents, boolean foodOnly) {
+        Query eventsQuery = collectionReference;
+        if (foodOnly && futureEvents) {
+            eventsQuery = collectionReference
+                    .whereGreaterThan("time", new Date().getTime())
+                    .whereEqualTo("food", true)
+                    .orderBy("time");
+        } else if (futureEvents) {
+            eventsQuery = collectionReference.whereGreaterThan("time", new Date().getTime())
+                    .orderBy("time");
+        } else if (foodOnly) {
+            eventsQuery = collectionReference.whereEqualTo("food", true)
+                    .orderBy("time");
+        }
+
+        return eventsQuery;
     }
 }

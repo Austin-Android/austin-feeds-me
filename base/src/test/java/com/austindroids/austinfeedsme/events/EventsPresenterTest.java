@@ -5,6 +5,7 @@ import com.austindroids.austinfeedsme.common.events.EventsPresenter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
+import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +17,12 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by darrankelinske on 5/4/16.
@@ -27,21 +32,15 @@ public class EventsPresenterTest {
     private static List<Event> EVENTS = new ArrayList<>();
 
     @Mock
-    EventsRepository eventsRepository;
+    FilterableEventsRepository eventsRepository;
     @Mock
     EventsContract.View eventsView;
 
     private EventsPresenter eventsPresenter;
 
-    /**
-     * {@link ArgumentCaptor} is a powerful Mockito API to capture argument values and use them to
-     * perform further actions or assertions on them.
-     */
-    @Captor
-    private ArgumentCaptor<EventsDataSource.LoadEventsCallback> loadEventsCallbackCaptor;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         eventsPresenter = new EventsPresenter(eventsRepository, eventsView);
 
@@ -54,18 +53,16 @@ public class EventsPresenterTest {
                 new Event("2", "Beer", "Duff Everywhere", 33928672270777L,
                         "www.duffman.com", "beer", true));
 
-
+        when(eventsRepository.getEventsRX(true, true)).thenReturn(Observable.just(EVENTS));
     }
 
     @Test
     public void loadAllEventsFromRepositoryAndLoadIntoView() {
-        // Given an initialized TasksPresenter with initialized events
+        // Given an initialized EventsPresenter with initialized events
         // When loading of Events is requested
         eventsPresenter.loadEvents();
 
-        // Callback is captured and invoked with stubbed events
-        verify(eventsRepository).getEvents(loadEventsCallbackCaptor.capture(), );
-        loadEventsCallbackCaptor.getValue().onEventsLoaded(EVENTS);
+        verify(eventsRepository).getEventsRX(true, true);
 
         //Verify that view is given a list of one event from the presenter
         ArgumentCaptor<List> showEventsArgumentCaptor = ArgumentCaptor.forClass(List.class);
