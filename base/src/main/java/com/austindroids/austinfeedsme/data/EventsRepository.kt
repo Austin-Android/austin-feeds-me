@@ -22,28 +22,28 @@ import io.reactivex.Single
 open class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : RxEventsDataSource {
 
     override fun getEventsRX(): Observable<List<Event>>? {
-        return Observable.create {
+        return Observable.create { emitter ->
             eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
                 override fun onEventsLoaded(events: List<Event>) {
-                    it.onNext(events)
+                    emitter.onNext(events)
                 }
 
                 override fun onError(error: String) {
-                    it.onError(Throwable(error))
+                    emitter.onError(Throwable(error))
                 }
             })
         }
     }
 
     override fun saveEventRX(eventToSave: Event?): Single<Boolean> {
-        return Single.create {
+        return Single.create { emitter ->
             eventsRemoteDataSource.saveEvent(eventToSave, object : EventsDataSource.SaveEventCallback {
                 override fun onEventSaved(success: Boolean) {
-                    it.onSuccess(true)
+                    emitter.onSuccess(true)
                 }
 
                 override fun onError(error: String) {
-                    it.onError(Throwable(error))
+                    emitter.onError(Throwable(error))
                 }
             })
         }

@@ -2,11 +2,10 @@ package com.austindroids.austinfeedsme.di.modules;
 
 import com.austindroids.austinfeedsme.data.EventsDataSource;
 import com.austindroids.austinfeedsme.data.EventsRepository;
-import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
+import com.austindroids.austinfeedsme.data.FilterableEventDataSource;
 import com.austindroids.austinfeedsme.data.eventbrite.EventbriteDataSource;
 import com.austindroids.austinfeedsme.data.firebase.FirebaseEventsDataSource;
 import com.austindroids.austinfeedsme.data.meetup.MeetupDataSource;
-
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -29,14 +28,14 @@ public class DataModule {
         return FirebaseFirestore.getInstance().collection("events");
     }
 
-    @Provides @Singleton
-    FilterableEventsRepository filterableEventsRepository(FirebaseEventsDataSource firebaseEventsDataSource) {
-        return new FilterableEventsRepository(firebaseEventsDataSource);
-    }
-
     @Provides @Firebase @Singleton
     EventsRepository eventsRepository(FirebaseEventsDataSource eventsDataSource) {
         return new EventsRepository(eventsDataSource);
+    }
+
+    @Provides
+    FilterableEventDataSource filterableEventDataSource(FirebaseEventsDataSource eventsDataSource) {
+        return eventsDataSource;
     }
 
     @Provides @Meetup @Singleton

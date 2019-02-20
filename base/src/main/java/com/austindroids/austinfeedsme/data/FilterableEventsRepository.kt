@@ -1,21 +1,22 @@
 package com.austindroids.austinfeedsme.data
 
 import io.reactivex.Observable
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class FilterableEventsRepository(private val eventsRemoteDataSource: FilterableEventDataSource)
+open class FilterableEventsRepository @Inject constructor(private val eventsRemoteDataSource: FilterableEventDataSource)
     : EventsRepository(eventsRemoteDataSource), FilterableRxEventsDataSource {
 
     override fun getEventsRX(onlyFuture: Boolean, onlyFood: Boolean): Observable<List<Event>> {
-        return Observable.create {
+        return Observable.create { emitter ->
             eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
                 override fun onEventsLoaded(events: List<Event>) {
-                    it.onNext(events)
+                    emitter.onNext(events)
                 }
 
                 override fun onError(error: String) {
-                    it.onError(Throwable(error))
+                    emitter.onError(Throwable(error))
                 }
             }, onlyFuture, onlyFood)
         }

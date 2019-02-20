@@ -6,6 +6,7 @@ import com.austindroids.austinfeedsme.data.FilterableEventDataSource;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -31,13 +32,17 @@ public class FirebaseEventsDataSource implements FilterableEventDataSource {
 
     @Override
     public void getEvents(final LoadEventsCallback callback) {
-        getEvents(callback, false, false);
+        getAllEvents(callback);
     }
 
     @Override
     public void saveEvent(Event eventToSave, SaveEventCallback callback) {
-        collectionReference.add(eventToSave);
-        callback.onEventSaved(true);
+        collectionReference.add(eventToSave).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                callback.onEventSaved(task.isSuccessful());
+            }
+        });
     }
 
     @Override
@@ -47,7 +52,7 @@ public class FirebaseEventsDataSource implements FilterableEventDataSource {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    List<Event> events = new ArrayList<>();
+                    List<Event> events = new ArrayList<>(task.getResult().size());
                     for (QueryDocumentSnapshot snapshot : task.getResult()) {
                         Event event = snapshot.toObject(Event.class);
                         events.add(event);
@@ -61,11 +66,15 @@ public class FirebaseEventsDataSource implements FilterableEventDataSource {
         });
     }
 
+    @Override
+    public void getAllEvents(LoadEventsCallback callback) {
+         getEvents(callback, true, true);
+    }
+
     private Query getEventsQuery(boolean futureEvents, boolean foodOnly) {
         Query eventsQuery = collectionReference;
-
         if (foodOnly && futureEvents) {
-            eventsQuery =  collectionReference
+            eventsQuery = collectionReference
                     .whereGreaterThan("time", new Date().getTime())
                     .whereEqualTo("food", true)
                     .orderBy("time");

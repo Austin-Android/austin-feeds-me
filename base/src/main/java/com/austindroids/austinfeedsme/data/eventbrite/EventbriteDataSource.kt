@@ -75,6 +75,6 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
     }
 
     override fun saveEvent(eventToSave: Event, callback: EventsDataSource.SaveEventCallback) {
-
+        // No-op - we dont have permission to save to Eventbrite
     }
 }
