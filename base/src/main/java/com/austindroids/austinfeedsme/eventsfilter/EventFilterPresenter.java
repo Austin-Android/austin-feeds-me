@@ -3,6 +3,8 @@ package com.austindroids.austinfeedsme.eventsfilter;
 import com.austindroids.austinfeedsme.data.Event;
 import com.austindroids.austinfeedsme.data.EventsRepository;
 import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
+import com.austindroids.austinfeedsme.di.modules.DataModule.Eventbrite;
+import com.austindroids.austinfeedsme.di.modules.DataModule.Meetup;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +12,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -26,8 +30,9 @@ public class EventFilterPresenter implements EventFilterContract.Presenter {
     private EventsRepository meetupRepository;
     private EventFilterContract.View view;
 
-    public EventFilterPresenter(FilterableEventsRepository filterableEventsRepository, EventsRepository eventbriteRepository,
-                                EventsRepository meetupRepository, EventFilterContract.View view) {
+    @Inject
+    public EventFilterPresenter(FilterableEventsRepository filterableEventsRepository, @Eventbrite EventsRepository eventbriteRepository,
+                                @Meetup EventsRepository meetupRepository, EventFilterContract.View view) {
         this.filterableEventsRepository = filterableEventsRepository;
         this.eventbriteRepository = eventbriteRepository;
         this.meetupRepository = meetupRepository;

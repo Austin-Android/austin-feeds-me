@@ -18,9 +18,7 @@ package com.austindroids.austinfeedsme.data
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import javax.inject.Singleton
 
-@Singleton
 open class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : RxEventsDataSource {
 
     override fun getEventsRX(): Observable<List<Event>>? {

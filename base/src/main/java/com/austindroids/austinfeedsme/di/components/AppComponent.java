@@ -8,6 +8,7 @@ import com.austindroids.austinfeedsme.data.FilterableEventsRepository;
 import com.austindroids.austinfeedsme.di.modules.ActivityBindingModule;
 import com.austindroids.austinfeedsme.di.modules.ApplicationModule;
 import com.austindroids.austinfeedsme.di.modules.DataModule;
+import com.austindroids.austinfeedsme.di.modules.DataModule.Firebase;
 
 import javax.inject.Singleton;
 
@@ -27,11 +28,9 @@ public interface AppComponent extends AndroidInjector<AustinFeedsMeApplication> 
         @BindsInstance
         public abstract Builder application(Application application);
 
-        public abstract Builder dataModule(DataModule datassModule);
-
         public abstract AppComponent build();
     }
 
-    EventsRepository getEventsRepository();
-    FilterableEventsRepository getFilterableEventsRepository();
+//    @Firebase EventsRepository getEventsRepository();
+//    FilterableEventsRepository getFilterableEventsRepository();
 }
