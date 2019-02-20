@@ -36,7 +36,6 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
 
         val searchList = arrayOf("taco", "pizza", "beer", "breakfast", "lunch", "dinner", "drinks", "spaghetti", "hamburger")
 
-
         for (searchTerm in searchList) {
             observableList.add(eventbriteService.getEventsByKeyword(searchTerm))
         }
@@ -44,7 +43,7 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
 
     override fun getEvents(callback: EventsDataSource.LoadEventsCallback) {
 
-        val eventIds: Set<String> = HashSet()
+        val eventIds: MutableSet<String> = mutableSetOf()
 
         val eventbriteEventsSubscriber = Consumer<List<EventbriteEvent>> { eventbriteEvents ->
             val convertedEventbriteEvents = ArrayList<Event>()
@@ -58,10 +57,10 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
 
             val mergedEvents: ArrayList<EventbriteEvent> = ArrayList()
 
-            eventBriteEvents.map { it as EventbriteEvents }.forEach {
-                it.events.forEach {
+            eventBriteEvents.map { it as EventbriteEvents }.forEach { eventbriteEvents ->
+                eventbriteEvents.events.forEach {
                     if (!eventIds.contains(it.id)) {
-                        eventIds.plus(it.id)
+                        eventIds.add(it.id)
                         mergedEvents.add(it)
                     }
                 }
