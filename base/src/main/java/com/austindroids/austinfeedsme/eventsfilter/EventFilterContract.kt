@@ -13,6 +13,6 @@ interface EventFilterContract {
 
     interface Presenter {
         fun loadEvents()
+        fun dispose();
     }
-
 }

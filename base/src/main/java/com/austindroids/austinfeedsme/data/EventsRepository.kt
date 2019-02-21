@@ -21,7 +21,7 @@ import io.reactivex.Single
 
 open class EventsRepository(private val eventsRemoteDataSource: EventsDataSource) : RxEventsDataSource {
 
-    override fun getEventsRX(): Observable<List<Event>>? {
+    override fun getEventsRX(): Observable<List<Event>> {
         return Observable.create { emitter ->
             eventsRemoteDataSource.getEvents(object : EventsDataSource.LoadEventsCallback {
                 override fun onEventsLoaded(events: List<Event>) {
