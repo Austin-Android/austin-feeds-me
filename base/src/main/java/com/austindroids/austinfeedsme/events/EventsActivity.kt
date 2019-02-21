@@ -176,7 +176,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         handleIntent(intent)
     }
 
-    override fun setPizzaCount(count: Int) {
+    override fun setPizzaCount(count: Int?) {
         // get menu from navigationView
         val menu = navigationView.menu
         // find MenuItem you want to change
@@ -185,7 +185,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         navigationPizzaEvents.title = "Pizza: $count"
     }
 
-    override fun setTacoCount(count: Int) {
+    override fun setTacoCount(count: Int?) {
         // get menu from navigationView
         val menu = navigationView.menu
         // find MenuItem you want to change
@@ -195,7 +195,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     }
 
-    override fun setBeerCount(count: Int) {// get menu from navigationView
+    override fun setBeerCount(count: Int?) {// get menu from navigationView
         val menu = navigationView.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_beer)

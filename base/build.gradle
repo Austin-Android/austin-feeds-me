@@ -2,6 +2,7 @@ apply plugin: 'com.android.feature'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
+apply plugin: 'kotlin-android-extensions'
 
 Properties props = new Properties()
 props.load(new FileInputStream(file(project.property("austinfeedsme.properties"))))
