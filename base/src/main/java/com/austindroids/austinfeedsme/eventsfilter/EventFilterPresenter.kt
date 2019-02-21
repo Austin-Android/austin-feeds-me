@@ -24,21 +24,21 @@ constructor(private val filterableEventsRepository: FilterableEventsRepository, 
 
     override fun loadEvents() {
         disposable = Observable.combineLatest(filterableEventsRepository.getEventsRX(true, false), eventbriteRepository.eventsRX, meetupRepository.eventsRX,
-                { persistedEvents: List<Event>, eventbriteEvents: List<Event>, meetupEvents: List<Event> ->
+                Function3 { persistedEvents: List<Event>, eventbriteEvents: List<Event>, meetupEvents: List<Event> ->
                     val persistedIds = HashSet<String>()
 
-                    for (event in persistedEvents) {
+                    persistedEvents.forEach { event ->
                         persistedIds.add(event.id)
                     }
 
                     val eventsToReturn = eventbriteEvents.filter {
-                        !persistedIds.contains(it.id)
+                        it.id !in persistedIds
                     }.toMutableList()
 
                     eventsToReturn.addAll(meetupEvents)
-                    eventsToReturn.sortedWith(compareBy { it.time })
+                    eventsToReturn.sortWith(compareBy { it.time })
                     eventsToReturn
-                } as Function3<List<Event>, List<Event>, List<Event>, List<Event>>)
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { events ->

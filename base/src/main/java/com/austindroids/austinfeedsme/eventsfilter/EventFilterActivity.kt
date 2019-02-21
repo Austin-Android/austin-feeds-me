@@ -30,7 +30,7 @@ class EventFilterActivity : BaseActivity(), EventFilterContract.View {
     }
 
     override fun showEvents(events: List<Event>) {
-        eventFilterAdapter.addEvents(events)
+        eventFilterAdapter.setEvents(events)
     }
 
     override fun onDestroy() {
