@@ -218,15 +218,15 @@ class EventsMapActivity : BaseActivity(), EventsContract.View, OnMapReadyCallbac
         }
     }
 
-    override fun setPizzaCount(count: Int?) {
+    override fun setPizzaCount(count: Int) {
 
     }
 
-    override fun setTacoCount(count: Int?) {
+    override fun setTacoCount(count: Int) {
 
     }
 
-    override fun setBeerCount(count: Int?) {
+    override fun setBeerCount(count: Int) {
 
     }
 

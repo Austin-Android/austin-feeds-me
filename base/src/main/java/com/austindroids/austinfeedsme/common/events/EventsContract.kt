@@ -10,9 +10,9 @@ interface EventsContract {
 
     interface View {
         fun showEvents(events: List<Event>)
-        fun setPizzaCount(count: Int?)
-        fun setTacoCount(count: Int?)
-        fun setBeerCount(count: Int?)
+        fun setPizzaCount(count: Int)
+        fun setTacoCount(count: Int)
+        fun setBeerCount(count: Int)
         fun setTotalCount(count: Int)
         fun showFilteringPopUpMenu()
         fun showNoEventsView()

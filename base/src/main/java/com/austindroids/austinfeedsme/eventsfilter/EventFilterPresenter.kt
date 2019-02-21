@@ -8,6 +8,7 @@ import com.austindroids.austinfeedsme.di.modules.DataModule.Meetup
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -19,7 +20,7 @@ import javax.inject.Inject
 class EventFilterPresenter @Inject
 constructor(private val filterableEventsRepository: FilterableEventsRepository, @param:Eventbrite private val eventbriteRepository: EventsRepository,
             @param:Meetup private val meetupRepository: EventsRepository, private val view: EventFilterContract.View) : EventFilterContract.Presenter {
-    private var disposable: Disposable? = null
+    private var disposable: Disposable = Disposables.disposed()
 
     override fun loadEvents() {
         disposable = Observable.combineLatest(filterableEventsRepository.getEventsRX(true, false), eventbriteRepository.eventsRX, meetupRepository.eventsRX,
@@ -46,6 +47,6 @@ constructor(private val filterableEventsRepository: FilterableEventsRepository, 
     }
 
     override fun dispose() {
-        disposable!!.dispose()
+        disposable.dispose()
     }
 }

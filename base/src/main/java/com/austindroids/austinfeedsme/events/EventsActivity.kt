@@ -27,6 +27,7 @@ import com.austindroids.austinfeedsme.R
 import com.austindroids.austinfeedsme.common.base.BaseActivity
 import com.austindroids.austinfeedsme.common.events.EventsContract
 import com.austindroids.austinfeedsme.common.events.EventsPresenter
+import com.austindroids.austinfeedsme.common.events.EventsPresenter.Companion.SEARCH_RESET_STRING
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.eventsfilter.EventFilterActivity
 import com.austindroids.austinfeedsme.eventsmap.EventsMapActivity
@@ -176,7 +177,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         handleIntent(intent)
     }
 
-    override fun setPizzaCount(count: Int?) {
+    override fun setPizzaCount(count: Int) {
         // get menu from navigationView
         val menu = navigationView.menu
         // find MenuItem you want to change
@@ -185,7 +186,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
         navigationPizzaEvents.title = "Pizza: $count"
     }
 
-    override fun setTacoCount(count: Int?) {
+    override fun setTacoCount(count: Int) {
         // get menu from navigationView
         val menu = navigationView.menu
         // find MenuItem you want to change
@@ -195,7 +196,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
 
     }
 
-    override fun setBeerCount(count: Int?) {// get menu from navigationView
+    override fun setBeerCount(count: Int) {// get menu from navigationView
         val menu = navigationView.menu
         // find MenuItem you want to change
         val navigationPizzaEvents = menu.findItem(R.id.events_beer)
@@ -300,7 +301,7 @@ class EventsActivity : BaseActivity(), EventsContract.View {
     private fun selectDrawerItem(menuItem: MenuItem) {
 
         when (menuItem.itemId) {
-            R.id.events_list -> Handler().postDelayed({ searchViewForMenu!!.setQuery("reset", true) }, 300)
+            R.id.events_list -> Handler().postDelayed({ searchViewForMenu!!.setQuery(SEARCH_RESET_STRING, true) }, 300)
             R.id.events_map -> Handler().postDelayed({ startActivity(Intent(this@EventsActivity, EventsMapActivity::class.java)) }, 300)
             R.id.events_filter -> Handler().postDelayed({ startActivity(Intent(this@EventsActivity, EventFilterActivity::class.java)) }, 300)
             R.id.events_pizza -> Handler().postDelayed({ searchViewForMenu!!.setQuery("pizza", true) }, 300)

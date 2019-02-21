@@ -17,8 +17,7 @@ class EventFilterActivity : BaseActivity(), EventFilterContract.View {
     internal lateinit var eventFilterPresenter: EventFilterPresenter
     @Inject
     internal lateinit var eventsRepository: FilterableEventsRepository
-
-    private var eventFilterAdapter: EventFilterAdapter? = null
+    private lateinit var eventFilterAdapter: EventFilterAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +30,7 @@ class EventFilterActivity : BaseActivity(), EventFilterContract.View {
     }
 
     override fun showEvents(events: List<Event>) {
-        eventFilterAdapter?.addEvents(events)
+        eventFilterAdapter.addEvents(events)
     }
 
     override fun onDestroy() {

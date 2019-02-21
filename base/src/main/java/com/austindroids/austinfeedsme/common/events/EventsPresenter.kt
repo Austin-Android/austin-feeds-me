@@ -68,14 +68,14 @@ constructor(private val repository: FilterableEventsRepository, private val view
     }
 
     override fun searchEvents(searchTerm: String) {
-        if (searchTerm.equals("reset", ignoreCase = true)) {
+        if (searchTerm.equals(SEARCH_RESET_STRING, ignoreCase = true)) {
             loadEvents()
             return
         }
 
         val lowerCaseSearch = searchTerm.toLowerCase()
 
-        val subscribe = repository.eventsRX!!
+        val subscribe = repository.eventsRX
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ events ->
@@ -139,8 +139,12 @@ constructor(private val repository: FilterableEventsRepository, private val view
 
         }
 
-        view.setPizzaCount(if (yummyCounts[PIZZA.name] == null) 0 else yummyCounts[PIZZA.name])
-        view.setTacoCount(if (yummyCounts[TACO.name] == null) 0 else yummyCounts[TACO.name])
-        view.setBeerCount(if (yummyCounts[BEER.name] == null) 0 else yummyCounts[BEER.name])
+        view.setPizzaCount(yummyCounts[PIZZA.name] ?: 0)
+        view.setTacoCount(yummyCounts[TACO.name] ?: 0)
+        view.setBeerCount(yummyCounts[BEER.name] ?: 0)
+    }
+
+    companion object {
+        const val SEARCH_RESET_STRING = "reset"
     }
 }
