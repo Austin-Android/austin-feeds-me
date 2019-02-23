@@ -17,9 +17,13 @@ import javax.inject.Inject
 /**
  * Created by darrankelinske on 8/4/16.
  */
-class EventFilterPresenter @Inject
-constructor(private val filterableEventsRepository: FilterableEventsRepository, @param:Eventbrite private val eventbriteRepository: EventsRepository,
-            @param:Meetup private val meetupRepository: EventsRepository, private val view: EventFilterContract.View) : EventFilterContract.Presenter {
+class EventFilterPresenter @Inject constructor(
+        private val filterableEventsRepository: FilterableEventsRepository,
+        @param:Eventbrite private val eventbriteRepository: EventsRepository,
+        @param:Meetup private val meetupRepository: EventsRepository,
+        private val view: EventFilterContract.View
+) : EventFilterContract.Presenter {
+
     private var disposable: Disposable = Disposables.disposed()
 
     override fun loadEvents() {

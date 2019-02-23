@@ -14,9 +14,9 @@ import javax.inject.Inject
 class EventFilterActivity : BaseActivity(), EventFilterContract.View {
 
     @Inject
-    internal lateinit var eventFilterPresenter: EventFilterPresenter
+    lateinit var eventFilterPresenter: EventFilterPresenter
     @Inject
-    internal lateinit var eventsRepository: FilterableEventsRepository
+    lateinit var eventsRepository: FilterableEventsRepository
     private lateinit var eventFilterAdapter: EventFilterAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {

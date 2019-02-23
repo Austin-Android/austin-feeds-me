@@ -79,11 +79,11 @@ constructor(private val repository: FilterableEventsRepository, private val view
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ events ->
-                    val filteredEvents = events.filter {
-                        !it.isFood
-                                || it.time < Date().time
-                                || TextUtils.isEmpty(it.description)
-                                || !it.description.toLowerCase().contains(lowerCaseSearch)
+                    val filteredEvents = events.filter {event ->
+                        !event.isFood
+                                || event.time < Date().time
+                                || TextUtils.isEmpty(event.description)
+                                || !event.description.toLowerCase().contains(lowerCaseSearch)
                     }
 
                     view.showEvents(filteredEvents)
