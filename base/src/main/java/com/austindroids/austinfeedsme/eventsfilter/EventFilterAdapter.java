@@ -64,9 +64,8 @@ public class EventFilterAdapter extends RecyclerView.Adapter<EventFilterAdapter.
         viewHolder.eventLinkTextView.setText(event.getEvent_url());
     }
 
-    public void addEvents(List<Event> events) {
-        this.events.clear();
-        this.events.addAll(events);
+    public void setEvents(List<Event> events) {
+        this.events = events;
         notifyDataSetChanged();
     }
 
