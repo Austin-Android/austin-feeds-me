@@ -48,6 +48,7 @@ class EventFilterAdapter(private val eventsRepository: EventsRepository) : Recyc
         private lateinit var event: Event
         private val titleTextView: TextView = itemView.findViewById(R.id.event_title)
         private val groupTextView: TextView = itemView.findViewById(R.id.event_group_name)
+        private val eventDescription: TextView = itemView.findViewById(R.id.event_text)
         private val eventLinkTextView: TextView = itemView.findViewById(R.id.event_link)
         private val addEventButton: Button = itemView.findViewById(R.id.button_add_event)
         private val removeEventButton: Button = itemView.findViewById(R.id.button_remove_event)
@@ -89,6 +90,7 @@ class EventFilterAdapter(private val eventsRepository: EventsRepository) : Recyc
             this.event = event
             titleTextView.text = event.name
             groupTextView.text = event.group.name
+            eventDescription.text = event.description
             eventLinkTextView.text = event.event_url
         }
 
