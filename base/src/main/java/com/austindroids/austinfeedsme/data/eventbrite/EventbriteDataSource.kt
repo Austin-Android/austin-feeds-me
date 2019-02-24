@@ -1,5 +1,6 @@
 package com.austindroids.austinfeedsme.data.eventbrite
 
+import com.austindroids.austinfeedsme.common.Constants.SEARCH_TERMS
 import com.austindroids.austinfeedsme.common.utils.EventbriteUtils
 import com.austindroids.austinfeedsme.data.Event
 import com.austindroids.austinfeedsme.data.EventsDataSource
@@ -34,9 +35,7 @@ class EventbriteDataSource(val eventsRepository: EventsRepository) : EventsDataS
 
         val eventbriteService = eventbriteRetrofit.create(EventbriteService::class.java)
 
-        val searchList = arrayOf("taco", "pizza", "beer", "breakfast", "lunch", "dinner", "drinks", "spaghetti", "hamburger")
-
-        for (searchTerm in searchList) {
+        for (searchTerm in SEARCH_TERMS) {
             observableList.add(eventbriteService.getEventsByKeyword(searchTerm))
         }
     }
