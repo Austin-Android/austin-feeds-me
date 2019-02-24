@@ -14,125 +14,53 @@
  * limitations under the License.
  */
 
-package com.austindroids.austinfeedsme.data;
+package com.austindroids.austinfeedsme.data
 
-public final class Event {
+class Event {
 
-    private String id;
-    private String name;
-    private String description;
-    private String event_url;
-    private String foodType;
-    private String picture;
-    private String tags;
-    private Group group;
-    private Long time;
-    private Venue venue;
-    private boolean isFood;
+    var id: String? = null
+    var name: String? = null
+        private set
+    var description: String? = null
+        private set
+    var event_url: String? = null
+    var foodType: String? = null
+    val picture: String? = null
+    val tags: String? = null
+    var group: Group? = null
+    var time: Long? = null
+    var venue: Venue? = null
+    var isFood: Boolean = false
 
-    public enum Type {
+    enum class Type {
         PIZZA, BEER, TACO, NONE
     }
 
-    public Event() {}
+    constructor() {}
 
-    public Event(String uid, String name, String description) {
-        this.id = uid;
-        this.name = name;
-        this.description = description;
+    constructor(name: String) {
+        this.name = name
     }
 
-    public Event(String uid, String name, String description, Long time,
-                 String rsvpLink, String foodType) {
-
-        this.id = uid;
-        this.name = name;
-        this.description = description;
-        this.time = time;
-        this.event_url = rsvpLink;
-        this.foodType = foodType;
+    constructor(uid: String, name: String, description: String) {
+        this.id = uid
+        this.name = name
+        this.description = description
     }
 
-    public Event(String uid, String name, String description, Long time,
-                 String rsvpLink, String foodType, boolean isFood) {
+    constructor(uid: String, name: String, description: String, time: Long?,
+                rsvpLink: String, foodType: String) {
 
-        this(uid, name, description, time, rsvpLink, foodType);
-        this.isFood = isFood;
+        this.id = uid
+        this.name = name
+        this.description = description
+        this.time = time
+        this.event_url = rsvpLink
+        this.foodType = foodType
     }
 
-    public Event(String name) {
-        this.name = name;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public boolean isFood() {
-        return isFood;
-    }
-
-    public void setFood(boolean food) {
-        isFood = food;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setEvent_url(String event_url) {
-        this.event_url = event_url;
-    }
-
-    public void setTime(Long time) {
-        this.time = time;
-    }
-
-    public Long getTime() {
-        return time;
-    }
-
-    public String getEvent_url() {
-        return event_url;
-    }
-
-    public Venue getVenue() {
-        return venue;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public void setVenue(Venue venue) {
-        this.venue = venue;
-    }
-
-    public String getFoodType() {
-        return foodType;
-    }
-
-    public void setFoodType(String foodType) {
-        this.foodType = foodType;
+    constructor(uid: String, name: String, description: String, time: Long?,
+                rsvpLink: String, foodType: String, isFood: Boolean) : this(uid, name, description, time, rsvpLink, foodType) {
+        this.isFood = isFood
     }
 }
